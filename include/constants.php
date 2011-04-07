@@ -38,8 +38,8 @@ define("TBL_BANNED_USERS",  "banned_users");
 define("TBL_LANDS",  "lands");
 define("TBL_CHARACTERS",  "characters");
 define("TBL_TRIBE",  "tribe");
-define("TBL_RESOURCES",  "resources");
 define("TBL_ACTION_QUEUE",  "action_queue");
+define("TBL_TREASURY", "treasury");
 
 
 /**
@@ -108,11 +108,6 @@ define("ALL_LOWERCASE", false);
 define("FRAGMENTS_TITLE", "Fragments Project - made in STHLM");
 
 /**
- * These constants defined the economy a character is initialized with
- */
-define("INIT_PRODUCTION", 100);
-
-/**
  * terrain types
  */
 define("DIRT", 1);
@@ -159,15 +154,32 @@ define("CLEAN_TIME", 10);
 define("MOVE_TIME", 10);
 
 /**
- * Resources
- */
-define("PRODUCTION_FREQUENCY", 10);
-
-/**
  * Defined action types
  */
 define("UNDEFINED", 0);
 define("CLEAN", 1);
 define("MOVE", 2);
 
+/**
+ * Defined game time unit in seconds
+ */
+define("GAME_TIME_UNIT", 60);
+
+/**
+ * Population definitions
+ */
+define("INIT_POPULATION", 2);
+define("POPULATION_MAX", 20);
+define("NATIVITY", 0.1);
+
+/**
+ * Treasury
+ */
+define("INIT_GOLD", 10);
+define("INIT_TAX", 0.25);
+
+/**
+ * Logging
+ */
+define("DB_VERBOSE", 0);
 ?>

@@ -34,6 +34,12 @@
                          */
                         echo '<script src="js/func.js" type="text/javascript"></script>';
 
+                        /*
+                         * map.js
+                         * Javascript code included in the map description.
+                         */
+                        echo '<script src="js/map.js" type="text/javascript"></script>';
+
 			echo '<link rel="stylesheet" type="text/css" href="css/style.css"></link>';
 		}
 

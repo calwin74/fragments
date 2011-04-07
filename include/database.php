@@ -287,7 +287,9 @@ class MySQLDB
     */
    function query($query){
       global $session;
-      $session->logger->LogInfo($query);
+      if (DB_VERBOSE){
+         $session->logger->LogInfo($query);
+      }
       return mysql_query($query, $this->connection);
    }
 
@@ -411,7 +413,9 @@ class MySQLDB
       global $session;
 
       $q = "DELETE FROM ".TBL_ACTION_QUEUE." WHERE name = '$character' and x = ".$x." and y = ".$y."";
-      $session->logger->LogInfo($q);
+      if (DB_VERBOSE){     
+         $session->logger->LogInfo($q);
+      }
 
       mysql_query($q, $this->connection);
       return NULL;
@@ -435,7 +439,10 @@ class MySQLDB
 
       /* No moves are due */
       if(mysql_numrows($result) < 1){
-         $session->logger->LogInfo("No result in checkActionQueue");
+         if(DB_VERBOSE){
+            $session->logger->LogInfo("No result in checkActionQueue");
+         }
+
          return NULL;
       }
       
@@ -444,7 +451,7 @@ class MySQLDB
       /* Return result array */
       $dbarray = array();
       
-      $now = strtotime("+0 seconds");
+      $now = strtotime("now");
       $now = strftime("%Y-%m-%d %H:%M:%S", $now);
 
       for ($i=0; $row = mysql_fetch_assoc($result); $i++){
@@ -518,7 +525,9 @@ class MySQLDB
       global $session;
 
       $q = "DELETE FROM ".TBL_BUILD_QUEUE." WHERE town = '$town' and x = ".$x." and y = ".$y."";
-      $session->logger->LogInfo($q);
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
 
       mysql_query($q, $this->connection);
       return NULL;
@@ -551,7 +560,7 @@ class MySQLDB
       /* Return result array */
       $dbarray = array();
       
-      $now = strtotime("+0 seconds");
+      $now = strtotime("now");
       $now = strftime("%Y-%m-%d %H:%M:%S", $now);
 
       for ($i=0; $row = mysql_fetch_assoc($result); $i++){
@@ -853,8 +862,8 @@ class MySQLDB
     * addNewCharacter - Inserts the given character info into the database.
     * Returns true on success, false otherwise.
     */
-   function addNewCharacter($charname, $username, $tribe, $x, $y, $code){
-      $q = "INSERT INTO ".TBL_CHARACTERS." VALUES ('$charname', '$username', '$tribe', '$x', '$y', '$code')";
+   function addNewCharacter($charname, $username, $tribe, $x, $y){
+      $q = "INSERT INTO ".TBL_CHARACTERS." VALUES ('$charname', '$username', '$tribe', '$x', '$y')";
       return mysql_query($q, $this->connection);
    }
 
@@ -1005,65 +1014,6 @@ class MySQLDB
    }
 
    /**
-    * initResources - initialize reources for character
-    * Returns nothing
-    */
-   function initResources($characterName, $production, $production_growth, $now) {
-      global $session;
-
-      $q = "INSERT INTO ".TBL_RESOURCES." VALUES ('$characterName', ".$production.", ".$production_growth.", '$now')";
-      $result = $this->query($q);
-      if (!$result) {
-         $session->logger->LogError("Error in initResources");
-      }
-   }
-
-   /**
-    * updateResources - update reources for character
-    * Returns nothing
-    */
-   function updateResources($characterName, $production, $growth, $now) {
-      global $session;
-
-      if ($now) {
-         $q = "UPDATE ".TBL_RESOURCES." SET production = ".$production.", production_growth = ".$growth.", due_time = '$now' WHERE character_name = '$characterName'";
-      }
-      else {
-         $q = "UPDATE ".TBL_RESOURCES." SET production = ".$production." WHERE character_name = '$characterName'";
-      }
-
-      $result = $this->query($q);
-      if (!$result) {
-         $session->logger->LogError("Error in updateResources");
-      }
-   }
-
-   /**
-    * getResources - get resources for a character
-    * Returns resources
-    */
-   function getResources($characterName) {
-      global $session;
-
-      $q = "SELECT * FROM ".TBL_RESOURCES." WHERE character_name = '".$characterName."'";
-      $result = $this->query($q);
-      /* Error occurred */
-      if (!$result) {
-         $session->logger->LogError("Error in getResources");
-         return NULL;
-      }
-      if (mysql_numrows($result) != 1) {
-         $session->logger->LogError("getResources didn't return one resourse row");         
-         return 0;
-      }
-
-      $row = mysql_fetch_assoc($result);
-      mysql_free_result($result);
-
-      return $row;
-   }
-
-   /**
     * getAllTribes - get all tribes
     * Returns array tribes
     */
@@ -1096,7 +1046,10 @@ class MySQLDB
       global $session;
 
       $q = "UPDATE ".TBL_LANDS." SET owner = '$owner' WHERE x = ".$x." AND y = ".$y;
-      $session->logger->LogInfo($q);
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
       return mysql_query($q, $this->connection);
    }
 
@@ -1107,7 +1060,10 @@ class MySQLDB
       global $session;
 
       $q = "UPDATE ".TBL_LANDS." SET toxic = ".$toxic." WHERE x = ".$x." AND y = ".$y;
-      $session->logger->LogInfo($q);
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
       return mysql_query($q, $this->connection);    
    }
 
@@ -1156,56 +1112,159 @@ class MySQLDB
    }
 
    /**
-    * checkResourceTime - check if it's time to get resources
-    * Returns due resource rows
+    * updatePopulation - update population for a land
+    * Returns nothing
     */
-   function checkResourceTime() {
+   function updatePopulation($population, $x, $y, $newTime) {
       global $session;
 
-      $q = "SELECT * FROM ".TBL_RESOURCES." ORDER BY due_time ASC";
+      $q = "UPDATE ".TBL_LANDS." SET population = ".$population.", population_time = '$newTime' WHERE x = ".$x." AND y = ".$y;
+
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updatePopulation");
+      }
+   }
+
+   /**
+    * getPopulationUpdate - Get lands that are due for population update
+    * Returns array of lands to update.
+    */
+   function getPopulationUpdate(){
+      global $session;
+
+      /* create time limit for population calculation */
+      $then = strtotime("-".GAME_TIME_UNIT." seconds");
+      $then = strftime("%Y-%m-%d %H:%M:%S", $then);
+      
+      $q = "SELECT * from ".TBL_LANDS." WHERE population > 1 AND population < ".POPULATION_MAX." AND population_time < '$then' ORDER BY population_time ASC";
       $result = $this->query($q);
 
       /* Error occurred */
       if (!$result){
-         $session->logger->LogError("Error in checkResourceTime");
+         $session->logger->LogError("Error in getPopulationUpdate");
          return NULL;
       }
 
-      /* No resources are due */
+      /* No populatin are due */
       if(mysql_numrows($result) < 1){
-         $session->logger->LogInfo("No result in checkResourceTime");
+         if(DB_VERBOSE){
+            $session->logger->LogInfo("No result in getPopulationUpdate");
+         }
+
          return NULL;
       }
-      
+
       $rows = mysql_numrows($result);
 
       /* Return result array */
       $dbarray = array();
       
-      $now = strtotime("+0 seconds");
-      $now = strftime("%Y-%m-%d %H:%M:%S", $now);
-
       for ($i=0; $row = mysql_fetch_assoc($result); $i++){
-         $dueTime = $row["due_time"];
-         // need to replace this function with local function
-         $diff = $this->getTimeDiff($dueTime, $now);
-         
-         /* if first char in the time string is a minus sign the move is due */
-         if ($diff[0] == "-"){
-            $dbarray[$i] = $row;
-         }
-         /* if time string is zero the move is due */
-         else if(!strcmp($diff, "00:00:00"))
-         {
-            $dbarray[$i] = $row;
-         }
+         $dbarray[$i] = $row;
       }
 
       mysql_free_result($result);      
 
-      return $dbarray;
+      return $dbarray;      
    }
 
+   /**
+    * getGoldFromOwner - get gold for a character
+    * Returns gold
+    */
+   function getGoldFromOwner($character) {
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_TREASURY." WHERE character_name = '$character'";
+      $result = $this->query($q);
+      /* Error occurred */
+      if (!$result) {
+         $session->logger->LogError("Error in getGoldFromOwner");
+         return NULL;
+      }
+      if (mysql_numrows($result) != 1) {
+         $session->logger->LogError("getGoldFromOwner didn't return one treasury row");         
+         return 0;
+      }
+
+      $row = mysql_fetch_assoc($result);
+      mysql_free_result($result);
+
+      return $row;
+   }
+
+   /**
+    * getGoldUpdate - Get treasuries that are due for gold update
+    * Returns array of treasuries to update.
+    */
+   function getGoldUpdate(){
+      global $session;
+
+      /* create time limit for gold calculation */
+      $then = strtotime("-".GAME_TIME_UNIT." seconds");
+      $then = strftime("%Y-%m-%d %H:%M:%S", $then);
+      
+      $q = "SELECT * from ".TBL_TREASURY." WHERE gold_time < '$then' ORDER BY gold_time ASC";
+      $result = $this->query($q);
+
+      /* Error occurred */
+      if (!$result){
+         $session->logger->LogError("Error in getGoldUpdate");
+         return NULL;
+      }
+
+      /* No gold calculations are due */
+      if(mysql_numrows($result) < 1){
+         if(DB_VERBOSE){
+            $session->logger->LogInfo("No result in getGoldUpdate");
+         }
+         return NULL;
+      }
+
+      $rows = mysql_numrows($result);
+
+      /* Return result array */
+      $dbarray = array();
+      
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dbarray[$i] = $row;
+      }
+
+      mysql_free_result($result);      
+
+      return $dbarray;      
+   }
+
+   /**
+    * updateGold - update gold for a character
+    * Returns nothing
+    */
+   function updateGold($gold, $character, $newTime) {
+      global $session;
+
+      $q = "UPDATE ".TBL_TREASURY." SET gold = ".$gold.", gold_time = '$newTime' WHERE character_name = '$character'";
+
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updateGold");
+      }
+   }
+
+   /**
+    * initTreasury - insert a treasury row for a character
+    * Returns nothing
+    */
+   function initTreasury($character, $gold, $gold_time, $tax) {
+      global $session;
+
+      $q = "INSERT INTO ".TBL_TREASURY." VALUES ('$character', ".$gold.", '$gold_time', ".$tax.")"; 
+
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in initTreasury");
+      }
+   }
 };
 
 ?>

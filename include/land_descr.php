@@ -19,7 +19,7 @@ class Land
    
    /* Class constructor */
    public function Land(){
-      /* nothing yet */
+     /* nothing yet */
    }
 
    /* Public methods */
@@ -96,20 +96,32 @@ class Land
       return $this->toxic;
    }
 
-   public function getDescr($position) {
-      $classes = $this->getClasses($this->getOwner(), $this->getCharacter());
-      $tag = $this->getTag();
-      $name = $this->getName();
-      $x = $this->getX();
-      $y = $this->getY();
-      //$coord = $x.",".$y;
+   public function getDescr() {
+      $descr = array();
+
+      $classes = $this->getClasses($this->getCharacter());
       $toxic = "";
       if (($this->getAvailable() == AVAILABLE) || ($this->getOwner() == I_OWN)){
          $toxic = $this->getToxic();
       }
-      $html_descr = "<$tag class=\"$classes $position\" id=$name><p>$toxic</p></$tag>";
 
-      return $html_descr;
+      $descr["class"] = $classes;
+      $descr["toxic"] = $toxic;
+
+      return $descr;
+   }
+
+   public function getDescrXML() {
+      $classes = $this->getClasses($this->getCharacter());
+      $name = $this->getName();
+      $toxic = "";
+      if (($this->getAvailable() == AVAILABLE) || ($this->getOwner() == I_OWN)){
+         $toxic = $this->getToxic();
+      }
+      
+      $xml_descr = "<land key=\"$name\" class=\"$classes\" toxic=\"$toxic\" />";
+
+      return $xml_descr;
    }
 
    /* Private methods */
@@ -118,48 +130,51 @@ class Land
 ´   * Get land class types.
     */
 
-   private function getClasses($owner, $character){
-      $img = "hex";
+   private function getClasses($character){
+      $class = "hex";
 
-      if ($owner == 0){
-         $img .= " gray";
-      }
-      else if ($owner == 1){
-         $img .= " cyan";
-      }
-      else if ($owner == 2){
-         $img .= " blue";
-      }
-      /* else */
+      $class .= $this->getOwnerClass();
+
+      $class .= $this->getActionClass();
 
       /*
       if ($character){
-         $img .= " character";
+         $class .= " character";
       }
       */
 
-      return $img;
+      return $class;
     }
 
-   /**
-    * The tag decides if land is clickable ...
-    */
-   private function getTag(){
-      $tag = "default";
+   private function getOwnerClass(){
+      $class = "";
 
-      if (($this->owner == NOT_OWNED) && ($this->available == AVAILABLE)){
-         /* possible to move here */
-         return "move";
+      if ($this->getOwner() == NOT_OWNED){
+         $class .= " gray";
       }
-      else if (($this->owner == I_OWN) && ($this->toxic < TOXIC_CLEAN)){
-         /* possible to clean */
-         return "clean";
+      else if ($this->getOwner() == I_OWN){
+         $class .= " cyan";
       }
-      else if ($this->owner == YOU_OWN){
-         /* someone owns this already - not applicable */
-         return "na";
-      }      
-      return $tag;
+      else if ($this->getOwner() == YOU_OWN){
+         $class .= " blue";
+      }
+
+      return $class;
    }
+
+  private function getActionClass(){
+      $class = "";
+
+      if (($this->getOwner() == NOT_OWNED) && ($this->available == AVAILABLE)){
+         /* possible to move here */
+         $class .= " move";
+      }
+      else if (($this->getOwner() == I_OWN) && ($this->toxic < TOXIC_CLEAN)){
+         /* possible to clean */
+         $class .= " clean";
+      }
+     
+      return $class;
+  }
 }
 ?>

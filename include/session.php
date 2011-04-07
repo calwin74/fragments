@@ -514,7 +514,7 @@ class Session
       $session->logger->LogError($y);
 
       if ($database->getLandType($x, $y) == SEA){
-         $session->logger->LogError("getLandType is see");
+         $session->logger->LogError("getLandType is sea");
          $ok = 0;
       }
       else if($database->getLandOwner($x, $y)){
@@ -530,9 +530,9 @@ class Session
     * initialisation form. Determines if there were any errors with
     * the entry fields, if so, it records the errors and returns
     * 1. If no errors were found, it initialises the new user and
-    * returns 0. Returns 2 if initialisation failed.
+    * returns 0.
     */
-   function initUser($subname, $subtribe){
+   function initUser($subname){
       global $session, $form;  //Session and form object
       $database = $this->database; //The database object
       
@@ -568,32 +568,7 @@ class Session
          return 1;  //Errors with form
       }
       /* No errors, add the new account to the database*/
-      else{
-         $username = $session->username;
-         $ok = 0;
-         $x = 0;
-         $y = 0;
-
-         while ($ok != 1){
-           $x = rand(-X_LOCAL_MAP_SIZE, X_LOCAL_MAP_SIZE);
-           $y = rand(-Y_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
-
-           $ok = $this->checkStartPoint($x, $y);
-         }
-
-         if($database->addNewCharacter($subname, $username, $subtribe, $x, $y, 0)){
-            // Init land
-            $database->setLandOwner($x, $y, $subname);
-            $database->setLandToxic($x, $y, 9);
-
-            // Update init field in the users table to mark that initialisation has been done.
-            $database->updateUserField($this->username, "init", 1);
-            return 0;  //New character added succesfully
-         }
-         else{
-            return 2;  //Initialisation attempt failed
-         }
-      }
+      return 0;
    }
 };
 

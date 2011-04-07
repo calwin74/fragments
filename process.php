@@ -11,7 +11,7 @@
  * Last Updated: August 19, 2004
  */
 include_once("include/session.php");
-include_once("include/resources.php");
+include_once("include/population.php");
 
 class Process
 {
@@ -211,13 +211,12 @@ class Process
          $_POST['charname'] = strtolower($_POST['charname']);
       }
       /* Initialisation attempt */
-      $retval = $session->initUser($_POST['charname'], $_POST['tribe']);
+      $retval = $session->initUser($_POST['charname']);
       
       /* Initialisation Successful */
       if($retval == 0){
          /* init resources */
-         initResources($_POST['charname']);
-                 
+         $this->initUser($_POST['charname'], $_POST['tribe']);
          header("Location: ".$session->referrer);
       }
       /* Error found with form */
@@ -226,10 +225,64 @@ class Process
          $_SESSION['error_array'] = $form->getErrorArray();
          header("Location: ".$session->referrer);
       }
-      /* Initialisation attempt failed */
-      else if($retval == 2){
-         header("Location: ".$session->referrer);
+   }
+
+   /**
+    * initUser - Do game specific initalization
+    */
+   function initUser($charName, $tribe){
+      global $session;
+      $database = $session->database;
+
+      $username = $session->username;
+      $ok = 0;
+      $x = 0;
+      $y = 0;
+
+      while ($ok != 1){
+         $x = rand(-X_LOCAL_MAP_SIZE, X_LOCAL_MAP_SIZE);
+         $y = rand(-Y_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
+
+         $ok = $this->checkStartPoint($x, $y);
       }
+
+      if($database->addNewCharacter($charName, $username, $tribe, $x, $y)){
+        // Init land
+        $database->setLandOwner($x, $y, $charName);
+        $database->setLandToxic($x, $y, 9);
+        
+        $now = strtotime("now");
+        $now = strftime("%Y-%m-%d %H:%M:%S", $now);
+        $database->updatePopulation(INIT_POPULATION, $x, $y, $now);
+        $database->initTreasury($charName, INIT_GOLD, $now, INIT_TAX);
+
+        // Update init field in the users table to mark that initialisation has been done.
+        $database->updateUserField($session->username, "init", 1);
+      }
+   }
+
+   /**
+    * checkStartPoint - Check that start point is valid
+    */
+   function checkStartPoint($x, $y){
+      global $session;
+      $database = $session->database;
+
+      $ok = 1;
+      $session->logger->LogError("checkStartPoint");
+      $session->logger->LogError($x);
+      $session->logger->LogError($y);
+
+      if ($database->getLandType($x, $y) == SEA){
+         $session->logger->LogError("getLandType is sea");
+         $ok = 0;
+      }
+      else if($database->getLandOwner($x, $y)){
+         $session->logger->LogError("land owner is not null");
+         $ok = 0;
+      }
+
+      return $ok;
    }
 };
 

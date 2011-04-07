@@ -44,6 +44,8 @@ CREATE TABLE `lands` (
   `yield` int(10) NOT NULL default '0',
   `owner` varchar(30) default NULL,
   `toxic` int(10) NOT NULL default '0',
+  `population` double unsigned NOT NULL default '0',
+  `population_time` datetime NOT NULL default '0000-00-00 00:00:00',
   UNIQUE KEY `Index_1` (`x`,`y`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -74,22 +76,12 @@ CREATE TABLE `characters` (
   `tribe` varchar(30) default NULL,
   `x` int(10) NOT NULL default '0',
   `y` int(10) NOT NULL default '0',
-  `code` int(10) NOT NULL default '0',
   PRIMARY KEY  (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Definition of table `resources`
 --
-
-DROP TABLE IF EXISTS `resources`;
-CREATE TABLE `resources` (
-  `character_name` varchar(30) default NULL,
-  `production` int(10) NOT NULL default '0',
-  `production_growth` double unsigned NOT NULL default '0',
-  `due_time` datetime NOT NULL default '0000-00-00 00:00:00',
-  UNIQUE KEY `Index_1` (`character_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Definition of table `tribe`
@@ -114,4 +106,17 @@ CREATE TABLE `action_queue` (
   `type` int(10) unsigned NOT NULL default '0',
   `add_info` int(10) unsigned NOT NULL default '0',
   UNIQUE KEY `Index_1` (`name`,`x`,`y`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Definition of table `treasury`
+--
+
+DROP TABLE IF EXISTS `treasury`;
+CREATE TABLE `treasury` (
+  `character_name` varchar(30) default NULL,
+  `gold` double unsigned NOT NULL default '0',
+  `gold_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `tax` double unsigned NOT NULL default '0',
+  UNIQUE KEY `Index_1` (`character_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

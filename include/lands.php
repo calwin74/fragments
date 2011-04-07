@@ -2,6 +2,7 @@
 include_once("land_descr.php");
 include_once("land_utils.php");
 include_once("constants.php");
+include_once("include/session.php");
 
 /**
  * lands.php
@@ -13,8 +14,33 @@ class Lands
    private $my_lands;           //land container
    
    /* Class constructor */
-   public function Lands(){
+   public function Lands($x, $y, $characterName){
+     global $session;
+     $database = $session->database;
+
      $this->my_lands = array();
+     $land_rows = $database->map($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
+
+     foreach ($land_rows as $row){
+       $land = new Land;
+       $land->init($row["x"], $row["y"], $row["type"], $row["toxic"]);
+       /* handle land ownership */
+       if ($row["owner"]){
+         if (strcmp($characterName, $row["owner"]) == 0){
+           $land->setOwner(I_OWN);
+         }
+         else{
+           $land->setOwner(YOU_OWN);
+         }
+       }
+       else{
+         $land->setOwner(NOT_OWNED);
+       }
+       $this->addLand($land);
+     }
+
+     /* handle available lands */
+     $this->fixAvailableLands();
    }
 
    /* Public methods */  
@@ -49,7 +75,7 @@ class Lands
      }
    }
 
-   public function fixAvailableLands(){
+   private function fixAvailableLands(){
      foreach ($this->my_lands as $land){
        if (($land->getOwner() == I_OWN) && ($land->getToxic() == TOXIC_CLEAN)){
          $land->setAvailable(NOT_AVAILABLE);
@@ -104,6 +130,13 @@ class Lands
            $this->setAvailableLand($x-1, $y+1);
          }
        }
+     }
+   }
+
+   public function getLandsXML(){
+     foreach ($this->my_lands as $land){
+       $xml = $land->getDescrXML();
+       echo $xml."\n";
      }
    }
 }

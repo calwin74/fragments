@@ -12,76 +12,28 @@ include_once("include/land_descr.php");
 include_once("include/land_utils.php");
 include_once("include/lands.php");
 include_once("include/utils.php");
+include_once("include/character.php");
+include_once("include/population.php");
+include_once("include/treasury.php");
 
 global $session;
 
 $database = $session->database;  //The database connection
 
-/* fix this ... */
-$lands = new Lands();
-
+/* initialization */
 $x = 0;
 $y = 0;
+$character = new Character();
+$lands = new Lands($x, $y, $character->getName());
+$population = new Population();
+$treasury = new Treasury();
 
-$land_rows = $database->map($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
+/* update resources */
+$population->updateAllPopulation();
+$treasury->updateAllTreasury();
 
 $html = new Html;
 $html->html_header(FRAGMENTS_TITLE);
-
-?>
-
-<script type="text/javascript">
-$(function($) {
-    $('.jclock').jclock();
-});
-</script>
- 
-<script type="text/javascript">
-   $(document).ready(function() {
-       var money = $("div.money");
-       var production = parseInt(document.getElementById('production').innerHTML);
-       var growth = parseFloat(document.getElementById('growth').innerHTML);
-       
-       $('move').contextMenu('myMenu1', {
-          bindings: {
-             'move': function(t) {
-                 var actionForm = document.forms["actionForm"];
-
-                 actionForm.elements["action"].value = 'move';
-                 actionForm.elements["key"].value = t.id;
-                 actionForm.submit();
-             },
-          }
-       });
-       $('clean').contextMenu('myMenu2', {
-          bindings: {
-             'clean': function(t) {
-                 var actionForm = document.forms["actionForm"];
-
-                 actionForm.elements["action"].value = 'clean';
-                 actionForm.elements["key"].value = t.id;
-                 actionForm.submit();
-             },
-          }
-       });
-
-       $(".controlled-interval", money).everyTime("1s", "controlled", function() {
-            var production_int = 0;
-
-            production += growth;
-            production_int = Math.round(production);
-                      
-            document.getElementById('production').innerHTML = production_int;
-       });
-
-       $(".hex").mouseover(function() {
-          var id = this.id
-          document.getElementById('coordinates').innerHTML = id;
-       });
-    });
-</script>
-
-<?php
 $html->html_end_header();
 ?>
 
@@ -115,47 +67,6 @@ $html->html_end_header();
 
 /* set menu */
 menu1();
-
-$character = $database->getCharacter($session->username);
-$characterName = $character["name"];
-
-/*
-if ($character){
-   $char_x = $character["x"];
-   $char_y = $character["y"];
-   $key = createKey($char_x, $char_y);
-   $land = $lands->getLand($key);
-   $land->setCharacter(1);
-}
-*/
-
-/* get resources */
-$resources = $database->getResources($characterName);
-$production = $resources["production"];
-$growth = $resources["production_growth"];
-
-foreach ($land_rows as $row){
-   $land = new Land;
-   $land->init($row["x"], $row["y"], $row["type"], $row["toxic"]);
-   /* handle land ownership */
-   if ($row["owner"]){
-      if (strcmp($characterName, $row["owner"]) == 0){
-         $land->setOwner(I_OWN);
-      }
-      else{
-         $land->setOwner(YOU_OWN);
-      }
-   }
-   else{
-      $land->setOwner(NOT_OWNED);
-   }
-   $lands->addLand($land);
-}
-
-/* handle available lands */
-$lands->fixAvailableLands();
-
-
 ?>
 
 <div id="map">
@@ -163,7 +74,7 @@ $lands->fixAvailableLands();
 <?php
 
 /*
-   Lay out the tiles:
+   Loops that lays the heagon tiles:
    1. First row is always even.
    2. The first odd tile is special.
    3. NOTE: The x and y coordinates in the for-loops are there to set up the map
@@ -175,34 +86,40 @@ $is_odd = 0;
 for ($y_pos = $y + Y_LOCAL_MAP_SIZE; $y_pos >= $y - Y_LOCAL_MAP_SIZE; $y_pos--){
   $is_first_odd = 1;
   $is_first_even = 1;
+  $position = "";
 
   for ($x_pos = $x - X_LOCAL_MAP_SIZE; $x_pos <= $x + X_LOCAL_MAP_SIZE; $x_pos++){
-    $key = createKey($x_pos, $y_pos);
-    $land = $lands->getLand($key);
-
     if ($first_row){
-      echo $land->getDescr("first");
+      $position = "first";
     }
     else{
       if ($is_odd){
         if ($is_first_odd){
-          echo $land->getDescr("br firstodd");
-          $is_first_odd = 0;           
+          $is_first_odd = 0;
+          $position = "br firstodd";           
         }
         else{
-          echo $land->getDescr("odd");
+          $position = "odd";
         }
       }
       else{
         if ($is_first_even){
-          echo $land->getDescr("br even");
           $is_first_even = 0;
+          $position = "br even";
         }
         else{
-          echo $land->getDescr("even");
+          $position = "even";
         }
       }
     }
+
+    $key = createKey($x_pos, $y_pos);
+    $land = $lands->getLand($key);
+    $land_descr = $land->getDescr();
+    $classes = $land_descr["class"];
+    $toxic = $land_descr["toxic"];
+
+    echo "<span class=\"$classes $position\" id=$key><p>$toxic</p></span>";
   }
   
   if ($is_odd){
@@ -221,26 +138,27 @@ for ($y_pos = $y + Y_LOCAL_MAP_SIZE; $y_pos >= $y - Y_LOCAL_MAP_SIZE; $y_pos--){
 </div>
 
 <div id="character">
-<b>Character: </b> <?php echo $characterName; ?>
+<b>Character: </b> <?php echo $character->getName(); ?>
 <br>
 <b>Time: </b>
 <!-- clock -->
 <clock class="jclock"></clock>
 <br>
-<b>Production:</b>
-<!-- production count here -->
-  <div id="production">
-  <?php echo $production ?>
+<b>Population in land:</b>
+<!-- population count here -->
+  <div id="population">
+  <?php echo $population->getPopulation($character->getName()) ?>
   </div>
-<b>Growth:</b>
-  <div id="growth">
-  <?php echo round($growth, 2) ?>/sec
+<b>Gold:</b>
+<!-- gold count here -->
+  <div id="gold">
+  <?php echo $treasury->getGold($character->getName()) ?>
   </div>
 </div>
 
 <?php
 /* display action queue */
-$actions = $database->getActions($characterName);
+$actions = $database->getActions($character->getName());
 if (count($actions)){
    echo "<div id=\"action_queue\">";
    for ($i = 0; $i < count($actions); $i++) {
