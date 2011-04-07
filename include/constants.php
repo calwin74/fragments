@@ -20,13 +20,6 @@ include_once("site.php");
  */
 
 /*
-define("DB_SERVER", "localhost");
-define("DB_USER", "root");
-define("DB_PASS", "aaa123");
-define("DB_NAME", "fragments");
-*/
-
-/*
  * Database Table Constants - these constants
  * hold the names of all the database tables used
  * in the script.

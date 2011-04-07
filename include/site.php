@@ -15,7 +15,14 @@
  * correct.
  */
 
+/*
 define("DB_SERVER", "localhost");
 define("DB_USER", "root");
 define("DB_PASS", "aaa123");
 define("DB_NAME", "fragments");
+*/
+
+define("DB_SERVER", "mysql36.kontrollpanelen.se");
+define("DB_USER", "web73728_M7r0Xdr");
+define("DB_PASS", "55830133");
+define("DB_NAME", "web73728_fragments");
