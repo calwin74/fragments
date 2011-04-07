@@ -158,6 +158,7 @@ for ($y_pos = $y + Y_LOCAL_MAP_SIZE; $y_pos >= $y - Y_LOCAL_MAP_SIZE; $y_pos--){
 
 <?php
 /* display action queue */
+/* Not used for now ...
 $actions = $database->getActions($character->getName());
 if (count($actions)){
    echo "<div id=\"action_queue\">";
@@ -174,7 +175,7 @@ if (count($actions)){
    }
    echo "</div><br>";
 }
-
+*/
 ?>
 
 <div id="hex_info">
