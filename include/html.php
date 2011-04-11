@@ -43,10 +43,10 @@
 			echo '<link rel="stylesheet" type="text/css" href="css/style.css"></link>';
 		}
 
-                function html_end_header() {
-                        echo '</head>';
+      function html_end_header() {
+         echo '</head>';
 			echo '<body>';
-                }
+      }
 
 		function html_footer() {
 			echo '</body>';

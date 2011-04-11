@@ -7,10 +7,11 @@ $(function($) {
 });
 
 $(function() {
+/*
    var money = $("div.money");
    var production = parseInt(document.getElementById('production').innerHTML);
    var growth = parseFloat(document.getElementById('growth').innerHTML);
-
+*/
 /*
        $.ajax({
           type: "GET",
@@ -65,6 +66,7 @@ $(function() {
       }
    });
 
+/*
    $(".controlled-interval", money).everyTime("1s", "controlled", function() {
       var production_int = 0;
 
@@ -73,7 +75,7 @@ $(function() {
                       
       document.getElementById('production').innerHTML = production_int;
    });
-
+*/
    $(".hex").mouseover(function() {
       var id = this.id
       document.getElementById('coordinates').innerHTML = id;
