@@ -19,7 +19,7 @@ class Treasury
       global $session;
       $database = $session->database;
 
-      $treasury = $database->getGoldFromOwner($owner);
+      $treasury = $database->getTreasuryFromOwner($owner);
 
       return floor($treasury["gold"]);
    }

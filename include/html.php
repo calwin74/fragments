@@ -29,12 +29,6 @@
                         echo '<script src="js/jquery.timers-1.2.js" type="text/javascript"></script>';
 
                         /*
-                         * Timer with countdown
-                         * http://devana.eu
-                         */
-                        echo '<script src="js/func.js" type="text/javascript"></script>';
-
-                        /*
                          * map.js
                          * Javascript code included in the map description.
                          */

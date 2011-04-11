@@ -1170,10 +1170,10 @@ class MySQLDB
    }
 
    /**
-    * getGoldFromOwner - get gold for a character
+    * getTreasuryFromOwner - get gold for a character
     * Returns gold
     */
-   function getGoldFromOwner($character) {
+   function getTreasuryFromOwner($character) {
       global $session;
 
       $q = "SELECT * FROM ".TBL_TREASURY." WHERE character_name = '$character'";
@@ -1243,7 +1243,12 @@ class MySQLDB
    function updateGold($gold, $character, $newTime) {
       global $session;
 
-      $q = "UPDATE ".TBL_TREASURY." SET gold = ".$gold.", gold_time = '$newTime' WHERE character_name = '$character'";
+      if ($newTime){
+         $q = "UPDATE ".TBL_TREASURY." SET gold = ".$gold.", gold_time = '$newTime' WHERE character_name = '$character'";
+      }
+      else{
+         $q = "UPDATE ".TBL_TREASURY." SET gold = ".$gold." WHERE character_name = '$character'";
+      }
 
       $result = $this->query($q);
       if (!$result){

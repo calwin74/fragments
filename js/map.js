@@ -6,6 +6,29 @@ $(function($) {
    $('.jclock').jclock();
 });
 
+function timer(data, lnk)
+{
+	dat=document.getElementById(data);
+	var time=(dat.innerHTML).split(":"); var done=0;
+	if (time[2]>0) time[2]--;
+	else
+	{
+		time[2]=59;
+		if (time[1]>0) time[1]--;
+		else
+		{
+			time[1]=59;
+			if (time[0]>0) time[0]--;
+			else { clearTimeout(id[data]); window.location.href=lnk; done=1;}
+		}
+	}
+	if (!done)
+	{
+		dat.innerHTML=time[0]+":"+time[1]+":"+time[2];
+		id[data]=setTimeout("timer('"+data+"', '"+lnk+"')", 1000);
+	}
+}
+
 $(function() {
 /*
    var money = $("div.money");

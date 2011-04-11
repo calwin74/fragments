@@ -137,8 +137,8 @@ define("AVAILABLE", 1);
 /**
  * Costs
  */
-define("CLEAN_COST", 10);
-define("MOVE_COST", 100);
+define("CLEAN_COST", 5);
+define("MOVE_COST", 30);
 
 /**
  * Times
@@ -174,5 +174,5 @@ define("INIT_TAX", 0.25);
 /**
  * Logging
  */
-define("DB_VERBOSE", 0);
+define("DB_VERBOSE", 1);
 ?>

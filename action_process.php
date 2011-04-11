@@ -38,7 +38,6 @@ class ActionProcess
     */
    function handleAction(){
       global $session;
-      global $lands;
       $database = $session->database;
 
       $action = $_POST['action'];
@@ -46,28 +45,24 @@ class ActionProcess
       $x = getXfromKey($key);
       $y = getYfromKey($key);
 
-      if (!strcmp($action, "move")){
-         $character = $database->getCharacter($session->username);
+      $character = $database->getCharacter($session->username);
+      $treasury = $database->getTreasuryFromOwner($character["name"]);
+      $gold = $treasury["gold"];
 
-         /* check production */
-         $resources = $database->getResources($character["name"]);
-         $production = $resources["production"];
-         if ($production >= MOVE_COST) {
+      if (!strcmp($action, "move")){
+         if ($gold >= MOVE_COST) {
             $database->addToActionQueue($x, $y, $character["name"], getNow(MOVE_TIME), 2, 0);
-            $database->updateResources($character["name"], $production - MOVE_COST, NULL, NULL);
+            $database->updateGold($gold - MOVE_COST, $character["name"], NULL);
          }
          header("Location: ".$session->referrer);
       }
       else if (!strcmp($action, "clean")){
-         /* check production and toxic level */
-         $character = $database->getCharacter($session->username);
-         $resources = $database->getResources($character["name"]);
-         $production = $resources["production"];
+         /* check toxic level */
          $toxic = $database->getLandToxic($x, $y);
          /* cost is level times CLEAN_COST */
          $clean_cost = $toxic * CLEAN_COST;
 
-         if ($production >= $clean_cost) {
+         if ($gold >= $clean_cost) {
             if ($toxic < TOXIC_CLEAN) {
                /* time is level times CLEAN TIME */
                if ($toxic == 0){
@@ -78,7 +73,7 @@ class ActionProcess
                   $dueTime = CLEAN_TIME*$toxic;               
                }
                $database->addToActionQueue($x, $y, $character["name"], getNow($dueTime), 1, $toxic);
-               $database->updateResources($character["name"], $production - $clean_cost, NULL, NULL);
+               $database->updateGold($gold - $clean_cost, $character["name"], NULL);
             }
          }
          header("Location: ".$session->referrer);

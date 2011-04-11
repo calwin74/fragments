@@ -15,22 +15,29 @@ include_once("include/utils.php");
 include_once("include/character.php");
 include_once("include/population.php");
 include_once("include/treasury.php");
+include_once("include/action.php");
 
 global $session;
 
 $database = $session->database;  //The database connection
 
-/* initialization */
-$x = 0;
-$y = 0;
+/* get character */
 $character = new Character();
-$lands = new Lands($x, $y, $character->getName());
-$population = new Population();
-$treasury = new Treasury();
 
 /* update resources */
+$population = new Population();
+$treasury = new Treasury();
 $population->updateAllPopulation();
 $treasury->updateAllTreasury();
+
+/* process any due actions */
+$action = new Action();
+$action->processActions();
+
+/* get lands */
+$x = 0;
+$y = 0;
+$lands = new Lands($x, $y, $character->getName());
 
 $html = new Html;
 $html->html_header(FRAGMENTS_TITLE);
@@ -56,11 +63,6 @@ $html->html_end_header();
    <ul>
       <li id="clean"> Clean</li>
    </ul>
-</div>
-
-<div class="money">
-   <div class="controlled-interval">
-   </div>
 </div>
 
 <?php
@@ -158,7 +160,22 @@ for ($y_pos = $y + Y_LOCAL_MAP_SIZE; $y_pos >= $y - Y_LOCAL_MAP_SIZE; $y_pos--){
 
 <?php
 /* display action queue */
-/* Not used for now ...
+
+$actions = $action->getActions($character->getName());
+if (count($actions)){
+   echo "<div id=\"action_queue\">";
+
+   for ($i = 0; $i < count($actions); $i++){
+      $row = $actions[$i];
+      $diff = $action->getDiff($row["due_time"]);
+      $type = $action->typeToString($row["type"]);
+
+      echo " ".$type." (".$row["x"]."|".$row["y"].") <span id='".$i."'>".$diff."</span> <script type='text/javascript'> var id=new Array(50); timer('".$i."', 'hex_map.php');</script><br>";            
+   }
+   echo "</div><br>";
+}
+
+/*
 $actions = $database->getActions($character->getName());
 if (count($actions)){
    echo "<div id=\"action_queue\">";
