@@ -38,7 +38,6 @@
          echo '<link rel="stylesheet" type="text/css" href="css/ui.spinner.css" >';
          echo '<script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>';
          echo '<script type="text/javascript" src="js/ui.spinner.min.js"></script>';
-         //echo '<script type="text/javascript" src="http://jqueryui.com/themeroller/themeswitchertool/"></script>';
 
          /*
           * map.js
