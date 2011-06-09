@@ -344,10 +344,10 @@ class MySQLDB
    * units - Get units based on coordinates and size.
    * Returns array of units
    */
-   function units($x, $y, $size){
+   function units($x, $y, $x_size, $y_size){
       global $session;
 
-      $q = "SELECT * FROM ".TBL_CHARACTERS." WHERE (y BETWEEN ".($y - $size)." AND ".($y + $size).") AND (x BETWEEN ".($x - $size)." AND ".($x + $size).") ORDER BY y ASC, x ASC";
+      $q = "SELECT * FROM ".TBL_CHARACTERS." WHERE (y BETWEEN ".($y - $y_size)." AND ".($y + $y_size).") AND (x BETWEEN ".($x - $x_size)." AND ".($x + $x_size).") ORDER BY y ASC, x ASC";
       $result = $this->query($q);
       /* Error occurred */
       if(!$result || (mysql_numrows($result) < 1)){
@@ -508,12 +508,14 @@ class MySQLDB
       return $dbarray;
    }
 
+   /* ------ build_queue table ------ */
+
    /**
     * addToBuildQueue - insert a build action in the build queue
     * Returns nothing
     */
-   function addToBuildQueue($x, $y, $town, $character, $dueTime, $type, $action, $level){
-     $q = "INSERT INTO ".TBL_BUILD_QUEUE." VALUES ('$character', '$town', $x, $y, '$dueTime', '$type', $action, $level)";
+   function addToBuildQueue($x, $y, $character, $dueTime, $type, $action){
+     $q = "INSERT INTO ".TBL_BUILD_QUEUE." VALUES ('$character', $x, $y, '$dueTime', '$type', $action)";
      return $this->query($q);
    }
 
@@ -521,10 +523,10 @@ class MySQLDB
     * removeFromBuildQueue - remove a build action in the build queue
     * Returns nothing
     */
-   function removeFromBuildQueue($x, $y, $town){
+   function removeFromBuildQueue($x, $y, $character){
       global $session;
 
-      $q = "DELETE FROM ".TBL_BUILD_QUEUE." WHERE town = '$town' and x = ".$x." and y = ".$y."";
+      $q = "DELETE FROM ".TBL_BUILD_QUEUE." WHERE name = '$character' and x = ".$x." and y = ".$y."";
       if(DB_VERBOSE){
          $session->logger->LogInfo($q);
       }
@@ -540,7 +542,7 @@ class MySQLDB
    function checkBuildQueue(){
       global $session;
 
-      $q = "SELECT * FROM ".TBL_BUILD_QUEUE." ORDER BY dueTime ASC";
+      $q = "SELECT * FROM ".TBL_BUILD_QUEUE." ORDER BY due_time ASC";
       $result = $this->query($q);
 
       /* Error occurred */
@@ -564,7 +566,7 @@ class MySQLDB
       $now = strftime("%Y-%m-%d %H:%M:%S", $now);
 
       for ($i=0; $row = mysql_fetch_assoc($result); $i++){
-         $dueTime = $row["dueTime"];
+         $dueTime = $row["due_time"];
          // need to replace this function with local function
          $diff = $this->getTimeDiff($dueTime, $now);
          
@@ -609,14 +611,14 @@ class MySQLDB
    }
 
    /**
-    * getBuildEvents - get events from build queue
+    * getBuilds - get builds from build queue for a character and coordinates
     * Returns build events
     */
 
-   function getBuildEvents($character){
+   function getBuilds($character, $x, $y){
       global $session;
 
-      $q = "SELECT * FROM ".TBL_BUILD_QUEUE." WHERE character = '".$character."'";
+      $q = "SELECT * FROM ".TBL_BUILD_QUEUE." WHERE name = '".$character."' AND x = ".$x." AND y = ".$y;
 
       $result = $this->query($q);
       /* Error occurred */
@@ -626,19 +628,27 @@ class MySQLDB
       }
 
       $rows = mysql_numrows($result);
+      if ($rows < 1){
+         return NULL;
+      }
 
-      $row = mysql_fetch_assoc($result);
+      /* Return result array */
+      $dbarray = array();
+
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dbarray[$i] = $row;
+      }
 
       mysql_free_result($result);
       
-      return $row;
+      return $dbarray;
    }
 
    /**
-    * move - move a character to some coordinate
+    * moveCharacter - move a character to some coordinate
     * Returns nothing
     */
-   function move($x, $y, $character){
+   function moveCharacter($x, $y, $character){
      $q = "UPDATE ".TBL_CHARACTERS." SET x = ".$x." ,y = ".$y." WHERE name = '".$character."'";
      return $this->query($q);
    }
@@ -657,33 +667,18 @@ class MySQLDB
      $this->addToPopQueue($name, $dueTime);
    }
 
-   /**
-    * addToPopQueue - create an entry in the population queue
-    * returns nothing
-    */
-   function addToPopQueue($name, $dueTime){
-     
-     $q = "INSERT INTO ".TBL_POPULATION_QUEUE." VALUES ('$name', '$dueTime')";
-     return $this->query($q);
-   }
-   
+
+   /* ------ Buildings table ------ */
+
    /**
     * createBuilding - create a building on a coordinate
     * Returns nothing
     */
-   function createBuilding($type, $x, $y, $town){
-     /* level is always 1 when creating a building */
-     $level = 1;
-
-     /* constructing, removing and upgrading */
+   function createBuilding($type, $x, $y){
      $constructing = 1;
      $removing = 0;
-     $upgrading = 0;
 
-     /* hp is always 10 when creating a building */
-     $hp = 10;
-
-     $q = "INSERT INTO ".TBL_BUILDINGS." VALUES ('$type', '$level', '$hp', '$x', '$y', '$town', '$constructing', '$removing', '$upgrading')";
+     $q = "INSERT INTO ".TBL_BUILDINGS." VALUES ('$type', '$x', '$y', '$constructing', '$removing')";
      return $this->query($q);
    }
 
@@ -691,28 +686,8 @@ class MySQLDB
     * createBuildingDone - Building is created.
     * Returns nothing
     */
-   function createBuildingDone($x, $y, $town){
-     $q = "UPDATE ".TBL_BUILDINGS." SET constructing = 0 WHERE town = '$town' AND x = ".$x." AND y = ".$y;
-     return $this->query($q);
-   }
-
-   /**
-    * updateBuildingLevel - update building level on a coordinate
-    * Returns nothing
-    */
-   function updateBuildingLevel($x, $y, $town){
-     $q = "UPDATE ".TBL_BUILDINGS." SET upgrading = 1 WHERE town = '$town' AND x = ".$x." AND y = ".$y;
-
-     return $this->query($q);
-   }
-
-   /**
-    * updateBuildingLevelDone - Done updating building level.
-    * Returns nothing
-    */
-   function updateBuildingLevelDone($level, $x, $y, $town){
-     $q = "UPDATE ".TBL_BUILDINGS." SET level = ".$level.", upgrading = 0 WHERE town = '$town' AND x = ".$x." AND y = ".$y;
-
+   function createBuildingDone($x, $y, $type){
+     $q = "UPDATE ".TBL_BUILDINGS." SET constructing = 0 WHERE type = '$type' AND x = ".$x." AND y = ".$y;
      return $this->query($q);
    }
 
@@ -720,8 +695,8 @@ class MySQLDB
     * deleteBuilding - delete a building on a coordinate
     * Returns nothing
     */
-   function removeBuilding($x, $y, $town){
-     $q = "UPDATE ".TBL_BUILDINGS." SET removing = 1 WHERE town = '$town' AND x = ".$x." AND y = ".$y;
+   function removeBuilding($x, $y, $type){
+     $q = "UPDATE ".TBL_BUILDINGS." SET removing = 1 WHERE type = '$type' AND x = ".$x." AND y = ".$y;
      return $this->query($q);
    }
 
@@ -729,48 +704,22 @@ class MySQLDB
     * deleteBuildingDone - Done deleting a building.
     * Returns nothing
     */
-   function removeBuildingDone($x, $y, $town){
-     $q = "DELETE FROM ".TBL_BUILDINGS." WHERE town = '$town' and x = ".$x." and y = ".$y."";
+   function removeBuildingDone($x, $y, $type){
+     $q = "DELETE FROM ".TBL_BUILDINGS." WHERE type = '$type' AND x = ".$x." AND y = ".$y."";
      return $this->query($q);
    }
 
    /**
-    * getBuilding - get a building
+    * getBuildingsDone - get buildings that are done
     * Returns the building
     */
-   function getBuilding($town, $x, $y){
+   function getBuildingsDone($x, $y){
       global $session;
 
-      $q = "SELECT * FROM ".TBL_BUILDINGS." WHERE town = '$username' and x = ".$x." and y = ".$y."";
+      $q = "SELECT * FROM ".TBL_BUILDINGS." WHERE x = ".$x." AND y = ".$y." AND constructing = 0";
       $result = $this->query($q);
-      /* Error occurred */
-      if(!$result || (mysql_numrows($result) < 1)){
-         $session->logger->LogError("getBuilding - Error or no result");
-         return NULL;
-      }
-      /* Return result array */
-      $dbarray = array();
-      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
-         $dbarray[$i] = $row;
-      }
-
-      mysql_free_result($result);
-
-      return $dbarray;
-   }
-
-   /**
-    * getAllBuildings - get all buildings in a town
-    * Returns all buildings in a town
-    */
-   function getAllBuildings($town){
-      global $session;
-
-      $q = "SELECT * FROM ".TBL_BUILDINGS." WHERE town = '$town' order by y ASC, x ASC";
-      $result = $this->query($q);
-      /* Error occurred */
+      /* No results */
       if(!$result){
-         $session->logger->LogError("Error in getAllBuildings");
          return NULL;
       }
 
@@ -786,23 +735,41 @@ class MySQLDB
    }
 
    /**
-    * updateBuildingHP - update building hp on a coordinate
-    * Returns nothing
+    * getBuildingsDone - get buildings that are done
+    * Returns the building
     */
-   function updateBuildingHP($hp, $x, $y, $town){
-     $q = "UPDATE ".TBL_BUILDINGS." SET hp = ".$hp." WHERE town = '$town' AND x = ".$x." AND y = ".$y;
+   function getBuildings($x, $y){
+      global $session;
 
-     return $this->query($q);
+      $q = "SELECT * FROM ".TBL_BUILDINGS." WHERE x = ".$x." AND y = ".$y;
+      $result = $this->query($q);
+      /* No results */
+      if(!$result){
+         return NULL;
+      }
+
+      /* Return result array */
+      $dbarray = array();
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dbarray[$i] = $row;
+      }
+
+      mysql_free_result($result);
+
+      return $dbarray;
    }
+
+
+   /* ------ building_types table ------ */
         
-    /**
+   /**
     * getBuildingTypes - get building types
     * Returns all building types
     */
    function getBuildingTypes(){
       global $session;
 
-      $q = "SELECT * FROM ".TBL_BUILDING_TYPES." ORDER BY type DESC";
+      $q = "SELECT * FROM ".TBL_BUILDING_TYPES." ORDER BY type ASC";
 
       $result = $this->query($q);
       /* Error occurred */
@@ -965,6 +932,21 @@ class MySQLDB
    }
 
    /**
+    * updateCharater - update a character field based on name.
+    */
+   function updateCharacter($civilians, $name) {
+      global $session;
+
+      $q = "UPDATE ".TBL_CHARACTERS." SET civilians = ".$civilians." WHERE name = '$name'";
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
+      return mysql_query($q, $this->connection);
+   }
+
+
+   /**
     * getLandOwner - get land owner
     */
    function getLandOwner($x, $y) {
@@ -1089,6 +1071,27 @@ class MySQLDB
       }
    }
 
+   function getLand($x, $y) {
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_LANDS." WHERE x = ".$x." AND y = ".$y;
+      $result = $this->query($q);
+      if (!$result) {
+         $session->logger->LogError("Bad result from getLand");
+         return NULL;
+      }
+      if (mysql_numrows($result) != 1) {
+         $session->logger->LogError("getLand didn't return a land");         
+         return 0;
+      }
+      else {
+         $row = mysql_fetch_assoc($result);
+         mysql_free_result($result);
+
+         return $row;
+      }
+   }
+
    function getLandFromOwner($owner) {
       global $session;
 
@@ -1112,44 +1115,43 @@ class MySQLDB
    }
 
    /**
-    * updatePopulation - update population for a land
+    * updateCivilians - update civilians for a land
     * Returns nothing
     */
-   function updatePopulation($population, $x, $y, $newTime) {
+   function updateCivilians($civilians, $x, $y, $newTime) {
       global $session;
 
-      $q = "UPDATE ".TBL_LANDS." SET population = ".$population.", population_time = '$newTime' WHERE x = ".$x." AND y = ".$y;
-
+      $q = "UPDATE ".TBL_LANDS." SET civilians = ".$civilians.", civilians_time = '$newTime' WHERE x = ".$x." AND y = ".$y;
       $result = $this->query($q);
       if (!$result){
-         $session->logger->LogError("Error in updatePopulation");
+         $session->logger->LogError("Error in updateCivilians");
       }
    }
 
    /**
-    * getPopulationUpdate - Get lands that are due for population update
+    * getCiviliansUpdate - Get lands that are due for civilians update
     * Returns array of lands to update.
     */
-   function getPopulationUpdate(){
+   function getCiviliansUpdate(){
       global $session;
 
-      /* create time limit for population calculation */
+      /* create time limit for civilians calculation */
       $then = strtotime("-".GAME_TIME_UNIT." seconds");
       $then = strftime("%Y-%m-%d %H:%M:%S", $then);
       
-      $q = "SELECT * from ".TBL_LANDS." WHERE population > 1 AND population < ".POPULATION_MAX." AND population_time < '$then' ORDER BY population_time ASC";
+      $q = "SELECT * from ".TBL_LANDS." WHERE civilians > 1 AND civilians < ".CIVILIANS_MAX." AND civilians_time < '$then' ORDER BY civilians_time ASC";
       $result = $this->query($q);
 
       /* Error occurred */
       if (!$result){
-         $session->logger->LogError("Error in getPopulationUpdate");
+         $session->logger->LogError("Error in getCiviliansUpdate");
          return NULL;
       }
 
       /* No populatin are due */
       if(mysql_numrows($result) < 1){
          if(DB_VERBOSE){
-            $session->logger->LogInfo("No result in getPopulationUpdate");
+            $session->logger->LogInfo("No result in getCiviliansUpdate");
          }
 
          return NULL;

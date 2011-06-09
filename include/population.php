@@ -23,43 +23,43 @@ class Population
 
       for($i = 0; $i < count($lands); $i++) {
          /* sum all complete people, for instance 4.3 + 3.9 = 7 people */
-         $population += floor($lands[$i]["population"]);
+         $population += floor($lands[$i]["civilians"]);
       }
 
       return $population;
    }
 
-   public function updateAllPopulation(){
-      while ($this->updatePopulationChunk());
+   public function updateAllCivilians(){
+      while ($this->updateCiviliansChunk());
    }
 
-   private function updatePopulationChunk(){
+   private function updateCiviliansChunk(){
       global $session;
       $database = $session->database;
 
-      $lands = $database->getPopulationUpdate();
+      $lands = $database->getCiviliansUpdate();
       $i = 0;
 
       for ($i = 0; $i < count($lands); $i++){
          $land = $lands[$i];
-         $newTime = strtotime($land["population_time"]) + GAME_TIME_UNIT;
+         $newTime = strtotime($land["civilians_time"]) + GAME_TIME_UNIT;
          $newTime = strftime("%Y-%m-%d %H:%M:%S", $newTime);
-         $population = $land["population"];
+         $civilians = $land["civilians"];
          $x = $land["x"];
          $y = $land["y"];
          $toxic = $land["toxic"];
 
-         $newPopulation = $this->calculatePopulation($population, $toxic);
+         $newCivilians = $this->calculateCivilians($civilians, $toxic);
 
-         if ($newPopulation > $population){
-            $database->updatePopulation($newPopulation, $x, $y, $newTime); 
+         if ($newCivilians > $civilians){
+            $database->updateCivilians($newCivilians, $x, $y, $newTime); 
          }
       }
       
       return $i;
    }
 
-   private function calculatePopulation($pop, $toxic){
+   private function calculateCivilians($pop, $toxic){
       $tax = 0.25; /* set tax to 25% for now */
    
       /* need at least 2 people */
@@ -68,10 +68,10 @@ class Population
          return $pop;
       }
 
-      $newPop = $pop + $pop * (1 - $tax) * ((POPULATION_MAX - $toxic)/POPULATION_MAX) * NATIVITY;
+      $newPop = $pop + $pop * (1 - $tax) * ((CIVILIANS_MAX - $toxic)/CIVILIANS_MAX) * NATIVITY;
       
-      if ($newPop > POPULATION_MAX){
-         $newPop = POPULATION_MAX;
+      if ($newPop > CIVILIANS_MAX){
+         $newPop = CIVILIANS_MAX;
       }
 
       return $newPop;

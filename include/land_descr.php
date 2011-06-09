@@ -16,7 +16,9 @@ class Land
    private $character;          //character in land
    private $available;          //available to enter
    private $toxic;              //toxic level in land
-   
+   private $civilians;          //civilians in land
+   private $marked;             //marked
+   private $colonize;           //available to colonize   
    /* Class constructor */
    public function Land(){
      /* nothing yet */
@@ -25,14 +27,20 @@ class Land
    /* Public methods */
 
    /* Init object, need to be called first */
-   public function init($x, $y, $type, $toxic){
+   public function init($x, $y, $type, $toxic, $civilians){
      $this->x = $x;
      $this->y = $y;
      $this->type = $type;
      $this->name = createKey($x, $y);
-     $character = 0;
+     /* round to lower integer */
+     $this->civilians = floor($civilians);
      $this->toxic = $toxic;
+     
+     /* defaults */
      $this->available = 0;
+     $this->marked = 0;
+     $this->colonize = 0;
+     $this->character = 0;
    }
 
    /* misc get and set functions */
@@ -96,17 +104,31 @@ class Land
       return $this->toxic;
    }
 
-   public function getDescr() {
+   public function getCivilians(){
+      return $this->civilians;
+   }
+
+   public function markLand(){
+      $this->marked = 1;
+   }
+
+   public function isMarkedLand(){
+      return $this->marked;
+   }
+
+   public function setColonize($enable){
+      $this->colonize = $enable;
+   }
+
+   public function getColonize(){
+      return $this->colonize;
+   }
+
+   public function getDescr($isAction) {
       $descr = array();
 
-      $classes = $this->getClasses($this->getCharacter());
-      $toxic = "";
-      if (($this->getAvailable() == AVAILABLE) || ($this->getOwner() == I_OWN)){
-         $toxic = $this->getToxic();
-      }
-
+      $classes = $this->getClasses($this->getCharacter(), $isAction);
       $descr["class"] = $classes;
-      $descr["toxic"] = $toxic;
 
       return $descr;
    }
@@ -129,19 +151,16 @@ class Land
    /**
 ´   * Get land class types.
     */
-
-   private function getClasses($character){
+   private function getClasses($character, $isAction){
       $class = "hex";
 
       $class .= $this->getOwnerClass();
 
-      $class .= $this->getActionClass();
+      $class .= $this->getActionClass($isAction);
 
-      /*
       if ($character){
          $class .= " character";
       }
-      */
 
       return $class;
     }
@@ -149,7 +168,10 @@ class Land
    private function getOwnerClass(){
       $class = "";
 
-      if ($this->getOwner() == NOT_OWNED){
+      if ($this->marked){
+         $class .= " green";
+      }
+      else if ($this->getOwner() == NOT_OWNED){
          $class .= " gray";
       }
       else if ($this->getOwner() == I_OWN){
@@ -162,18 +184,17 @@ class Land
       return $class;
    }
 
-  private function getActionClass(){
+  private function getActionClass($isAction){
       $class = "";
 
-      if (($this->getOwner() == NOT_OWNED) && ($this->available == AVAILABLE)){
-         /* possible to move here */
+      if ( !$isAction && $this->getAvailable() && !$this->getCharacter() ){
          $class .= " move";
       }
-      else if (($this->getOwner() == I_OWN) && ($this->toxic < TOXIC_CLEAN)){
-         /* possible to clean */
-         $class .= " clean";
+
+      if ( !$isAction && $this->getColonize() && $this->getCharacter() ){
+         $class .= " colonize";
       }
-     
+
       return $class;
   }
 }

@@ -30,10 +30,12 @@ function timer(data, lnk)
 }
 
 $(function() {
+
 /*
    var money = $("div.money");
    var production = parseInt(document.getElementById('production').innerHTML);
    var growth = parseFloat(document.getElementById('growth').innerHTML);
+
 */
 /*
        $.ajax({
@@ -65,7 +67,7 @@ $(function() {
           alert($("#" + key).html());
        }
 */
-        
+
    $('span.move').contextMenu('myMenu1', {
       bindings: {
          'move': function(t) {
@@ -77,18 +79,17 @@ $(function() {
          },
       }
    });
-   $('span.clean').contextMenu('myMenu2', {
+   $('span.colonize').contextMenu('myMenu2', {
       bindings: {
-         'clean': function(t) {
+         'colonize': function(t) {
             var actionForm = document.forms["actionForm"];
 
-            actionForm.elements["action"].value = 'clean';
+            actionForm.elements["action"].value = 'colonize';
             actionForm.elements["key"].value = t.id;
             actionForm.submit();
-         },
+         },         
       }
    });
-
 /*
    $(".controlled-interval", money).everyTime("1s", "controlled", function() {
       var production_int = 0;
@@ -99,6 +100,15 @@ $(function() {
       document.getElementById('production').innerHTML = production_int;
    });
 */
+//   $(".cyan,.character").click(function(t) {
+   $(".cyan").click(function(t) {
+      var actionForm = document.forms["actionForm"];
+
+      actionForm.elements["action"].value = "mark";
+      actionForm.elements["key"].value = this.id; 
+      actionForm.submit();
+   });
+
    $(".hex").mouseover(function() {
       var id = this.id
       document.getElementById('coordinates').innerHTML = id;

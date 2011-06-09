@@ -44,8 +44,8 @@ CREATE TABLE `lands` (
   `yield` int(10) NOT NULL default '0',
   `owner` varchar(30) default NULL,
   `toxic` int(10) NOT NULL default '0',
-  `population` double unsigned NOT NULL default '0',
-  `population_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `civilians` double unsigned NOT NULL default '0',
+  `civilians_time` datetime NOT NULL default '0000-00-00 00:00:00',
   UNIQUE KEY `Index_1` (`x`,`y`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -76,6 +76,7 @@ CREATE TABLE `characters` (
   `tribe` varchar(30) default NULL,
   `x` int(10) NOT NULL default '0',
   `y` int(10) NOT NULL default '0',
+  `civilians` int(10) NOT NULL default '0',
   PRIMARY KEY  (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -92,6 +93,11 @@ CREATE TABLE `tribe` (
   `name` varchar(30) NOT NULL,
   PRIMARY KEY  (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `tribe` (`name`) VALUES 
+ ("Empire fragment"),
+ ("Human fragment"),
+ ("Mutant fragment");
 
 --
 -- Definition of table `move_queue`
@@ -119,4 +125,50 @@ CREATE TABLE `treasury` (
   `gold_time` datetime NOT NULL default '0000-00-00 00:00:00',
   `tax` double unsigned NOT NULL default '0',
   UNIQUE KEY `Index_1` (`character_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Definition of table `building_types`
+--
+
+DROP TABLE IF EXISTS `building_types`;
+CREATE TABLE `building_types` (
+  `type` varchar(30) NOT NULL,
+  `cost` int(10) NOT NULL default 1,
+  PRIMARY KEY  (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `building_types` (`type`,`cost`) VALUES 
+ ("barack",20),
+ ("university",30),
+ ("town square",10);
+
+
+--
+-- Definition of table `buildings`
+--
+
+DROP TABLE IF EXISTS `buildings`;
+CREATE TABLE `buildings` (
+  `type` varchar(30) NOT NULL,
+  `x` int(10) NOT NULL default '0',
+  `y` int(10) NOT NULL default '0',
+  `constructing` int(10) NOT NULL default 1,
+  `removing` int(10) NOT NULL default 0,
+  UNIQUE KEY `Index_1` (`x`,`y`, `type`)  
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Definition of table `build_queue`
+--
+
+DROP TABLE IF EXISTS `build_queue`;
+CREATE TABLE `build_queue` (
+  `name` varchar(30) default NULL,
+  `x` int(10) NOT NULL default '0',
+  `y` int(10) NOT NULL default '0',
+  `due_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `type` varchar(30) NOT NULL,
+  `action` int(10) unsigned NOT NULL default '0',
+  UNIQUE KEY `Index_1` (`name`,`x`,`y`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

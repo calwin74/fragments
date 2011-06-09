@@ -38,6 +38,14 @@ if($session->logged_in){
 else{
 
 ?>
+<b>New features:</b>
+<br>
+buildings and build queues, economic information, colonization of neutral tiles, moving civilians with the character.
+<br>
+<b>Constraints:</b>
+<br>
+You need to create new character.
+
 <div id="content">
 <h1>Login</h1>
 <?php

@@ -10,18 +10,25 @@ include_once("population.php");
 
 class Treasury
 {
-   /* Class constructor */
-   public function Treasury(){
-      /* empty for now */
-   }
+   private $my_gold;
+   private $my_tax;
 
-   public function getGold($owner){
+   /* Class constructor */
+   public function Treasury($owner){
       global $session;
       $database = $session->database;
 
       $treasury = $database->getTreasuryFromOwner($owner);
+      $this->my_gold = floor($treasury["gold"]);
+      $this->my_tax = $treasury["tax"];
+   }
 
-      return floor($treasury["gold"]);
+   public function getGold(){
+      return $this->my_gold;
+   }
+
+   public function getTax(){
+      return $this->my_tax;
    }
 
    public function updateAllTreasury(){

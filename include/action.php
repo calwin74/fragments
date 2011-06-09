@@ -8,21 +8,43 @@
  */
 include_once("session.php");
 include_once("utils.php");
+include_once("constants.php");
 
 class Action
 {
+   private $my_actions;           //action container
+
    /* Class constructor */
    public function Action(){
-      /* empty for now */
+      /* nothing yet */
    }
 
-   public function getActions($character){
+   public function readActions($character){
       global $session;
       $database = $session->database;
 
+      $this->my_actions = array();
       $actions = $database->getActions($character);
+
+      if ($actions){
+         foreach ($actions as $action){
+            $this->my_actions[] = $action;
+         }
+      }
+   }
+
+   public function getActions(){
+      return $this->my_actions;
+   }
+
+   public function isAction(){
+      foreach ($this->my_actions as $action){
+         if ( ($action["type"] == MOVE) || ($action["type"] == COLONIZE) ){
+            return 1;
+         }
+      }
       
-      return $actions;
+      return 0;
    }
 
    public function getDiff($time){
@@ -34,8 +56,8 @@ class Action
 
    public function typeToString($type){
       switch($type){
-         case 1: $what = "clean"; break;
-         case 2: $what = "move"; break;
+         case COLONIZE: $what = "colonize"; break;
+         case MOVE: $what = "move"; break;
       }
 
       return $what;
@@ -49,15 +71,14 @@ class Action
 
       for ($i = 0; $i < count($actions); $i++) {
          $action = $actions[$i];
-         if ($action["type"] == 1){
-            /* clean action */
-            $toxic = $action["add_info"] + 1;
-            $database->setLandToxic($action["x"], $action["y"], $toxic);
+         if($action["type"] == MOVE){
+            /* move action */
+            $database->moveCharacter($action["x"], $action["y"], $action["name"]);  
             $database->removeFromActionQueue($action["x"], $action["y"], $action["name"]);
          }
-         else if($action["type"] == 2){
-            /* move action */
-            $database->setLandOwner($action["x"], $action["y"], $action["name"]);
+         else if($action["type"] == COLONIZE){
+            /* colonize action */
+            $database->setLandOwner($action["x"], $action["y"], $action["name"]);  
             $database->removeFromActionQueue($action["x"], $action["y"], $action["name"]);
          }
          else {

@@ -33,6 +33,9 @@ define("TBL_CHARACTERS",  "characters");
 define("TBL_TRIBE",  "tribe");
 define("TBL_ACTION_QUEUE",  "action_queue");
 define("TBL_TREASURY", "treasury");
+define("TBL_BUILDING_TYPES", "building_types");
+define("TBL_BUILDINGS", "buildings");
+define("TBL_BUILD_QUEUE", "build_queue");
 
 
 /**
@@ -111,8 +114,8 @@ define("FOREST", 3);
  *  Map constants
  */
 
-define("X_LOCAL_MAP_SIZE", 4);
-define("Y_LOCAL_MAP_SIZE", 16);
+define("X_LOCAL_MAP_SIZE", 6);
+define("Y_LOCAL_MAP_SIZE", 14);
 
 /**
  * Toxic levels
@@ -137,21 +140,21 @@ define("AVAILABLE", 1);
 /**
  * Costs
  */
-define("CLEAN_COST", 5);
 define("MOVE_COST", 30);
 
 /**
  * Times
  */
-define("CLEAN_TIME", 10);
-define("MOVE_TIME", 10);
+define("MOVE_TIME", 5);
+define("COLONIZE_TIME", 10);
+define("BUILD_TIME", 30);
 
 /**
  * Defined action types
  */
 define("UNDEFINED", 0);
-define("CLEAN", 1);
-define("MOVE", 2);
+define("MOVE", 1);
+define("COLONIZE", 2);
 
 /**
  * Defined game time unit in seconds
@@ -162,7 +165,7 @@ define("GAME_TIME_UNIT", 60);
  * Population definitions
  */
 define("INIT_POPULATION", 2);
-define("POPULATION_MAX", 20);
+define("CIVILIANS_MAX", 20);
 define("NATIVITY", 0.1);
 
 /**
@@ -170,6 +173,13 @@ define("NATIVITY", 0.1);
  */
 define("INIT_GOLD", 10);
 define("INIT_TAX", 0.25);
+
+/**
+ * Build operations
+ */
+define("B_UNDEFINED", 0);
+define("B_CREATE", 1);
+define("B_REMOVE", 2);
 
 /**
  * Logging
