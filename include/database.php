@@ -830,7 +830,7 @@ class MySQLDB
     * Returns true on success, false otherwise.
     */
    function addNewCharacter($charname, $username, $tribe, $x, $y){
-      $q = "INSERT INTO ".TBL_CHARACTERS." VALUES ('$charname', '$username', '$tribe', '$x', '$y')";
+      $q = "INSERT INTO ".TBL_CHARACTERS." (name, username, tribe, x, y) VALUES ('$charname', '$username', '$tribe', '$x', '$y')";
       return mysql_query($q, $this->connection);
    }
 

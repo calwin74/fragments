@@ -164,14 +164,14 @@ define("GAME_TIME_UNIT", 60);
 /**
  * Population definitions
  */
-define("INIT_POPULATION", 2);
+define("INIT_POPULATION", 10);
 define("CIVILIANS_MAX", 20);
 define("NATIVITY", 0.1);
 
 /**
  * Treasury
  */
-define("INIT_GOLD", 10);
+define("INIT_GOLD", 500);
 define("INIT_TAX", 0.25);
 
 /**
@@ -184,5 +184,5 @@ define("B_REMOVE", 2);
 /**
  * Logging
  */
-define("DB_VERBOSE", 1);
+define("DB_VERBOSE", 0);
 ?>

@@ -246,6 +246,7 @@ class Process
          $ok = $this->checkStartPoint($x, $y);
       }
 
+      $session->logger->LogInfo("addNewCharacter");
       if($database->addNewCharacter($charName, $username, $tribe, $x, $y)){
         // Init land
         $database->setLandOwner($x, $y, $charName);
@@ -253,11 +254,16 @@ class Process
         
         $now = strtotime("now");
         $now = strftime("%Y-%m-%d %H:%M:%S", $now);
-        $database->updatePopulation(INIT_POPULATION, $x, $y, $now);
+        $database->updateCivilians(INIT_POPULATION, $x, $y, $now);
         $database->initTreasury($charName, INIT_GOLD, $now, INIT_TAX);
 
         // Update init field in the users table to mark that initialisation has been done.
         $database->updateUserField($session->username, "init", 1);
+
+        $session->logger->LogInfo("addNewCharacter ok");
+      }
+      else {
+        $session->logger->LogInfo("addNewCharacter failed");
       }
    }
 
