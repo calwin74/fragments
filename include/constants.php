@@ -106,9 +106,32 @@ define("FRAGMENTS_TITLE", "Fragments Project - made in STHLM");
 /**
  * terrain types
  */
-define("DIRT", 1);
-define("SEA", 2);
-define("FOREST", 3);
+define("DIRT1", 1);
+define("DIRT2", 2);
+define("DIRT3", 3);
+define("DIRT4", 4);
+define("DIRT5", 5);
+
+define("DIRTVEG1", 6);
+define("DIRTVEG2", 7);
+define("DIRTVEG3", 8);
+define("DIRTVEG4", 9);
+define("DIRTVEG5", 10);
+
+define("URBAN1", 11);
+define("URBAN2", 12);
+define("URBAN3", 13);
+define("URBAN4", 14);
+define("URBAN5", 15);
+
+define("VEG1", 16);
+define("VEG2", 17);
+define("VEG3", 18);
+define("VEG4", 19);
+define("VEG5", 20);
+
+define("SEA", 21);
+
 
 /**
  *  Map constants

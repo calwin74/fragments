@@ -40,11 +40,16 @@ else{
 ?>
 <b>New features:</b>
 <br>
-buildings and build queues, economic information, colonization of neutral tiles, moving civilians with the character.
+Uses 20 new terrain hexagon tiles (sea is still grey since no sea tile was invented yet).
 <br>
 <b>Constraints:</b>
 <br>
-You need to create new character.
+You need to create new a new character since data model changed.
+<br>
+<b>Extra:</b>
+<br>
+See Andreas mockup on http://danielmadsen.se/fragskiss.
+<br>
 
 <div id="content">
 <h1>Login</h1>

@@ -154,7 +154,7 @@ class Land
    private function getClasses($character, $isAction){
       $class = "hex";
 
-      $class .= $this->getOwnerClass();
+      $class .= $this->getTerrainClass();
 
       $class .= $this->getActionClass($isAction);
 
@@ -165,14 +165,79 @@ class Land
       return $class;
     }
 
-   private function getOwnerClass(){
+   private function getTerrainClass(){
       $class = "";
 
       if ($this->marked){
          $class .= " green";
       }
       else if ($this->getOwner() == NOT_OWNED){
-         $class .= " gray";
+         /* get terrain type */
+         $type = $this->getType();
+
+         if ($type == DIRT1){
+            $class .= " dirt1";
+         }
+         else if ($type == DIRT2){
+            $class .= " dirt2";
+         }
+         else if ($type == DIRT3){
+            $class .= " dirt3";
+         }
+         else if ($type == DIRT4){
+            $class .= " dirt4";
+         }
+         else if ($type == DIRT5){
+            $class .= " dirt5";
+         }
+         else if ($type == DIRTVEG1){
+            $class .= " dirtveg1";
+         }
+         else if ($type == DIRTVEG2){
+            $class .= " dirtveg2";
+         }
+         else if ($type == DIRTVEG3){
+            $class .= " dirtveg3";
+         }
+         else if ($type == DIRTVEG4){
+            $class .= " dirtveg4";
+         }
+         else if ($type == DIRTVEG5){
+            $class .= " dirtveg5";
+         }
+         else if ($type == URBAN1){
+            $class .= " urban1";
+         }
+         else if ($type == URBAN2){
+            $class .= " urban2";
+         }
+         else if ($type == URBAN3){
+            $class .= " urban3";
+         }
+         else if ($type == URBAN4){
+            $class .= " urban4";
+         }
+         else if ($type == URBAN5){
+            $class .= " urban5";
+         }
+         else if ($type == VEG1){
+            $class .= " veg1";
+         }
+         else if ($type == VEG2){
+            $class .= " veg2";
+         }
+         else if ($type == VEG3){
+            $class .= " veg3";
+         }
+         else if ($type == VEG4){
+            $class .= " veg4";
+         }
+         else if ($type == VEG5){
+            $class .= " veg5";
+         }
+         else{ /* default */
+            $class .= " gray";
+         }
       }
       else if ($this->getOwner() == I_OWN){
          $class .= " cyan";
