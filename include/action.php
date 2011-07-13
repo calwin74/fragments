@@ -39,7 +39,7 @@ class Action
 
    public function isAction(){
       foreach ($this->my_actions as $action){
-         if ( ($action["type"] == MOVE) || ($action["type"] == COLONIZE) ){
+         if ( ($action["type"] == MOVE) || ($action["type"] == EXPLORE) ){
             return 1;
          }
       }
@@ -56,7 +56,7 @@ class Action
 
    public function typeToString($type){
       switch($type){
-         case COLONIZE: $what = "colonize"; break;
+         case EXPLORE: $what = "explore"; break;
          case MOVE: $what = "move"; break;
       }
 
@@ -71,15 +71,26 @@ class Action
 
       for ($i = 0; $i < count($actions); $i++) {
          $action = $actions[$i];
+         $x = $action["x"];
+         $y = $action["y"];
+         $name = $action["name"];
+
          if($action["type"] == MOVE){
             /* move action */
-            $database->moveCharacter($action["x"], $action["y"], $action["name"]);  
-            $database->removeFromActionQueue($action["x"], $action["y"], $action["name"]);
+            $database->moveCharacter($x, $y, $name);  
+            $database->removeFromActionQueue($x, $y, $name);
          }
-         else if($action["type"] == COLONIZE){
-            /* colonize action */
-            $database->setLandOwner($action["x"], $action["y"], $action["name"]);  
-            $database->removeFromActionQueue($action["x"], $action["y"], $action["name"]);
+         else if($action["type"] == EXPLORE){
+            /* explore action */
+            $database->setLandOwner($x, $y, $name);
+
+            /* two explorers transform into two civilians */
+            $database->updateCivilians(2, $x, $y, getNow(0));
+
+            $character = $database->getCharacterByName($name);
+            $database->updateCharacterExplorers($character["explorers"] - 2, $name);
+
+            $database->removeFromActionQueue($x, $y, $name);
          }
          else {
             /* not supported yet */

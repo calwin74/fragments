@@ -553,8 +553,10 @@ class MySQLDB
 
       /* No builds are due */
       if(mysql_numrows($result) < 1){
-         $session->logger->LogInfo("No result in checkBuildQueue");
-         return NULL;
+         if (DB_VERBOSE){
+            $session->logger->LogInfo("No result in checkBuildQueue");
+            return NULL;
+         }
       }
       
       $rows = mysql_numrows($result);
@@ -807,6 +809,220 @@ class MySQLDB
       return $result;
    }
 
+   /* ------ unit_queue table ------ */
+
+   /**
+    * getUnitBuilds - get builds from unit queue for a character and coordinates
+    * Returns build events
+    */
+
+   function getUnitBuilds($character, $x, $y){
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_UNIT_QUEUE." WHERE name = '".$character."' AND x = ".$x." AND y = ".$y;
+
+      $result = $this->query($q);
+      /* Error occurred */
+      if(!$result){
+         $session->logger->LogError("Error in getUnitBuilds");
+         return NULL;
+      }
+
+      $rows = mysql_numrows($result);
+      if ($rows < 1){
+         return NULL;
+      }
+
+      /* Return result array */
+      $dbarray = array();
+
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dbarray[$i] = $row;
+      }
+
+      mysql_free_result($result);
+      
+      return $dbarray;
+   }
+
+   /**
+    * checkUnitQueue - check if unit are due
+    * returns due units
+    */
+   function checkUnitQueue(){
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_UNIT_QUEUE." ORDER BY due_time ASC";
+      $result = $this->query($q);
+
+      /* Error occurred */
+      if(!$result){
+         $session->logger->LogError("Error in checkUnitQueue");
+         return NULL;
+      }
+
+      /* No builds are due */
+      if(mysql_numrows($result) < 1){
+         if (DB_VERBOSE){
+            $session->logger->LogInfo("No result in checkUnitQueue");
+            return NULL;
+         }
+      }
+      
+      $rows = mysql_numrows($result);
+
+      /* Return result array */
+      $dbarray = array();
+      
+      $now = strtotime("now");
+      $now = strftime("%Y-%m-%d %H:%M:%S", $now);
+
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dueTime = $row["due_time"];
+         // need to replace this function with local function
+         $diff = $this->getTimeDiff($dueTime, $now);
+         
+         /* if first char in the time string is a minus sign the move is due */
+         if ($diff[0] == "-"){
+            $dbarray[$i] = $row;
+         }
+         /* if time string is zero the move is due */
+         else if(!strcmp($diff, "00:00:00"))
+         {
+            $dbarray[$i] = $row;
+         }
+      }
+
+      mysql_free_result($result);      
+
+      return $dbarray;
+   }
+
+   /**
+    * addToUnitQueue - insert a build action in the unit queue
+    * Returns nothing
+    */
+   function addToUnitQueue($x, $y, $character, $dueTime, $type){
+     $q = "INSERT INTO ".TBL_UNIT_QUEUE." VALUES ('$character', $x, $y, '$dueTime', '$type')";
+     return $this->query($q);
+   }
+
+   /**
+    * removeFromUnitQueue - remove a build action in the unit queue
+    * Returns nothing
+    */
+   function removeFromUnitQueue($x, $y, $character){
+      global $session;
+
+      $q = "DELETE FROM ".TBL_UNIT_QUEUE." WHERE name = '$character' and x = ".$x." and y = ".$y."";
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
+      mysql_query($q, $this->connection);
+      return NULL;
+   }
+
+
+   /* ------ unit_types table ------ */
+   
+   /**
+    * getUnitTypes - get unit types
+    * Returns all unit types
+    */
+   function getUnitTypes(){
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_UNIT_TYPES." ORDER BY type ASC";
+
+      $result = $this->query($q);
+      /* Error occurred */
+      if(!$result || (mysql_numrows($result) < 1)) {
+         $session->logger->LogError("getUnitTypes - Error or no result");
+         return NULL;
+      }
+      /* Return result array */
+      $dbarray = array();
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dbarray[$i] = $row;
+      }
+
+      mysql_free_result($result);
+
+      return $dbarray;
+   }
+
+    /**
+    * getUnitCost - get unit cost
+    * Returns cost for a unit of a certain type
+    */
+   function getUnitCost($type){
+      global $session;
+
+      $q = "SELECT cost FROM ".TBL_UNIT_TYPES." where type = '$type'";
+
+      $result = $this->query($q);
+      /* Error occurred */
+      if(!$result || (mysql_numrows($result) < 1)) {
+         $session->logger->LogError("getUnitCost - Error or no result");
+         return NULL;
+      }
+
+      return $result;
+   }
+
+   /* ------ garrison table ------ */
+
+   /**
+    * initGarrison - insert a garrison row for a character
+    * Returns nothing
+    */
+   function initGarrison($character) {
+      global $session;
+
+      $q = "INSERT INTO ".TBL_GARRISON." (name) VALUES ('$character')"; 
+
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in initGarrison");
+      }
+   }
+
+   /**
+    * getGarrison - get a garrison
+    * Returns garrison
+    */
+   function getGarrison($character) {
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_GARRISON." WHERE name = '$character'";
+      $result = $this->query($q);
+      /* Error occurred */
+      if (!$result) {
+         $session->logger->LogError("Error in getGarrison");
+         return NULL;
+      }
+      if (mysql_numrows($result) != 1) {
+         $session->logger->LogError("getGarrison didn't return one treasury row");         
+         return 0;
+      }
+
+      $row = mysql_fetch_assoc($result);
+      mysql_free_result($result);
+
+      return $row;
+   }
+
+   /**
+    * updateGarrison - update garrison soldiers
+    * Returns nothing
+    */
+   function updateGarrison($name, $soldiers){
+     $q = "UPDATE ".TBL_GARRISON." SET soldiers = ".$soldiers." WHERE name = '$name'";
+     return $this->query($q);
+   }
+
+
    /**
     * charnameTaken - 
     * Returns true if the character name has
@@ -838,8 +1054,8 @@ class MySQLDB
     * updateLandType - Update the terrain type for a land entity
     * Returns true on success, false otherwise.
     */
-   function updateLand($type, $yield, $x, $y){
-      $q = "UPDATE ".TBL_LANDS." SET type = ".$type.", yield = ".$yield."  WHERE x = ".$x." AND y = ".$y;
+   function updateLandType($type, $x, $y){
+      $q = "UPDATE ".TBL_LANDS." SET type = ".$type." WHERE x = ".$x." AND y = ".$y;
       return $this->query($q);
    }
 
@@ -862,42 +1078,39 @@ class MySQLDB
    }
 
   /**
-   * getCharacters - Get characters from username.
-   * Returns array of units
-   */
-   function getCharacters($username){
-      global $session;
-
-      $q = "SELECT * FROM ".TBL_CHARACTERS." WHERE username = '$username'";
-      $result = $this->query($q);
-      /* Error occurred */
-      if(!$result || (mysql_numrows($result) < 1)){
-         $session->logger->LogError("getCharacter - Error or no result");
-         return NULL;
-      }
-      /* Return result array */
-      $dbarray = array();
-      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
-         $dbarray[$i] = $row;
-      }
-
-      mysql_free_result($result);
-
-      return $dbarray;
-   }
-
-  /**
-   * getCharacter - Get a character from unique name
+   * getCharacterByUser - Get a character from unique username
    * Returns the character
    */
-   function getCharacter($name){
+   function getCharacterByUser($name){
       global $session;
 
       $q = "SELECT * FROM ".TBL_CHARACTERS." WHERE username = '$name'";
       $result = $this->query($q);
       /* Error occurred */
       if(!$result || (mysql_numrows($result) != 1)){
-         $session->logger->LogError("getCharacter - Error or didn´t return unique row");
+         $session->logger->LogError("getCharacterByUser - Error or didn´t return unique row");
+         return NULL;
+      }
+
+      $row = mysql_fetch_assoc($result);
+
+      mysql_free_result($result);
+
+      return $row;
+   }
+
+  /**
+   * getCharacterByName - Get a character from character name
+   * Returns the character
+   */
+   function getCharacterByName($name){
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_CHARACTERS." WHERE name = '$name'";
+      $result = $this->query($q);
+      /* Error occurred */
+      if(!$result || (mysql_numrows($result) != 1)){
+         $session->logger->LogError("getCharacterByName - Error or didn´t return unique row");
          return NULL;
       }
 
@@ -932,9 +1145,9 @@ class MySQLDB
    }
 
    /**
-    * updateCharater - update a character field based on name.
+    * updateCharaterCivilians - update a character civilians field based on name.
     */
-   function updateCharacter($civilians, $name) {
+   function updateCharacterCivilians($civilians, $name) {
       global $session;
 
       $q = "UPDATE ".TBL_CHARACTERS." SET civilians = ".$civilians." WHERE name = '$name'";
@@ -945,6 +1158,33 @@ class MySQLDB
       return mysql_query($q, $this->connection);
    }
 
+   /**
+    * updateCharaterSoldiers - update a character soldiers field based on name.
+    */
+   function updateCharacterSoldiers($soldiers, $name) {
+      global $session;
+
+      $q = "UPDATE ".TBL_CHARACTERS." SET soldiers = ".$soldiers." WHERE name = '$name'";
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
+      return mysql_query($q, $this->connection);
+   }
+
+   /**
+    * updateCharacterExplorers - update a character explorers field based on name.
+    */
+   function updateCharacterExplorers($explorers, $name) {
+      global $session;
+
+      $q = "UPDATE ".TBL_CHARACTERS." SET explorers = ".$explorers." WHERE name = '$name'";
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
+      return mysql_query($q, $this->connection);
+   }
 
    /**
     * getLandOwner - get land owner
@@ -1129,6 +1369,34 @@ class MySQLDB
    }
 
    /**
+    * updateCivilians2 - update civilians for a land, no time is set.
+    * Returns nothing
+    */
+   function updateCivilians2($civilians, $x, $y) {
+      global $session;
+
+      $q = "UPDATE ".TBL_LANDS." SET civilians = ".$civilians." WHERE x = ".$x." AND y = ".$y;
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updateCivilians2");
+      }
+   }
+
+   /**
+    * updateExplorers - update explorers for a land
+    * Returns nothing
+    */
+   function updateExplorers($explorers, $x, $y) {
+      global $session;
+
+      $q = "UPDATE ".TBL_LANDS." SET explorers = ".$explorers." WHERE x = ".$x." AND y = ".$y;
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updateExplorers");
+      }
+   }   
+
+   /**
     * getCiviliansUpdate - Get lands that are due for civilians update
     * Returns array of lands to update.
     */
@@ -1267,9 +1535,32 @@ class MySQLDB
 
       $q = "INSERT INTO ".TBL_TREASURY." VALUES ('$character', ".$gold.", '$gold_time', ".$tax.")"; 
 
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
       $result = $this->query($q);
       if (!$result){
          $session->logger->LogError("Error in initTreasury");
+      }
+   }
+
+    /**
+    * updateTax - update tax rate
+    * Returns nothing
+    */
+   function updateTax($character, $tax) {
+      global $session;
+
+      $q = "UPDATE ".TBL_TREASURY." set tax = ".$tax." where character_name = '$character'"; 
+
+      if(DB_VERBOSE){
+         $session->logger->LogInfo($q);
+      }
+
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updateTax");
       }
    }
 };

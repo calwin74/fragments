@@ -17,8 +17,9 @@ class Land
    private $available;          //available to enter
    private $toxic;              //toxic level in land
    private $civilians;          //civilians in land
+   private $explorers;
    private $marked;             //marked
-   private $colonize;           //available to colonize   
+   private $explore;           //available to colonize   
    /* Class constructor */
    public function Land(){
      /* nothing yet */
@@ -27,13 +28,16 @@ class Land
    /* Public methods */
 
    /* Init object, need to be called first */
-   public function init($x, $y, $type, $toxic, $civilians){
+   public function init($x, $y, $type, $toxic, $civilians, $explorers){
      $this->x = $x;
      $this->y = $y;
      $this->type = $type;
      $this->name = createKey($x, $y);
+
      /* round to lower integer */
      $this->civilians = floor($civilians);
+
+     $this->explorers = $explorers;
      $this->toxic = $toxic;
      
      /* defaults */
@@ -108,6 +112,10 @@ class Land
       return $this->civilians;
    }
 
+   public function getExplorers(){
+      return $this->explorers;
+   }
+   
    public function markLand(){
       $this->marked = 1;
    }
@@ -116,12 +124,12 @@ class Land
       return $this->marked;
    }
 
-   public function setColonize($enable){
-      $this->colonize = $enable;
+   public function setExplore($enable){
+      $this->explore = $enable;
    }
 
-   public function getColonize(){
-      return $this->colonize;
+   public function getExplore(){
+      return $this->explore;
    }
 
    public function getDescr($isAction) {
@@ -256,8 +264,8 @@ class Land
          $class .= " move";
       }
 
-      if ( !$isAction && $this->getColonize() && $this->getCharacter() ){
-         $class .= " colonize";
+      if ( !$isAction && $this->getExplore() && $this->getCharacter() ){
+         $class .= " explore";
       }
 
       return $class;

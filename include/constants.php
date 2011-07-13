@@ -36,6 +36,9 @@ define("TBL_TREASURY", "treasury");
 define("TBL_BUILDING_TYPES", "building_types");
 define("TBL_BUILDINGS", "buildings");
 define("TBL_BUILD_QUEUE", "build_queue");
+define("TBL_UNIT_QUEUE", "unit_queue");
+define("TBL_UNIT_TYPES", "unit_types");
+define("TBL_GARRISON", "garrison");
 
 
 /**
@@ -161,23 +164,19 @@ define("NOT_AVAILABLE", 0);
 define("AVAILABLE", 1);
 
 /**
- * Costs
- */
-define("MOVE_COST", 30);
-
-/**
  * Times
  */
 define("MOVE_TIME", 5);
-define("COLONIZE_TIME", 10);
+define("EXPLORE_TIME", 10);
 define("BUILD_TIME", 30);
+define("UNIT_BUILD_TIME", 10);
 
 /**
  * Defined action types
  */
 define("UNDEFINED", 0);
 define("MOVE", 1);
-define("COLONIZE", 2);
+define("EXPLORE", 2);
 
 /**
  * Defined game time unit in seconds
@@ -195,7 +194,7 @@ define("NATIVITY", 0.1);
  * Treasury
  */
 define("INIT_GOLD", 500);
-define("INIT_TAX", 0.25);
+define("INIT_TAX", 25);
 
 /**
  * Build operations
@@ -207,5 +206,5 @@ define("B_REMOVE", 2);
 /**
  * Logging
  */
-define("DB_VERBOSE", 0);
+define("DB_VERBOSE", 1);
 ?>

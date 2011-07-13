@@ -41,6 +41,7 @@ else{
 <b>New features:</b>
 <br>
 Uses 20 new terrain hexagon tiles (sea is still grey since no sea tile was invented yet).
+Added map editor, see menu.
 <br>
 <b>Constraints:</b>
 <br>

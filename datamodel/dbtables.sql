@@ -46,6 +46,7 @@ CREATE TABLE `lands` (
   `toxic` int(10) NOT NULL default '0',
   `civilians` double unsigned NOT NULL default '0',
   `civilians_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `explorers` int(10) NOT NULL default '0',
   UNIQUE KEY `Index_1` (`x`,`y`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -77,6 +78,8 @@ CREATE TABLE `characters` (
   `x` int(10) NOT NULL default '0',
   `y` int(10) NOT NULL default '0',
   `civilians` int(10) NOT NULL default '0',
+  `soldiers` int(10) NOT NULL default '0',
+  `explorers` int(10) NOT NULL default '0',
   PRIMARY KEY  (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -139,7 +142,7 @@ CREATE TABLE `building_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `building_types` (`type`,`cost`) VALUES 
- ("barack",20),
+ ("barrack",20),
  ("university",30),
  ("town square",10);
 
@@ -171,4 +174,46 @@ CREATE TABLE `build_queue` (
   `type` varchar(30) NOT NULL,
   `action` int(10) unsigned NOT NULL default '0',
   UNIQUE KEY `Index_1` (`name`,`x`,`y`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Definition of table `unit_queue`
+--
+
+DROP TABLE IF EXISTS `unit_queue`;
+CREATE TABLE `unit_queue` (
+  `name` varchar(30) default NULL,
+  `x` int(10) NOT NULL default '0',
+  `y` int(10) NOT NULL default '0',
+  `due_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `type` varchar(30) NOT NULL,
+  UNIQUE KEY `Index_1` (`name`,`x`,`y`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Definition of table `unit_types`
+--
+
+DROP TABLE IF EXISTS `unit_types`;
+CREATE TABLE `unit_types` (
+  `type` varchar(30) NOT NULL,
+  `cost` int(10) NOT NULL default 1,
+  `upkeep` int(10) NOT NULL default 1,
+  `building` varchar(30) default NULL,  
+  PRIMARY KEY  (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `unit_types` (`type`,`cost`,`upkeep`,`building`) VALUES 
+ ("soldier",10,1,"barrack"),
+ ("explorer",10,1,"town square");
+
+--
+-- Definition of table `garrison`
+--
+
+DROP TABLE IF EXISTS `garrison`;
+CREATE TABLE `garrison` (
+  `name` varchar(30) default NULL,
+  `soldiers` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

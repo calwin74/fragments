@@ -48,8 +48,9 @@ class Population
          $x = $land["x"];
          $y = $land["y"];
          $toxic = $land["toxic"];
+         $treasury = new Treasury($land["$owner"]);
 
-         $newCivilians = $this->calculateCivilians($civilians, $toxic);
+         $newCivilians = $this->calculateCivilians($civilians, $toxic, $treasury->getTax());
 
          if ($newCivilians > $civilians){
             $database->updateCivilians($newCivilians, $x, $y, $newTime); 
@@ -59,16 +60,14 @@ class Population
       return $i;
    }
 
-   private function calculateCivilians($pop, $toxic){
-      $tax = 0.25; /* set tax to 25% for now */
-   
+   private function calculateCivilians($pop, $toxic, $tax){
       /* need at least 2 people */
       if ($pop < 2) {
          /* no growth */
          return $pop;
       }
 
-      $newPop = $pop + $pop * (1 - $tax) * ((CIVILIANS_MAX - $toxic)/CIVILIANS_MAX) * NATIVITY;
+      $newPop = $pop + $pop * (1 - $tax/100) * ((CIVILIANS_MAX - $toxic)/CIVILIANS_MAX) * NATIVITY;
       
       if ($newPop > CIVILIANS_MAX){
          $newPop = CIVILIANS_MAX;

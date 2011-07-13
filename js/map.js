@@ -79,12 +79,12 @@ $(function() {
          },
       }
    });
-   $('span.colonize').contextMenu('myMenu2', {
+   $('span.explore').contextMenu('myMenu2', {
       bindings: {
-         'colonize': function(t) {
+         'explore': function(t) {
             var actionForm = document.forms["actionForm"];
 
-            actionForm.elements["action"].value = 'colonize';
+            actionForm.elements["action"].value = 'explore';
             actionForm.elements["key"].value = t.id;
             actionForm.submit();
          },         

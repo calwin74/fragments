@@ -27,9 +27,10 @@ class Lands
 
      foreach ($land_rows as $row){
        $land = new Land;
-       $land->init($row["x"], $row["y"], $row["type"], $row["toxic"], $row["civilians"]);
+       $land->init($row["x"], $row["y"], $row["type"], $row["toxic"], $row["civilians"], $row["explorers"]);
+
        /* handle land ownership */
-       if ($row["owner"]){
+       if ($row["owner"] && ($characterName != NULL)){
          if (strcmp($characterName, $row["owner"]) == 0){
            $land->setOwner(I_OWN);
          }
@@ -42,7 +43,7 @@ class Lands
        }
        $this->addLand($land);
      }
-
+     
      /* mark units */
      $units = $database->units($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
      foreach ($units as $unit){
@@ -53,11 +54,14 @@ class Lands
        if (!strcmp($unit["name"], $characterName)) {
          $character_x = $unit["x"];
          $character_y = $unit["y"];
+         $explorers = $unit["explorers"];
        }
      }
 
-     /* handle available lands */
-     $this->fixAvailableLands($character_x, $character_y);
+     if ($character_x && $character_y){
+       /* handle available lands */
+       $this->fixAvailableLands($character_x, $character_y, $explorers);
+     }
 
      /* mark that move is in progress */
      $this->isAction = $isAction;
@@ -164,7 +168,7 @@ class Lands
      }
    }
 
-   private function fixAvailableLands($unit_x, $unit_y){
+   private function fixAvailableLands($unit_x, $unit_y, $explorers){
      global $session;
 
      /* check if character is within land borders, if so mark land neighbourhood as available */   
@@ -192,14 +196,14 @@ class Lands
        }
      }
      else if( isset($unit_x) && isset($unit_y) && ($unit_land->getOwner() == NOT_OWNED) ){
-       /* if some tile in the neighbourhood is owned, current tile can be colonized */
+       /* if some tile in the neighbourhood is owned, current tile can be explored */
        $nhood = '';
        $ok = 0;
 
        $this->getNeighbourhood($unit_x, $unit_y, $nhood);
        foreach ($nhood as $l){
-         if($l->getOwner() == I_OWN){
-           $unit_land->setColonize(1);
+         if( ($l->getOwner() == I_OWN) && ($explorers > 1) ){
+           $unit_land->setExplore(1);
            break;         
          }
        }
