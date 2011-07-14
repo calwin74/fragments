@@ -40,8 +40,8 @@ else{
 ?>
 <b>New features:</b>
 <br>
-Uses 20 new terrain hexagon tiles (sea is still grey since no sea tile was invented yet).
-Added map editor, see menu.
+Added explorers, can only explore a tile if 2 explorers travel with the character.
+<br>Added upkeep and overview of income and cost, can change tax. 
 <br>
 <b>Constraints:</b>
 <br>
