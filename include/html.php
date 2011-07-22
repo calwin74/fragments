@@ -15,7 +15,7 @@
           * Menu
           * http://www.trendskitchens.co.nz/jquery/contextmenu/
           */
-         echo '<script src="js/jquery.contextmenu.r2.js" type="text/javascript"></script>';
+         echo '<script src="js/jquery.contextmenu.r2.left.js" type="text/javascript"></script>';
 
          /* 
           * Clock

@@ -1,9 +1,10 @@
 <?php
 include_once("constants.php");
-include_once("include/session.php");
+include_once("session.php");
+include_once("treasury.php");
 
 /**
- * population.php
+ * populaation.php
  * This module handle population
  */
 
@@ -47,14 +48,12 @@ class Population
          $civilians = $land["civilians"];
          $x = $land["x"];
          $y = $land["y"];
-         $toxic = $land["toxic"];
-         $treasury = new Treasury($land["$owner"]);
+         $toxic = $land["toxic"];         
+         $treasury = new Treasury($land["owner"]);
 
          $newCivilians = $this->calculateCivilians($civilians, $toxic, $treasury->getTax());
 
-         if ($newCivilians > $civilians){
-            $database->updateCivilians($newCivilians, $x, $y, $newTime); 
-         }
+         $database->updateCivilians($newCivilians, $x, $y, $newTime); 
       }
       
       return $i;
@@ -62,7 +61,7 @@ class Population
 
    private function calculateCivilians($pop, $toxic, $tax){
       /* need at least 2 people */
-      if ($pop < 2) {
+      if ( ($pop < 2) || ($pop >= CIVILIANS_MAX) ) {
          /* no growth */
          return $pop;
       }

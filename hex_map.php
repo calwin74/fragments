@@ -58,7 +58,7 @@ $x = 0;
 $y = 0;
 
 /* get lands */
-$lands = new Lands($x, $y, $character->getName(), $action->isAction());
+$lands = new Lands($x, $y, $character->getName(), $action->isAction(), X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
 
 /* get marked land */
 if (isset($_GET['mark_key'])) {
@@ -88,6 +88,7 @@ $civilians_min = $character->getCivilians() - (CIVILIANS_MAX - $character_land->
 if ($civilians_min < 0){
   $civilians_min = 0;
 }
+$soldiers_max = $character->getSoldiers() + $garrison->getSoldiers();
 $explorers_max = $character->getExplorers() + $character_land->getExplorers();
 
 ?>
@@ -95,7 +96,7 @@ $explorers_max = $character->getExplorers() + $character_land->getExplorers();
 $(function() {
   /* spinners for input fields */
   $('#civilians').spinner({ min: <?php echo $civilians_min ?>, max: <?php echo $civilians_max ?> });
-  $('#soldiers').spinner({ min: 0, max: <?php echo $garrison->getSoldiers(); ?> });
+  $('#soldiers').spinner({ min: 0, max: <?php echo $soldiers_max; ?> });
   $('#explorers').spinner({ min: 0, max: <?php echo $explorers_max;?> });
   $('#tax').spinner({ min: 0, max: 100 });
 });
@@ -143,7 +144,7 @@ $html->html_end_header();
    </div>
    <div id="content">
 	   <div id="map">
-         <?php $lands->printMap($x, $y); ?>
+         <?php $lands->printMap($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE); ?>
          Coordinates: <div id="coordinates"></div>
       </div>
       <div id="land">
@@ -288,6 +289,9 @@ $html->html_end_header();
          </form>
          <?php 
          }
+         else{
+            echo " | soldiers: ".$character->getSoldiers();
+         }
 
          if ($character_land->getOwner() == I_OWN){
          ?>
@@ -308,7 +312,7 @@ $html->html_end_header();
          <?php 
          }
          else{
-            echo " | explorers: ".$character->getExplorers();;
+            echo " | explorers: ".$character->getExplorers();
          }                     
          ?>
       <?php

@@ -181,7 +181,7 @@ define("EXPLORE", 2);
 /**
  * Defined game time unit in seconds
  */
-define("GAME_TIME_UNIT", 60);
+define("GAME_TIME_UNIT", 120);
 
 /**
  * Population definitions
@@ -206,5 +206,5 @@ define("B_REMOVE", 2);
 /**
  * Logging
  */
-define("DB_VERBOSE", 1);
+define("DB_VERBOSE", 0);
 ?>

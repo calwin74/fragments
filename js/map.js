@@ -68,6 +68,15 @@ $(function() {
        }
 */
 
+   //   $(".cyan,.character").click(function(t) {
+   $(".cyan").click(function(t) {
+      var actionForm = document.forms["actionForm"];
+
+      actionForm.elements["action"].value = "mark";
+      actionForm.elements["key"].value = this.id; 
+      actionForm.submit();
+   });
+
    $('span.move').contextMenu('myMenu1', {
       bindings: {
          'move': function(t) {
@@ -100,14 +109,6 @@ $(function() {
       document.getElementById('production').innerHTML = production_int;
    });
 */
-//   $(".cyan,.character").click(function(t) {
-   $(".cyan").click(function(t) {
-      var actionForm = document.forms["actionForm"];
-
-      actionForm.elements["action"].value = "mark";
-      actionForm.elements["key"].value = this.id; 
-      actionForm.submit();
-   });
 
    $(".hex").mouseover(function() {
       var id = this.id

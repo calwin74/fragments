@@ -84,10 +84,6 @@ CREATE TABLE `characters` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Definition of table `resources`
---
-
---
 -- Definition of table `tribe`
 --
 

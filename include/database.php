@@ -953,13 +953,13 @@ class MySQLDB
    }
 
     /**
-    * getUnitCost - get unit cost
-    * Returns cost for a unit of a certain type
+    * getUnitType - get one unit type
+    * Returns one unit type
     */
-   function getUnitCost($type){
+   function getUnitType($type){
       global $session;
 
-      $q = "SELECT cost FROM ".TBL_UNIT_TYPES." where type = '$type'";
+      $q = "SELECT * FROM ".TBL_UNIT_TYPES." where type = '$type'";
 
       $result = $this->query($q);
       /* Error occurred */
@@ -968,7 +968,10 @@ class MySQLDB
          return NULL;
       }
 
-      return $result;
+      $row = mysql_fetch_assoc($result);
+      mysql_free_result($result);
+
+      return $row;
    }
 
    /* ------ garrison table ------ */
@@ -1003,7 +1006,7 @@ class MySQLDB
          return NULL;
       }
       if (mysql_numrows($result) != 1) {
-         $session->logger->LogError("getGarrison didn't return one treasury row");         
+         $session->logger->LogError("getGarrison didn't return one row");         
          return 0;
       }
 
@@ -1111,6 +1114,28 @@ class MySQLDB
       /* Error occurred */
       if(!$result || (mysql_numrows($result) != 1)){
          $session->logger->LogError("getCharacterByName - Error or didn´t return unique row");
+         return NULL;
+      }
+
+      $row = mysql_fetch_assoc($result);
+
+      mysql_free_result($result);
+
+      return $row;
+   }
+
+   /**
+    * getCharacterByXY - Get a character in the land
+    * Returns character
+    */
+   function getCharacterByXY($x, $y) {
+      global $session;
+      $status = 1;
+
+      $q = "SELECT * FROM ".TBL_CHARACTERS." WHERE x = ".$x." AND y = ".$y;
+      $result = $this->query($q);
+      if (!$result) {
+         $session->logger->LogError("Bad result from getCharacterbyXY");
          return NULL;
       }
 
@@ -1407,7 +1432,7 @@ class MySQLDB
       $then = strtotime("-".GAME_TIME_UNIT." seconds");
       $then = strftime("%Y-%m-%d %H:%M:%S", $then);
       
-      $q = "SELECT * from ".TBL_LANDS." WHERE civilians > 1 AND civilians < ".CIVILIANS_MAX." AND civilians_time < '$then' ORDER BY civilians_time ASC";
+      $q = "SELECT * from ".TBL_LANDS." WHERE civilians > 0 AND civilians_time < '$then' ORDER BY civilians_time ASC";
       $result = $this->query($q);
 
       /* Error occurred */
@@ -1450,11 +1475,11 @@ class MySQLDB
       $result = $this->query($q);
       /* Error occurred */
       if (!$result) {
-         $session->logger->LogError("Error in getGoldFromOwner");
+         $session->logger->LogError("Error in getTreasuryFromOwner");
          return NULL;
       }
       if (mysql_numrows($result) != 1) {
-         $session->logger->LogError("getGoldFromOwner didn't return one treasury row");         
+         $session->logger->LogError("getTreasuryFromOwner didn't return one treasury row");         
          return 0;
       }
 

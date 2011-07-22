@@ -150,15 +150,24 @@ class ActionProcess
          $type = $_POST['type'];
          $name = $_POST['name'];
 
-         $cost = $database->getUnitCost($type);
+         $unit_type = $database->getUnitType($type);
+         $cost = $unit_type["cost"];
+
          $treasury = $database->getTreasuryFromOwner($name);
          $gold = $treasury["gold"];
+
+         $s = $type." cost:".$cost;
+         $session->logger->LogInfo($s);
 
          if ($gold >= $cost) {
             $database->updateGold($gold - $cost, $name, NULL);
 
             $land = $database->getLand(getXFromKey($key), getYFromKey($key));
             $new_civilians = $land["civilians"] - 1;
+
+            $s = "new civilians:".$new_civilians;
+            $session->logger->LogInfo($s);            
+
             $database->updateCivilians2($new_civilians, getXFromKey($key), getYFromKey($key));
 
             /* add to unit queue */

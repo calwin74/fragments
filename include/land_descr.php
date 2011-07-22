@@ -260,7 +260,7 @@ class Land
   private function getActionClass($isAction){
       $class = "";
 
-      if ( !$isAction && $this->getAvailable() && !$this->getCharacter() ){
+      if ( !$isAction && ($this->getAvailable() == AVAILABLE) ){
          $class .= " move";
       }
 

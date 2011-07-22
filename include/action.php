@@ -9,6 +9,7 @@
 include_once("session.php");
 include_once("utils.php");
 include_once("constants.php");
+include_once("battle.php");
 
 class Action
 {
@@ -77,8 +78,22 @@ class Action
 
          if($action["type"] == MOVE){
             /* move action */
-            $database->moveCharacter($x, $y, $name);  
+
             $database->removeFromActionQueue($x, $y, $name);
+
+            $battle = new Battle($x, $y, $name);            
+
+            if($battle->isBattle()){
+               /* there will be blood ... */
+               if($battle->executeBattle()){
+                 /* attacker won, move into position */
+                 $database->moveCharacter($x, $y, $name);
+               }
+               $battle->reportBattle();
+            }
+            else{
+              $database->moveCharacter($x, $y, $name);
+            }
          }
          else if($action["type"] == EXPLORE){
             /* explore action */

@@ -15,7 +15,7 @@ class Lands
    private $isAction;
    
    /* Class constructor */
-   public function Lands($x, $y, $characterName, $isAction){
+   public function Lands($x, $y, $characterName, $isAction, $x_size, $y_size){
      global $session;
      $database = $session->database;
 
@@ -23,7 +23,7 @@ class Lands
      $character_y = NULL;
 
      $this->my_lands = array();
-     $land_rows = $database->map($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
+     $land_rows = $database->map($x, $y, $x_size, $y_size);
 
      foreach ($land_rows as $row){
        $land = new Land;
@@ -45,7 +45,8 @@ class Lands
      }
      
      /* mark units */
-     $units = $database->units($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
+     $units = $database->units($x, $y, $x_size, $y_size);
+
      foreach ($units as $unit){
        $key = createKey($unit["x"], $unit["y"]);
        $land = $this->getLand($key);
@@ -58,9 +59,9 @@ class Lands
        }
      }
 
-     if ($character_x && $character_y){
+     if ( ($character_x != NULL) && ($character_y != NULL) ){
        /* handle available lands */
-       $this->fixAvailableLands($character_x, $character_y, $explorers);
+       $this->fixAvailableLands($character_x, $character_y, $explorers, $x_size, $y_size);
      }
 
      /* mark that move is in progress */
@@ -76,16 +77,16 @@ class Lands
       3. NOTE: The x and y coordinates in the for-loops are there to set up the map
    */
 
-   public function printMap($x, $y){
+   public function printMap($x, $y, $x_size, $y_size){
       $first_row = 1;
       $is_odd = 0;
 
-      for ($y_pos = $y + Y_LOCAL_MAP_SIZE; $y_pos >= $y - Y_LOCAL_MAP_SIZE; $y_pos--){
+      for ($y_pos = $y + $y_size; $y_pos >= $y - $y_size; $y_pos--){
          $is_first_odd = 1;
          $is_first_even = 1;
          $position = "";
 
-         for ($x_pos = $x - X_LOCAL_MAP_SIZE; $x_pos <= $x + X_LOCAL_MAP_SIZE; $x_pos++){
+         for ($x_pos = $x - $x_size; $x_pos <= $x + $x_size; $x_pos++){
             if ($first_row){
                $position = "first";
             }
@@ -152,12 +153,12 @@ class Lands
      return count($this->my_lands);
    }
 
-   public function setAvailableLand($x, $y){
+   public function setAvailableLand($x, $y, $x_size, $y_size){
      /* check input */
-     if (($x > X_LOCAL_MAP_SIZE) || ($x < -X_LOCAL_MAP_SIZE)){
+     if (($x > $x_size) || ($x < -$x_size)){
        return;
      }
-     if (($y > Y_LOCAL_MAP_SIZE) || ($y < -Y_LOCAL_MAP_SIZE)){
+     if (($y > $y_size) || ($y < -$y_size)){
        return;
      }
      $key = createKey($x, $y);
@@ -168,7 +169,7 @@ class Lands
      }
    }
 
-   private function fixAvailableLands($unit_x, $unit_y, $explorers){
+   private function fixAvailableLands($unit_x, $unit_y, $explorers, $x_size, $y_size){
      global $session;
 
      /* check if character is within land borders, if so mark land neighbourhood as available */   
@@ -177,7 +178,7 @@ class Lands
      if($unit_land->getOwner() == I_OWN){
        foreach ($this->my_lands as $land){
          if ($land->getOwner() == I_OWN){
-           $land->setAvailable(AVAILABLE);
+           $land->setAvailable(AVAILABLE, $x_size, $y_size);
 
            /* Mark neighborhood as available
             * - Note: This will change if changing map to odd numbers
@@ -188,9 +189,9 @@ class Lands
 
            $nhood = '';
            $this->getNeighbourhood($x, $y, $nhood);
-           
+
            foreach ($nhood as $l){
-             $this->setAvailableLand($l->getX(), $l->getY());
+             $this->setAvailableLand($l->getX(), $l->getY(), $x_size, $y_size);
            }
          }
        }
@@ -211,14 +212,14 @@ class Lands
 
      /* mark character neighbourhood as available */     
      if (isset($unit_x) && isset($unit_y)){
+       global $session;
+
        $nhood = '';
        $this->getNeighbourhood($unit_x, $unit_y, $nhood);
 
        foreach ($nhood as $l){
-         $this->setAvailableLand($l->getX(), $l->getY());
-       }       
-
-              
+         $this->setAvailableLand($l->getX(), $l->getY(), $x_size, $y_size);
+       }                     
      } 
    }
 
@@ -230,23 +231,33 @@ class Lands
 
        /* x,y+2 */
        $land = $this->getLand(createKey($x, $y+2)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x+1,y+1 */
        $land = $this->getLand(createKey($x+1, $y+1)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x+1,y-1 */
        $land = $this->getLand(createKey($x+1, $y-1)); 
-       $nhood[$land->getName()] = $land;
-  
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
+
        /* x,y-2 */
        $land = $this->getLand(createKey($x, $y-2)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x,y-1 */
        $land = $this->getLand(createKey($x, $y-1)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x,y+1 */
        $land = $this->getLand(createKey($x, $y+1)); 
@@ -256,36 +267,52 @@ class Lands
        /* y is even */
 
        /* x,y+2 */
-       $land = $this->getLand(createKey($x, $y+2)); 
-       $nhood[$land->getName()] = $land;
+       $land = $this->getLand(createKey($x, $y+2));
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x,y+1 */
        $land = $this->getLand(createKey($x, $y+1)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x,y-1 */
        $land = $this->getLand(createKey($x, $y-1)); 
-       $nhood[$land->getName()] = $land;
-
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
+       
        /* x,y-2 */
        $land = $this->getLand(createKey($x, $y-2)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x-1,y-1 */
        $land = $this->getLand(createKey($x-1, $y-1)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
 
        /* x-1,y+1 */
        $land = $this->getLand(createKey($x-1, $y+1)); 
-       $nhood[$land->getName()] = $land;
+       if($land){
+         $nhood[$land->getName()] = $land;
+       }
      }
    }
 
    public function getLandsXML(){
-     foreach ($this->my_lands as $land){
+     foreach($this->my_lands as $land){
        $xml = $land->getDescrXML();
        echo $xml."\n";
      }
+   }
+
+   public function getSurrounding($x, $y, &$nhood){
+     $this->getNeighbourhood($x, $y, $nhood);
    }
 
    public function markLand($key){
