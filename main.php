@@ -38,14 +38,18 @@ if($session->logged_in){
 else{
 
 ?>
+<b>Updated 2011 07 22</b>
+<br>
+<br>
 <b>New features:</b>
 <br>
-Added explorers, can only explore a tile if 2 explorers travel with the character.
-<br>Added upkeep and overview of income and cost, can change tax. 
+Added battle feature. Attack and defense. Retreat and loss of land.
+<br>
+Fixed some bugs
 <br>
 <b>Constraints:</b>
 <br>
-You need to create new a new character since data model changed.
+You need to create new character becuase of the bugs mentioned above.
 <br>
 <b>Extra:</b>
 <br>
