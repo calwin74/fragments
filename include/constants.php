@@ -206,5 +206,5 @@ define("B_REMOVE", 2);
 /**
  * Logging
  */
-define("DB_VERBOSE", 1);
+define("DB_VERBOSE", 0);
 ?>

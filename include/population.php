@@ -87,7 +87,6 @@ class Population
    }
 
    private function calculateCivilians($pop, $toxic, $tax, $intervals){
-      global $session;
       if ( ($pop < 0) || ($pop >= CIVILIANS_MAX) ) {
          /* no growth */
          return $pop;
@@ -105,9 +104,6 @@ class Population
       if ($newPop > CIVILIANS_MAX){
          $newPop = CIVILIANS_MAX;
       }
-
-      $s = "pop:".$pop." toxic:".$toxic." tax:".$tax." new pop:".$newPop." intervals: ".$intervals;
-      $session->logger->LogInfo($s);
 
       return $newPop;
    }
