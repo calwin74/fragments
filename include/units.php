@@ -99,18 +99,4 @@ class Units
  
       return $database->getTimeDiff($time, getNow(0));
    }
-
-   public function getExplorers($owner){
-      global $session;
-      $database = $session->database;
-
-      $lands = $database->getLandFromOwner($owner);
-      $explorers = 0;
-
-      for($i = 0; $i < count($lands); $i++) {
-         $explorers += $lands[$i]["explorers"];
-      }
-
-      return $explorers;
-   }
 }

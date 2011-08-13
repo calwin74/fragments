@@ -37,79 +37,90 @@ class Treasury
    }
 
    public function getIncome(){
-      global $session;
-
-      $population = new Population();
-      $pop = $population->getPopulation($this->my_owner);
-      $income = $this->calculateIncome($pop, $this->my_tax);
+      $income = $this->calculateIncome($this->my_owner, $this->my_tax);
 
       return $income;      
    }
 
    public function getCost(){
-      global $session;
-      $database = $session->database;
-
-      $garrison = new Garrison($this->my_owner);
-      $character = $database->getCharacterByName($this->my_owner);
-      $soldiers = $garrison->getSoldiers() + $character["soldiers"];
-
-      $cost = $this->calculateCost($soldiers);
+      $cost = $this->calculateCost($this->my_owner);
 
       return $cost;
    }
 
    public function updateAllTreasury(){
-      while ($this->updateTreasuryChunk());
-   }
-
-   private function updateTreasuryChunk(){
       global $session;
       $database = $session->database;
 
       $treasuries = $database->getGoldUpdate();
-      $i = 0;
 
-      for ($i = 0; $i < count($treasuries); $i++){
-         $treasury = $treasuries[$i];
-         $newTime = strtotime($treasury["gold_time"]) + GAME_TIME_UNIT;
-         $newTime = strftime("%Y-%m-%d %H:%M:%S", $newTime);
-         $owner = $treasury["character_name"];
-         $gold = $treasury["gold"];
-         $tax = $treasury["tax"];
+      if ($treasuries){
+         foreach($treasuries as $treasury){
+            $last = strtotime($treasury["gold_time"]);
+            $now = strtotime("+0 seconds");
+            $intervals = floor(($now - $last)/GAME_TIME_UNIT);
 
-         $population = new Population();
-         $pop = $population->getPopulation($owner);
+            $owner = $treasury["character_name"];
+            $gold = $treasury["gold"];
+            $tax = $treasury["tax"];
 
-         $garrison = new Garrison($owner);
-         $character = $database->getCharacterByName($owner);
-         $soldiers = $garrison->getSoldiers() + $character["soldiers"];
+            $income = $this->calculateIncome($owner, $tax) * $intervals;
+            $cost = $this->calculateCost($owner) * $intervals;
+            $newGold = $this->calculateGold($gold, $income, $cost);
 
-         $income = $this->calculateIncome($pop, $tax);
-         $cost = $this->calculateCost($soldiers);
-         $newGold = $this->calculateGold($gold, $income, $cost);
+            $newTime = strftime("%Y-%m-%d %H:%M:%S", $now);
+            $database->updateGold($newGold, $owner, $newTime);
 
-         $database->updateGold($newGold, $owner, $newTime); 
+            if(!strcmp($this->my_owner, $owner)){
+               /* refresh gold count */
+               $this->my_gold = $newGold;
+            }
+         }
       }
-      
-      return $i;
    }
 
    private function calculateGold($gold, $income, $cost){
-      $newGold = $gold + income - cost;
+      $newGold = $gold + $income - $cost;
       
       return $newGold;
    }
 
-   private function calculateIncome($pop, $tax){
+   private function calculateIncome($owner, $tax){
+      $population = new Population();
+      $pop = $population->getPopulation($owner, "civilians");
+
       $income = $pop * $tax/100;
    
       return $income;
    }
 
-   private function calculateCost($soldiers){
-      $cost = $soldiers * 1;
+   private function calculateCost($owner){
+      global $session;
+      $database = $session->database;
+
+      $cost = 0;
+
+      /* soldiers */
+      $garrison = new Garrison($owner);
+      $character = $database->getCharacterByName($owner);
+      $soldiers = $garrison->getSoldiers() + $character["soldiers"];
+
+      /* explorers */
+      $population = new Population();
+      $explorers = $population->getPopulation($owner, "explorers") + $character["explorers"];
+
+      if($soldiers > 0){
+         $type = $database->getUnitType("soldier");
+         $upkeep = $type["upkeep"];
+         $cost += $soldiers * $upkeep;
+      }
       
+      if($explorers > 0){
+         $type = $database->getUnitType("explorer");
+         $upkeep = $type["upkeep"];
+         $cost += $explorers * $upkeep;
+      }
+
       return $cost;
    }
 }

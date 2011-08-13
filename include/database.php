@@ -1432,7 +1432,7 @@ class MySQLDB
       $then = strtotime("-".GAME_TIME_UNIT." seconds");
       $then = strftime("%Y-%m-%d %H:%M:%S", $then);
       
-      $q = "SELECT * from ".TBL_LANDS." WHERE civilians > 0 AND civilians_time < '$then' ORDER BY civilians_time ASC";
+      $q = "SELECT * from ".TBL_LANDS." WHERE owner IS NOT NULL AND civilians_time < '$then' ORDER BY civilians_time ASC";
       $result = $this->query($q);
 
       /* Error occurred */

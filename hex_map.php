@@ -130,6 +130,7 @@ $html->html_end_header();
 
 <div id="wrapper">
    <div id="header">
+      <b>Updated 2011 08 11</b> See login page for more information.<br>
 	   <?php menu1(); ?>
       <!-- clock -->
       Time: <clock class="jclock"></clock>
@@ -137,7 +138,7 @@ $html->html_end_header();
    <div id="overview">
       Overview data
       <br>Gold: <?php echo $treasury->getGold(); ?>
-      | Total Population: <?php echo $population->getPopulation($character->getName()) + $character->getCivilians(); ?>
+      | Total Civilians: <?php echo $population->getPopulation($character->getName(), "civilians") + $character->getCivilians(); ?>
       | Tax: <?php echo $treasury->getTax(); ?>%
       | Total Income: <?php echo $treasury->getIncome(); ?>
       | Total Cost: <?php echo $treasury->getCost(); ?>
@@ -336,8 +337,8 @@ $html->html_end_header();
       <div id="country">
          <b>Country</b>
          <?php
-         $civilians = $population->getPopulation($character->getName()) + $character->getCivilians();
-         $explorers = $units->getExplorers($character->getName()) + $character->getExplorers();
+         $civilians = $population->getPopulation($character->getName(), "civilians") + $character->getCivilians();
+         $explorers = $population->getPopulation($character->getName(), "explorers") + $character->getExplorers();
          ?>
          <br>Total Population: <?php echo $civilians; ?>
          (Civilians: <?php echo $civilians; ?>

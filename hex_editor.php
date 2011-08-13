@@ -21,7 +21,7 @@ $x = 0;
 $y = 0;
 
 /* get lands */
-$lands = new Lands($x, $y, NULL, 0);
+$lands = new Lands($x, $y, NULL, 0, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
 
 /* get marked land */
 if (isset($_GET['mark_key'])) {
@@ -51,7 +51,7 @@ $html->html_end_header();
 	</div>         
    <div id="content">
 	   <div id="map">
-         <?php $lands->printMap($x, $y); ?>
+         <?php $lands->printMap($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE); ?>
          Coordinates: <div id="coordinates"></div>
       </div>
       <div id="land">

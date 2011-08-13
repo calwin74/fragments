@@ -169,7 +169,7 @@ class Battle
        if($this->my_defender && !$this->my_land["owner"]){
          $rest = $this->my_n_defender - $this->my_n_attacker;
          $database->updateCharacterSoldiers($rest, $this->my_defender["name"]);
-         $this->my_defender_loss = $$this->my_n_defender - $rest;
+         $this->my_defender_loss = $this->my_n_defender - $rest;
        }
        else if(!$this->my_defender && $this->my_land["owner"]){
          $rest = $this->my_n_garrison - $this->my_n_attacker;

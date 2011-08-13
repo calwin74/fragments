@@ -38,18 +38,18 @@ if($session->logged_in){
 else{
 
 ?>
-<b>Updated 2011 07 22</b>
+<b>Updated 2011 08 13</b>
 <br>
-<br>
+<br>  
 <b>New features:</b>
 <br>
-Added battle feature. Attack and defense. Retreat and loss of land.
-<br>
-Fixed some bugs
-<br>
-<b>Constraints:</b>
-<br>
-You need to create new character becuase of the bugs mentioned above.
+Fixed bugs described below:<br>
+- gold and civilian didn't grow.<br>
+- attack with no soldiers caused fatal error.<br>
+- explorers doesn't cost upkeep, they should.<br>
+- map editor doesn't work.<br>
+- civilian growth should start from zero, not two.<br>
+- It should cost one explorer to take a new land, not two.
 <br>
 <b>Extra:</b>
 <br>

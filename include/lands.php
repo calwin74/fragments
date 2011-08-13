@@ -203,7 +203,7 @@ class Lands
 
        $this->getNeighbourhood($unit_x, $unit_y, $nhood);
        foreach ($nhood as $l){
-         if( ($l->getOwner() == I_OWN) && ($explorers > 1) ){
+         if( ($l->getOwner() == I_OWN) && ($explorers > 0) ){
            $unit_land->setExplore(1);
            break;         
          }

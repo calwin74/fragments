@@ -19,7 +19,7 @@ class Land
    private $civilians;          //civilians in land
    private $explorers;
    private $marked;             //marked
-   private $explore;           //available to colonize   
+   private $explore;            //available to colonize   
    /* Class constructor */
    public function Land(){
      /* nothing yet */

@@ -99,11 +99,11 @@ class Action
             /* explore action */
             $database->setLandOwner($x, $y, $name);
 
-            /* two explorers transform into two civilians */
-            $database->updateCivilians(2, $x, $y, getNow(0));
+            /* one explorer transform into one civilian */
+            $database->updateCivilians(1, $x, $y, getNow(0));
 
             $character = $database->getCharacterByName($name);
-            $database->updateCharacterExplorers($character["explorers"] - 2, $name);
+            $database->updateCharacterExplorers($character["explorers"] - 1, $name);
 
             $database->removeFromActionQueue($x, $y, $name);
          }
