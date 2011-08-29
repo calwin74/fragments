@@ -39,6 +39,7 @@ define("TBL_BUILD_QUEUE", "build_queue");
 define("TBL_UNIT_QUEUE", "unit_queue");
 define("TBL_UNIT_TYPES", "unit_types");
 define("TBL_GARRISON", "garrison");
+define("TBL_POPULATION", "population");
 
 
 /**
@@ -189,12 +190,19 @@ define("GAME_TIME_UNIT", 60);
 define("INIT_POPULATION", 10);
 define("CIVILIANS_MAX", 20);
 define("NATIVITY", 0.1);
+define("INIT_EXPLORERS", 0);
 
 /**
  * Treasury
  */
 define("INIT_GOLD", 500);
 define("INIT_TAX", 25);
+
+/**
+ * Toxic
+ */
+define("INIT_USER_TOXIC", 1);
+define("DEFAULT_TOXIC", 9);
 
 /**
  * Build operations
@@ -206,5 +214,5 @@ define("B_REMOVE", 2);
 /**
  * Logging
  */
-define("DB_VERBOSE", 0);
+define("DB_VERBOSE", 1);
 ?>

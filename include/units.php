@@ -45,25 +45,23 @@ class Units
       for ($i = 0; $i < count($units); $i++) {
          $unit = $units[$i];
          $type = $unit["type"];
+         $name = $unit["name"];
 
          if (strcmp($type, "soldier") == 0){
-            $garrison = new Garrison($unit["name"]);
+            $garrison = new Garrison($name);
             $soldiers = $garrison->getSoldiers();
             $garrison->setSoldiers($soldiers + 1);
          }
          if (strcmp($type, "explorer") == 0){
-            $x = $unit["x"];
-            $y = $unit["y"];
+            $population = $database->getPopulation($name);
+            $explorers = $population["explorers"];
 
-            $land = $database->getLand($x, $y);
-            $explorers = $land["explorers"];
-
-            $database->updateExplorers($explorers + 1, $x, $y);
+            $database->updateExplorers($explorers + 1, $name);
          }            
          else{
             //not supported yet
          }
-         $database->removeFromUnitQueue($unit["x"], $unit["y"], $unit["name"]);
+         $database->removeFromUnitQueue($unit["x"], $unit["y"], $name);
       }
    }
 

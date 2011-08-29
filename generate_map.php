@@ -14,10 +14,9 @@ for ($y=Y_LOCAL_MAP_SIZE; $y>=-Y_LOCAL_MAP_SIZE; $y--)
   for ($x=-X_LOCAL_MAP_SIZE; $x<=X_LOCAL_MAP_SIZE; $x++)
   {
     $type = rand(1,21);
-    $yield = 1;
-    $toxic = rand(0,10);
+    $toxic = DEFAULT_TOXIC;
  
-    $database->addLand($x, $y, $type, $yield, $toxic);
+    $database->addLand($x, $y, $type, $toxic);
   } 
 }
 

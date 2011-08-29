@@ -10,101 +10,89 @@ include_once("treasury.php");
 
 class Population
 {
+   private $my_civilians;
+   private $my_explorers;
+   private $my_owner;
+
    /* Class constructor */
-   public function Population(){
-      /* empty for now */
+   public function Population($owner){
+      $population = $this->getPopulation($owner);
+
+      $this->my_owner = $population["owner"];
+      $this->my_civilians = $population["civilians"];
+      $this->my_explorers = $population["explorers"];
    }
 
-   public function getPopulation($owner, $type){
+   public function getPopulation($owner){
       global $session;
       $database = $session->database;
 
-      $lands = $database->getLandFromOwner($owner);
-      $population = 0;
-
-      for($i = 0; $i < count($lands); $i++) {
-         /* sum all complete people, for instance 4.3 + 3.9 = 7 people */
-         /* $type is type of population to sum, e.g. "soldiers" */
-         $population += floor($lands[$i][$type]);
-      }
+      $population = $database->getPopulation($owner);
 
       return $population;
    }
-
-   public function updateAllCivilians2(){
-      while ($this->updateCiviliansChunk());
+   
+   public function getCivilians(){
+      return floor($this->my_civilians);
    }
 
-   private function updateCiviliansChunk(){
-      global $session;
-      $database = $session->database;
-
-      $lands = $database->getCiviliansUpdate();
-      $i = 0;
-
-      for ($i = 0; $i < count($lands); $i++){
-         $land = $lands[$i];
-         $newTime = strtotime($land["civilians_time"]) + GAME_TIME_UNIT;
-         $newTime = strftime("%Y-%m-%d %H:%M:%S", $newTime);
-         $civilians = $land["civilians"];
-         $x = $land["x"];
-         $y = $land["y"];
-         $toxic = $land["toxic"];         
-         $treasury = new Treasury($land["owner"]);
-
-         $newCivilians = $this->calculateCivilians($civilians, $toxic, $treasury->getTax());
-
-         $database->updateCivilians($newCivilians, $x, $y, $newTime); 
-      }
-      
-      return $i;
+   public function getExplorers(){
+      return $this->my_explorers;
    }
 
    public function updateAllCivilians(){
       global $session;
       $database = $session->database;
 
-      $lands = $database->getCiviliansUpdate();
+      $populations = $database->getCiviliansUpdate();
 
-      if ($lands){
-         foreach($lands as $land){
-            $last = strtotime($land["civilians_time"]);
+      if ($populations){
+         foreach($populations as $population){
+            $last = strtotime($population["civilians_time"]);
             $now = strtotime("+0 seconds");
             $intervals = floor(($now - $last)/GAME_TIME_UNIT);
 
-            $civilians = $land["civilians"];
-            $x = $land["x"];
-            $y = $land["y"];
-            $toxic = $land["toxic"];         
-            $treasury = new Treasury($land["owner"]);
-            
-            $newCivilians = $this->calculateCivilians($civilians, $toxic, $treasury->getTax(), $intervals);
+            $civilians = $population["civilians"];
+            $explorers = $population["explorers"];
+            $owner = $population["owner"];
+            $treasury = new Treasury($population["owner"]);
+
+            if($civilians < CIVILIANS_MAX){
+               $newCivilians = $this->calculateCivilians($civilians, $treasury->getTax(), $intervals, $owner);
+            }
+            else{
+               $newCivilians = $civilians;
+            }
+
             $newTime = strftime("%Y-%m-%d %H:%M:%S", $now);
 
-            $database->updateCivilians($newCivilians, $x, $y, $newTime);
+            $database->updateCivilians($newCivilians, $owner, $newTime);
+
+            if(!strcmp($this->my_owner, $population["owner"])){
+               /* refreash civilian count */
+               $this->my_civilians = $newCivilians;
+            }
          }
       }
    }
 
-   private function calculateCivilians($pop, $toxic, $tax, $intervals){
-      if ( ($pop < 0) || ($pop >= CIVILIANS_MAX) ) {
-         /* no growth */
-         return $pop;
-      }
-   
-      if($pop == 0){
-         $newValue = NATIVITY;
-      }
-      else{
-         $newValue = (1 - $tax/100) * ((CIVILIANS_MAX - $toxic)/CIVILIANS_MAX) * NATIVITY;
+   private function calculateCivilians($civilians, $tax, $intervals, $owner){
+      global $session;
+      $database = $session->database;      
+
+      $newValue = 0;
+
+      $lands = $database->getLandFromOwner($owner);
+
+      if ($lands){
+         foreach($lands as $land){
+            $toxic = $land["toxic"];
+            $newValue += (1 - $tax/100) * ((CIVILIANS_MAX - $toxic)/CIVILIANS_MAX) * NATIVITY;
+         }
       }
 
-      $newPop = $pop + $newValue * $intervals;
+      $newCivilians = $civilians + $newValue * $intervals;
 
-      if ($newPop > CIVILIANS_MAX){
-         $newPop = CIVILIANS_MAX;
-      }
-
-      return $newPop;
+      return $newCivilians;
    }
 }

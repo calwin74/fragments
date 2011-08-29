@@ -70,29 +70,6 @@ class ActionProcess
       $key = $_POST['key'];
 
       if (!strcmp($action, "army")){
-         if (isset($_POST['civilians'])){
-            $character_civilians = $_POST['character'];
-            $land_civilians = $_POST['land'];
-            $civilians = $_POST['civilians'];
-            $name = $_POST['name'];
-         
-            if ($character_civilians != $civilians){
-               /* update land */
-               $new_land_civilians = $land_civilians - ($civilians - $character_civilians);
-
-               /* check land civilians */
-               $land = $database->getLand(getXFromKey($key), getYFromKey($key));
-               if ($row["civilians"] + $new_land_civilians >= CIVILIANS_MAX){
-                  $new_land_civilians = CIVILIANS_MAX;
-               }
-
-               $database->updateCivilians($new_land_civilians, getXFromKey($key), getYFromKey($key), getNow(0));
-               /* update character */
-               $database->updateCharacterCivilians($civilians, $name);
-            }
-            header("Location: ".$session->referrer);
-         }
-
          if (isset($_POST['soldiers'])){
             $character_soldiers = $_POST['character'];
             $garrison = $_POST['garrison'];
@@ -119,7 +96,7 @@ class ActionProcess
                /* update land */
                $new_land_explorers = $land_explorers - ($explorers - $character_explorers);
 
-               $database->updateExplorers($new_land_explorers, getXFromKey($key), getYFromKey($key));
+               $database->updateExplorers($new_land_explorers, $name);
                /* update character */
                $database->updateCharacterExplorers($explorers, $name);
             }
@@ -159,10 +136,10 @@ class ActionProcess
          if ($gold >= $cost) {
             $database->updateGold($gold - $cost, $name, NULL);
 
-            $land = $database->getLand(getXFromKey($key), getYFromKey($key));
-            $new_civilians = $land["civilians"] - 1;
+            $population = $database->getPopulation($name);
+            $new_civilians = $population["civilians"] - 1;
 
-            $database->updateCivilians2($new_civilians, getXFromKey($key), getYFromKey($key));
+            $database->updateCivilians2($new_civilians, $name);
 
             /* add to unit queue */
             $database->addToUnitQueue(getXFromKey($key), getYFromKey($key), $name, getNow(UNIT_BUILD_TIME), $type);

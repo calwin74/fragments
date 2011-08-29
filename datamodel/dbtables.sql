@@ -41,12 +41,8 @@ CREATE TABLE `lands` (
   `x` int(10) NOT NULL default '0',
   `y` int(10) NOT NULL default '0',
   `type` int(10) NOT NULL default '0',
-  `yield` int(10) NOT NULL default '0',
   `owner` varchar(30) default NULL,
   `toxic` int(10) NOT NULL default '0',
-  `civilians` double unsigned NOT NULL default '0',
-  `civilians_time` datetime NOT NULL default '0000-00-00 00:00:00',
-  `explorers` int(10) NOT NULL default '0',
   UNIQUE KEY `Index_1` (`x`,`y`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -138,10 +134,10 @@ CREATE TABLE `building_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `building_types` (`type`,`cost`) VALUES 
- ("barrack",20),
- ("university",30),
- ("town square",10);
-
+ ("barrack",50),
+ ("town hall",0),
+ ("bunker",25);
+ ("factory", 50);
 
 --
 -- Definition of table `buildings`
@@ -201,7 +197,7 @@ CREATE TABLE `unit_types` (
 
 INSERT INTO `unit_types` (`type`,`cost`,`upkeep`,`building`) VALUES 
  ("soldier",10,1,"barrack"),
- ("explorer",10,1,"town square");
+ ("explorer",10,1,"town hall");
 
 --
 -- Definition of table `garrison`
@@ -212,4 +208,15 @@ CREATE TABLE `garrison` (
   `name` varchar(30) default NULL,
   `soldiers` int(10) NOT NULL default '0',
   PRIMARY KEY  (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Definition of table `population`
+--
+DROP TABLE IF EXISTS `population`;
+  `owner` varchar(30) default NULL,
+  `civilians` double unsigned NOT NULL default '0',
+  `civilians_time` datetime NOT NULL default '0000-00-00 00:00:00',
+  `explorers` int(10) NOT NULL default '0',
+  UNIQUE KEY `Index_1` (`owner`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

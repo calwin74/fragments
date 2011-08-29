@@ -16,8 +16,6 @@ class Land
    private $character;          //character in land
    private $available;          //available to enter
    private $toxic;              //toxic level in land
-   private $civilians;          //civilians in land
-   private $explorers;
    private $marked;             //marked
    private $explore;            //available to colonize   
    /* Class constructor */
@@ -28,16 +26,11 @@ class Land
    /* Public methods */
 
    /* Init object, need to be called first */
-   public function init($x, $y, $type, $toxic, $civilians, $explorers){
+   public function init($x, $y, $type, $toxic){
      $this->x = $x;
      $this->y = $y;
      $this->type = $type;
      $this->name = createKey($x, $y);
-
-     /* round to lower integer */
-     $this->civilians = floor($civilians);
-
-     $this->explorers = $explorers;
      $this->toxic = $toxic;
      
      /* defaults */
@@ -108,14 +101,6 @@ class Land
       return $this->toxic;
    }
 
-   public function getCivilians(){
-      return $this->civilians;
-   }
-
-   public function getExplorers(){
-      return $this->explorers;
-   }
-   
    public function markLand(){
       $this->marked = 1;
    }

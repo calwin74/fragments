@@ -19,7 +19,6 @@ include_once("include/buildings.php");
 include_once("include/units.php");
 include_once("include/garrison.php");
 
-
 global $session;
 
 /* check user name, guests not allowed for now */
@@ -45,7 +44,7 @@ $character = new Character();
 $action->readActions($character->getName());
 
 /* update resources */
-$population = new Population();
+$population = new Population($character->getName());
 $treasury = new Treasury($character->getName());
 $population->updateAllCivilians();
 $treasury->updateAllTreasury();
@@ -65,8 +64,6 @@ if (isset($_GET['mark_key'])) {
   $mark_key = $_GET['mark_key'];
   $lands->markLand($mark_key);
   $marked_land = $lands->getLand($mark_key);
-  $marked_civilians = $marked_land->getCivilians();
-  $marked_explorers = $marked_land->getExplorers();
   $marked_toxic = $marked_land->getToxic();
   /* buildings */
   $current_buildings = $buildings->getBuildingsDone($marked_land->getX(), $marked_land->getY());
@@ -83,19 +80,15 @@ $character_land = $lands->getLand(createKey($character->getX(), $character->getY
 $html = new Html;
 $html->html_header(FRAGMENTS_TITLE);
 
-$civilians_max = $character->getCivilians() + $character_land->getCivilians();
-$civilians_min = $character->getCivilians() - (CIVILIANS_MAX - $character_land->getCivilians());
-if ($civilians_min < 0){
-  $civilians_min = 0;
-}
+$civilians_max = $character->getCivilians() + $population->getCivilians();
 $soldiers_max = $character->getSoldiers() + $garrison->getSoldiers();
-$explorers_max = $character->getExplorers() + $character_land->getExplorers();
+$explorers_max = $character->getExplorers() + $population->getExplorers();
 
 ?>
 <script type='text/javascript'>
 $(function() {
   /* spinners for input fields */
-  $('#civilians').spinner({ min: <?php echo $civilians_min ?>, max: <?php echo $civilians_max ?> });
+  $('#civilians').spinner({ min: 0, max: <?php echo $civilians_max ?> });
   $('#soldiers').spinner({ min: 0, max: <?php echo $soldiers_max; ?> });
   $('#explorers').spinner({ min: 0, max: <?php echo $explorers_max;?> });
   $('#tax').spinner({ min: 0, max: 100 });
@@ -138,7 +131,7 @@ $html->html_end_header();
    <div id="overview">
       Overview data
       <br>Gold: <?php echo $treasury->getGold(); ?>
-      | Total Civilians: <?php echo $population->getPopulation($character->getName(), "civilians") + $character->getCivilians(); ?>
+      | Total Civilians: <?php echo $population->getCivilians() + $character->getCivilians(); ?>
       | Tax: <?php echo $treasury->getTax(); ?>%
       | Total Income: <?php echo $treasury->getIncome(); ?>
       | Total Cost: <?php echo $treasury->getCost(); ?>
@@ -151,8 +144,6 @@ $html->html_end_header();
       <div id="land">
          <b>Marked land</b> 
          <br>Coordinate: <?php echo $mark_key; ?>
-         | Civilians: <?php echo $marked_civilians; ?>
-         | Explorers: <?php echo $marked_explorers; ?>
          | Toxic: <?php echo $marked_toxic; ?>
          <br>
          <?php
@@ -218,7 +209,7 @@ $html->html_end_header();
             }
             echo "</div><br>";
          }
-         else if(count($new_units) && ($marked_civilians > 0)){
+         else if(count($new_units) && ($population->getCivilians() > 0)){
          ?>
          <form action="action_process.php" method="POST">
          <table align="left" border="0" cellspacing="0" cellpadding="3">
@@ -250,27 +241,6 @@ $html->html_end_header();
          <b>Character</b>
          <?php
          echo $character->getName();
-         if ($character_land->getOwner() == I_OWN){
-         ?>
-         <form action="action_process.php" method="POST">
-         <table align="left" border="0" cellspacing="0" cellpadding="3">
-         <tr><td colspan="2" align="left">
-         <font size="2">
-         <input type="text" id="civilians" name="civilians" value="<?php echo $character->getCivilians();?>" size="2">
-         <input type="hidden" name="subaction" value="1">
-         <input type="hidden" name="action" value="army">
-         <input type="hidden" name="key" value="<?php echo $character_land->getName();?>">
-         <input type="hidden" name="character" value="<?php echo $character->getCivilians();?>">
-         <input type="hidden" name="land" value="<?php echo $character_land->getCivilians();?>">
-         <input type="hidden" name="name" value="<?php echo $character->getName();?>">
-         <input type="submit" value="Civilians">
-         </table>
-         </form>
-         <?php 
-         }
-         else{
-            echo "<br>civilians: ".$character->getCivilians();
-         }
 
          if ($character_land->getOwner() == I_OWN){
          ?>
@@ -305,7 +275,7 @@ $html->html_end_header();
          <input type="hidden" name="action" value="army">
          <input type="hidden" name="key" value="<?php echo $character_land->getName();?>">
          <input type="hidden" name="character" value="<?php echo $character->getExplorers();?>">
-         <input type="hidden" name="land" value="<?php echo $character_land->getExplorers();?>">
+         <input type="hidden" name="land" value="<?php echo $population->getExplorers();?>">
          <input type="hidden" name="name" value="<?php echo $character->getName();?>">
          <input type="submit" value="Explorers">
          </table>
@@ -337,8 +307,8 @@ $html->html_end_header();
       <div id="country">
          <b>Country</b>
          <?php
-         $civilians = $population->getPopulation($character->getName(), "civilians") + $character->getCivilians();
-         $explorers = $population->getPopulation($character->getName(), "explorers") + $character->getExplorers();
+         $civilians = $population->getCivilians() + $character->getCivilians();
+         $explorers = $population->getExplorers() + $character->getExplorers();
          ?>
          <br>Total Population: <?php echo $civilians; ?>
          (Civilians: <?php echo $civilians; ?>

@@ -250,13 +250,13 @@ class Process
       if($database->addNewCharacter($charName, $username, $tribe, $x, $y)){
         // Init land
         $database->setLandOwner($x, $y, $charName);
-        $database->setLandToxic($x, $y, 9);
+        $database->setLandToxic($x, $y, INIT_TOXIC);
         
         $now = strtotime("now");
         $now = strftime("%Y-%m-%d %H:%M:%S", $now);
-        $database->updateCivilians(INIT_POPULATION, $x, $y, $now);
         $database->initTreasury($charName, INIT_GOLD, $now, INIT_TAX);
         $database->initGarrison($charName);
+        $database->initPopulation($charName, INIT_POPULATION, $now, INIT_EXPLORERS);
 
         // Update init field in the users table to mark that initialisation has been done.
         $database->updateUserField($session->username, "init", 1);

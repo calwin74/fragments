@@ -43,12 +43,8 @@ class AdminProcess
       else if(isset($_POST['subdelbanned'])){
          $this->procDeleteBannedUser();
       }
-      /* Changed terrain type */
-      else if(isset($_POST['subterrain'])){
-         $this->procUpdateTerrain();
-      }
-      else if(isset($_POST['subhoover'])){
-         $this->procHoover();
+      else if(isset($_POST['subdelcharacters'])){
+         $this->procDeleteCharacters();
       }
       
    /* Should not get here, redirect to home page */
@@ -107,6 +103,14 @@ class AdminProcess
       }
    }
    
+   function procDeleteCharacters(){
+      global $session;
+      $database = $session->database;
+
+      $database->deleteCharacters();
+      header("Location: ".$session->referrer);
+   }
+
    /**
     * procDeleteInactive - All inactive users are deleted from
     * the database, not including administrators. Inactivity

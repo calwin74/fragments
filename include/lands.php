@@ -27,7 +27,7 @@ class Lands
 
      foreach ($land_rows as $row){
        $land = new Land;
-       $land->init($row["x"], $row["y"], $row["type"], $row["toxic"], $row["civilians"], $row["explorers"]);
+       $land->init($row["x"], $row["y"], $row["type"], $row["toxic"]);
 
        /* handle land ownership */
        if ($row["owner"] && ($characterName != NULL)){
@@ -88,7 +88,7 @@ class Lands
 
          for ($x_pos = $x - $x_size; $x_pos <= $x + $x_size; $x_pos++){
             if ($first_row){
-               $position = "first";
+               $position = "hej";
             }
             else{
                if ($is_odd){

@@ -19,13 +19,13 @@ class Treasury
       $database = $session->database;
 
       $treasury = $database->getTreasuryFromOwner($owner);
-      $this->my_gold = floor($treasury["gold"]);
+      $this->my_gold = $treasury["gold"];
       $this->my_tax = $treasury["tax"];
       $this->my_owner = $treasury["character_name"];
    }
 
    public function getGold(){
-      return $this->my_gold;
+      return floor($this->my_gold);
    }
 
    public function getTax(){
@@ -86,8 +86,8 @@ class Treasury
    }
 
    private function calculateIncome($owner, $tax){
-      $population = new Population();
-      $pop = $population->getPopulation($owner, "civilians");
+      $population = new Population($owner);
+      $pop = $population->getCivilians();
 
       $income = $pop * $tax/100;
    
@@ -106,8 +106,8 @@ class Treasury
       $soldiers = $garrison->getSoldiers() + $character["soldiers"];
 
       /* explorers */
-      $population = new Population();
-      $explorers = $population->getPopulation($owner, "explorers") + $character["explorers"];
+      $population = new Population($owner);
+      $explorers = $population->getExplorers() + $character["explorers"];
 
       if($soldiers > 0){
          $type = $database->getUnitType("soldier");

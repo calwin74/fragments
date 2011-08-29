@@ -127,6 +127,25 @@ displayUsers();
 <tr>
 <td>
 <br>
+
+<?php
+/**
+ * Delete Characters
+ */
+?>
+<h3>Delete All Characters</h3>
+<form action="adminprocess.php" method="POST">
+<input type="hidden" name="subdelcharacters" value="1">
+<input type="submit" value="Delete Characters">
+</form>
+</td>
+</tr>
+<tr>
+<td><hr></td>
+</tr>
+<tr>
+<td>
+
 <?php
 /**
  * Update User Level

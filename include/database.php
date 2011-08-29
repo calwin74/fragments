@@ -1066,8 +1066,8 @@ class MySQLDB
     * addLand - Add land
     * Returns true on success, false otherwise.
     */
-   function addLand($x, $y, $type, $yield, $toxic){
-      $q = "INSERT into ".TBL_LANDS." (x, y, type, yield, toxic) values (".$x.", ".$y.", ".$type.", ".$yield.", ".$toxic.")";
+   function addLand($x, $y, $type, $toxic){
+      $q = "INSERT into ".TBL_LANDS." (x, y, type, toxic) VALUES (".$x.", ".$y.", ".$type.", ".$toxic.")";
       return $this->query($q);
    }
 
@@ -1380,91 +1380,6 @@ class MySQLDB
    }
 
    /**
-    * updateCivilians - update civilians for a land
-    * Returns nothing
-    */
-   function updateCivilians($civilians, $x, $y, $newTime) {
-      global $session;
-
-      $q = "UPDATE ".TBL_LANDS." SET civilians = ".$civilians.", civilians_time = '$newTime' WHERE x = ".$x." AND y = ".$y;
-      $result = $this->query($q);
-      if (!$result){
-         $session->logger->LogError("Error in updateCivilians");
-      }
-   }
-
-   /**
-    * updateCivilians2 - update civilians for a land, no time is set.
-    * Returns nothing
-    */
-   function updateCivilians2($civilians, $x, $y) {
-      global $session;
-
-      $q = "UPDATE ".TBL_LANDS." SET civilians = ".$civilians." WHERE x = ".$x." AND y = ".$y;
-      $result = $this->query($q);
-      if (!$result){
-         $session->logger->LogError("Error in updateCivilians2");
-      }
-   }
-
-   /**
-    * updateExplorers - update explorers for a land
-    * Returns nothing
-    */
-   function updateExplorers($explorers, $x, $y) {
-      global $session;
-
-      $q = "UPDATE ".TBL_LANDS." SET explorers = ".$explorers." WHERE x = ".$x." AND y = ".$y;
-      $result = $this->query($q);
-      if (!$result){
-         $session->logger->LogError("Error in updateExplorers");
-      }
-   }   
-
-   /**
-    * getCiviliansUpdate - Get lands that are due for civilians update
-    * Returns array of lands to update.
-    */
-   function getCiviliansUpdate(){
-      global $session;
-
-      /* create time limit for civilians calculation */
-      $then = strtotime("-".GAME_TIME_UNIT." seconds");
-      $then = strftime("%Y-%m-%d %H:%M:%S", $then);
-      
-      $q = "SELECT * from ".TBL_LANDS." WHERE owner IS NOT NULL AND civilians_time < '$then' ORDER BY civilians_time ASC";
-      $result = $this->query($q);
-
-      /* Error occurred */
-      if (!$result){
-         $session->logger->LogError("Error in getCiviliansUpdate");
-         return NULL;
-      }
-
-      /* No populatin are due */
-      if(mysql_numrows($result) < 1){
-         if(DB_VERBOSE){
-            $session->logger->LogInfo("No result in getCiviliansUpdate");
-         }
-
-         return NULL;
-      }
-
-      $rows = mysql_numrows($result);
-
-      /* Return result array */
-      $dbarray = array();
-      
-      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
-         $dbarray[$i] = $row;
-      }
-
-      mysql_free_result($result);      
-
-      return $dbarray;      
-   }
-
-   /**
     * getTreasuryFromOwner - get gold for a character
     * Returns gold
     */
@@ -1560,10 +1475,6 @@ class MySQLDB
 
       $q = "INSERT INTO ".TBL_TREASURY." VALUES ('$character', ".$gold.", '$gold_time', ".$tax.")"; 
 
-      if(DB_VERBOSE){
-         $session->logger->LogInfo($q);
-      }
-
       $result = $this->query($q);
       if (!$result){
          $session->logger->LogError("Error in initTreasury");
@@ -1588,6 +1499,172 @@ class MySQLDB
          $session->logger->LogError("Error in updateTax");
       }
    }
-};
 
+   /**
+    * getPopulation - get a population from owner
+    * Returns population
+    */
+   function getPopulation($owner) {
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_POPULATION." WHERE owner = '$owner'";
+      $result = $this->query($q);
+      /* Error occurred */
+      if (!$result) {
+         $session->logger->LogError("Error in getPopulation");
+         return NULL;
+      }
+      if (mysql_numrows($result) != 1) {
+         $session->logger->LogError("getPopulation didn't return one population row");         
+         return 0;
+      }
+
+      $row = mysql_fetch_assoc($result);
+      mysql_free_result($result);
+
+      return $row;
+   }
+
+   /**
+    * updateCivilians - update civilians for a land
+    * Returns nothing
+    */
+   function updateCivilians($civilians, $owner, $newTime) {
+      global $session;
+
+      $q = "UPDATE ".TBL_POPULATION." SET civilians = ".$civilians.", civilians_time = '$newTime' WHERE owner = '$owner'";
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updateCivilians");
+      }
+   }
+
+   /**
+    * updateCivilians2 - update civilians for a land, no time is set.
+    * Returns nothing
+    */
+   function updateCivilians2($civilians, $owner) {
+      global $session;
+
+      $q = "UPDATE ".TBL_POPULATION." SET civilians = ".$civilians." WHERE owner = '$owner'";
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updateCivilians2");
+      }
+   }
+
+   /**
+    * updateExplorers - update explorers for a land
+    * Returns nothing
+    */
+   function updateExplorers($explorers, $owner) {
+      global $session;
+
+      $q = "UPDATE ".TBL_POPULATION." SET explorers = ".$explorers." WHERE owner = '$owner'";
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in updateExplorers");
+      }
+   }   
+
+   /**
+    * getCiviliansUpdate - Get populations that are due for civilians update
+    * Returns array of populations to update.
+    */
+   function getCiviliansUpdate(){
+      global $session;
+
+      /* create time limit for civilians calculation */
+      $then = strtotime("-".GAME_TIME_UNIT." seconds");
+      $then = strftime("%Y-%m-%d %H:%M:%S", $then);
+      
+      $q = "SELECT * from ".TBL_POPULATION." WHERE civilians_time < '$then' ORDER BY civilians_time ASC";
+      $result = $this->query($q);
+
+      /* Error occurred */
+      if (!$result){
+         $session->logger->LogError("Error in getCiviliansUpdate");
+         return NULL;
+      }
+
+      /* No population are due */
+      if(mysql_numrows($result) < 1){
+         if(DB_VERBOSE){
+            $session->logger->LogInfo("No result in getCiviliansUpdate");
+         }
+
+         return NULL;
+      }
+
+      $rows = mysql_numrows($result);
+
+      /* Return result array */
+      $dbarray = array();
+      
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dbarray[$i] = $row;
+      }
+
+      mysql_free_result($result);      
+
+      return $dbarray;      
+   }
+
+   /**
+    * initPopulation - insert a population row for a character
+    * Returns nothing
+    */
+   function initPopulation($character, $civilians, $civilians_time, $explorers) {
+      global $session;
+
+      $q = "INSERT INTO ".TBL_POPULATION." (owner, civilians, civilians_time, explorers) VALUES ('$character', ".$civilians.", '$civilians_time', ".$explorers.")"; 
+
+      $result = $this->query($q);
+      if (!$result){
+         $session->logger->LogError("Error in initPopulation");
+      }
+   }
+
+
+   /**
+    * Delete all character data from database.
+    */
+   function deleteCharacters(){
+      $q = "DELETE FROM ".TBL_ACTIVE_USERS;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_BANNED_USERS;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_USERS;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_ACTION_QUEUE;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_BUILDINGS;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_BUILD_QUEUE;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_CHARACTERS;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_GARRISON;
+      $result = $this->query($q);
+
+      $q = "UPDATE ".TBL_LANDS." SET owner = NULL";
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_POPULATION;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_TREASURY;
+      $result = $this->query($q);
+
+      $q = "DELETE FROM ".TBL_UNIT_QUEUE;
+      $result = $this->query($q);
+   }
+};
 ?>
