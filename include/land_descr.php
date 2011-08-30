@@ -126,19 +126,6 @@ class Land
       return $descr;
    }
 
-   public function getDescrXML() {
-      $classes = $this->getClasses($this->getCharacter());
-      $name = $this->getName();
-      $toxic = "";
-      if (($this->getAvailable() == AVAILABLE) || ($this->getOwner() == I_OWN)){
-         $toxic = $this->getToxic();
-      }
-      
-      $xml_descr = "<land key=\"$name\" class=\"$classes\" toxic=\"$toxic\" />";
-
-      return $xml_descr;
-   }
-
    /* Private methods */
 
    /**

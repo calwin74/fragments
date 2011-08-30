@@ -250,7 +250,11 @@ class Process
       if($database->addNewCharacter($charName, $username, $tribe, $x, $y)){
         // Init land
         $database->setLandOwner($x, $y, $charName);
-        $database->setLandToxic($x, $y, INIT_TOXIC);
+        $database->setLandToxic($x, $y, INIT_USER_TOXIC);
+
+        /* create town hall */
+        $constructing = 0;
+        $database->createBuilding("town hall", $x, $y, $constructing);
         
         $now = strtotime("now");
         $now = strftime("%Y-%m-%d %H:%M:%S", $now);

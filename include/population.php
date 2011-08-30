@@ -53,16 +53,17 @@ class Population
             $intervals = floor(($now - $last)/GAME_TIME_UNIT);
 
             $civilians = $population["civilians"];
-            $explorers = $population["explorers"];
+            
             $owner = $population["owner"];
             $treasury = new Treasury($population["owner"]);
+            $character = $database->getCharacterByName($owner);
+            $garrison = new Garrison($owner);
 
-            if($civilians < CIVILIANS_MAX){
-               $newCivilians = $this->calculateCivilians($civilians, $treasury->getTax(), $intervals, $owner);
-            }
-            else{
-               $newCivilians = $civilians;
-            }
+            $explorers = $population["explorers"] + $character["explorers"];
+            $soldiers = $garrison->getSoldiers() + $character["soldiers"];
+            $workers = 0;
+            
+            $newCivilians = $this->calculateCivilians($civilians, $explorers, $soldiers, $workers, $treasury->getTax(), $intervals, $owner);
 
             $newTime = strftime("%Y-%m-%d %H:%M:%S", $now);
 
@@ -76,22 +77,61 @@ class Population
       }
    }
 
-   private function calculateCivilians($civilians, $tax, $intervals, $owner){
+   private function calculateCivilians($civilians, $explorers, $soldiers, $workers, $tax, $intervals, $owner){
       global $session;
       $database = $session->database;      
 
-      $newValue = 0;
+      $delta = 0;
+      $toxicSum = 0;
 
       $lands = $database->getLandFromOwner($owner);
 
       if ($lands){
          foreach($lands as $land){
-            $toxic = $land["toxic"];
-            $newValue += (1 - $tax/100) * ((CIVILIANS_MAX - $toxic)/CIVILIANS_MAX) * NATIVITY;
+            $toxicSum += $land["toxic"];
          }
-      }
+         $toxicAvg = $toxicSum/count($lands);
 
-      $newCivilians = $civilians + $newValue * $intervals;
+         $delta = (1 - $tax/100) * ((CIVILIANS_MAX - $toxicAvg)/CIVILIANS_MAX) * NATIVITY * $intervals;
+
+         $maxValue = (CIVILIANS_MAX * count($lands) - $toxicSum) - $explorers - $soldiers - $workers;
+     
+         if($delta + $civilians <= $maxValue){
+            $newCivilians = $delta + $civilians;            
+         }
+         else{
+            $newCivilians = $civilians;
+         }
+
+         $session->logger->LogInfo("--- population growth ---");
+
+         $s = "toxicSum: ".$toxicSum;
+         $session->logger->LogInfo($s);
+
+         $s = "toxicAvg: ".$toxicAvg;
+         $session->logger->LogInfo($s);
+
+         $s = "maxValue: ".$maxValue;
+         $session->logger->LogInfo($s);
+
+         $s = "delta: ".$delta;
+         $session->logger->LogInfo($s);
+
+         $s = "explorers: ".$explorers;
+         $session->logger->LogInfo($s);
+
+         $s = "soldiers: ".$soldiers;
+         $session->logger->LogInfo($s);
+
+         $s = "intervals: ".$intervals;
+         $session->logger->LogInfo($s);            
+
+         $s = "newCivilians: ".$newCivilians;
+         $session->logger->LogInfo($s);
+      }
+      else{
+         $newCivilians = $civilians;
+      }
 
       return $newCivilians;
    }

@@ -73,7 +73,6 @@ CREATE TABLE `characters` (
   `tribe` varchar(30) default NULL,
   `x` int(10) NOT NULL default '0',
   `y` int(10) NOT NULL default '0',
-  `civilians` int(10) NOT NULL default '0',
   `soldiers` int(10) NOT NULL default '0',
   `explorers` int(10) NOT NULL default '0',
   PRIMARY KEY  (`name`)

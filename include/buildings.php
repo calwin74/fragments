@@ -79,25 +79,27 @@ class Buildings
       $current_buildings = $this->getBuildings($x, $y);
       $building_types = $database->getBuildingTypes();
 
-      foreach ($building_types as $building){
-         $type = $building["type"];
-         $exist = 0;
+      if(count($current_buildings) < MAX_BUILDINGS){
+         foreach ($building_types as $building){
+            $type = $building["type"];
+            $exist = 0;
    
-         if ($current_buildings){
-            foreach($current_buildings as $current){
-               if(!strcmp($current["type"], $type)){
-                  $exist = 1;
+            if ($current_buildings){
+               foreach($current_buildings as $current){
+                  if(!strcmp($current["type"], $type)){
+                     $exist = 1;
+                  }
                }
             }
-         }
 
-         /* existing buildings can't be built again */         
-         if(!$exist){
-            $new[] = $building;
+            /* existing buildings can't be built again */         
+            if(!$exist){
+               $new[] = $building;
+            }
          }
       }
 
-      return $new;      
+      return $new;
    }
 
    public function getDiff($time){

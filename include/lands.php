@@ -164,7 +164,7 @@ class Lands
      $key = createKey($x, $y);
      $land = $this->getLand($key);
 
-     if ($land){
+     if ($land && $land->getType() != SEA){
        $land->setAvailable(AVAILABLE);
      }
    }

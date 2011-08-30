@@ -115,7 +115,8 @@ class ActionProcess
             $database->updateGold($gold - $cost, $name, NULL);
 
             /* create in database */
-            $database->createBuilding($type, getXFromKey($key), getYFromKey($key));
+            $constructing = 1;
+            $database->createBuilding($type, getXFromKey($key), getYFromKey($key), $constructing);
 
             /* add to build queue */
             $database->addToBuildQueue(getXFromKey($key), getYFromKey($key), $name, getNow(BUILD_TIME), $type, B_CREATE);

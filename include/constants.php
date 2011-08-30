@@ -212,7 +212,12 @@ define("B_CREATE", 1);
 define("B_REMOVE", 2);
 
 /**
+ * Buildings
+ */
+define("MAX_BUILDINGS", 1);
+
+/**
  * Logging
  */
-define("DB_VERBOSE", 1);
+define("DB_VERBOSE", 0);
 ?>

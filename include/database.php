@@ -676,8 +676,7 @@ class MySQLDB
     * createBuilding - create a building on a coordinate
     * Returns nothing
     */
-   function createBuilding($type, $x, $y){
-     $constructing = 1;
+   function createBuilding($type, $x, $y, $constructing){
      $removing = 0;
 
      $q = "INSERT INTO ".TBL_BUILDINGS." VALUES ('$type', '$x', '$y', '$constructing', '$removing')";
@@ -737,7 +736,7 @@ class MySQLDB
    }
 
    /**
-    * getBuildingsDone - get buildings that are done
+    * getBuildings - get buildings
     * Returns the building
     */
    function getBuildings($x, $y){
@@ -1167,20 +1166,6 @@ class MySQLDB
       mysql_free_result($result);
 
       return $status;
-   }
-
-   /**
-    * updateCharaterCivilians - update a character civilians field based on name.
-    */
-   function updateCharacterCivilians($civilians, $name) {
-      global $session;
-
-      $q = "UPDATE ".TBL_CHARACTERS." SET civilians = ".$civilians." WHERE name = '$name'";
-      if(DB_VERBOSE){
-         $session->logger->LogInfo($q);
-      }
-
-      return mysql_query($q, $this->connection);
    }
 
    /**

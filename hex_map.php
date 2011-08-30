@@ -80,7 +80,7 @@ $character_land = $lands->getLand(createKey($character->getX(), $character->getY
 $html = new Html;
 $html->html_header(FRAGMENTS_TITLE);
 
-$civilians_max = $character->getCivilians() + $population->getCivilians();
+$civilians_max = $population->getCivilians();
 $soldiers_max = $character->getSoldiers() + $garrison->getSoldiers();
 $explorers_max = $character->getExplorers() + $population->getExplorers();
 
@@ -131,7 +131,7 @@ $html->html_end_header();
    <div id="overview">
       Overview data
       <br>Gold: <?php echo $treasury->getGold(); ?>
-      | Total Civilians: <?php echo $population->getCivilians() + $character->getCivilians(); ?>
+      | Total Civilians: <?php echo $population->getCivilians();?>
       | Tax: <?php echo $treasury->getTax(); ?>%
       | Total Income: <?php echo $treasury->getIncome(); ?>
       | Total Cost: <?php echo $treasury->getCost(); ?>
@@ -307,7 +307,7 @@ $html->html_end_header();
       <div id="country">
          <b>Country</b>
          <?php
-         $civilians = $population->getCivilians() + $character->getCivilians();
+         $civilians = $population->getCivilians();
          $explorers = $population->getExplorers() + $character->getExplorers();
          ?>
          <br>Total Population: <?php echo $civilians; ?>
