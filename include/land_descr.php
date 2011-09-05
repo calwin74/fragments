@@ -38,6 +38,8 @@ class Land
      $this->marked = 0;
      $this->colonize = 0;
      $this->character = 0;
+     $this->bunker = 0;
+     $this->building = "";
    }
 
    /* misc get and set functions */
@@ -117,12 +119,31 @@ class Land
       return $this->explore;
    }
 
+   public function setBunker($bunker){
+      $this->bunker = $bunker;
+   }
+
+   public function getBunker(){
+      return $this->bunker;
+   }
+
+   public function setBuilding($type){
+      $this->building .= $type;
+   }
+
+   public function getBuilding(){
+      return $this->building;
+   }
+   
    public function getDescr($isAction) {
       $descr = array();
 
       $classes = $this->getClasses($this->getCharacter(), $isAction);
       $descr["class"] = $classes;
-
+      
+      $image = $this->getImage();
+      $descr["image"] = $image;
+ 
       return $descr;
    }
 
@@ -145,95 +166,131 @@ class Land
       return $class;
     }
 
+   /**
+    * Get image of building(s)
+    */
+   private function getImage(){
+      $image = NULL;
+      
+      $building = $this->getBuilding();
+   
+      if ($building){
+         if ($this->getBunker()){
+            $image = "img/".$building."-bunker.png";
+         }
+         else {
+            $image = "img/".$building.".png";
+         }
+      }
+      
+      return $image;
+   }
+
    private function getTerrainClass(){
       $class = "";
 
       if ($this->marked){
          $class .= " green";
       }
-      else if ($this->getOwner() == NOT_OWNED){
-         /* get terrain type */
-         $type = $this->getType();
 
-         if ($type == DIRT1){
-            $class .= " dirt1";
-         }
-         else if ($type == DIRT2){
-            $class .= " dirt2";
-         }
-         else if ($type == DIRT3){
-            $class .= " dirt3";
-         }
-         else if ($type == DIRT4){
-            $class .= " dirt4";
-         }
-         else if ($type == DIRT5){
-            $class .= " dirt5";
-         }
-         else if ($type == DIRTVEG1){
-            $class .= " dirtveg1";
-         }
-         else if ($type == DIRTVEG2){
-            $class .= " dirtveg2";
-         }
-         else if ($type == DIRTVEG3){
-            $class .= " dirtveg3";
-         }
-         else if ($type == DIRTVEG4){
-            $class .= " dirtveg4";
-         }
-         else if ($type == DIRTVEG5){
-            $class .= " dirtveg5";
-         }
-         else if ($type == URBAN1){
-            $class .= " urban1";
-         }
-         else if ($type == URBAN2){
-            $class .= " urban2";
-         }
-         else if ($type == URBAN3){
-            $class .= " urban3";
-         }
-         else if ($type == URBAN4){
-            $class .= " urban4";
-         }
-         else if ($type == URBAN5){
-            $class .= " urban5";
-         }
-         else if ($type == VEG1){
-            $class .= " veg1";
-         }
-         else if ($type == VEG2){
-            $class .= " veg2";
-         }
-         else if ($type == VEG3){
-            $class .= " veg3";
-         }
-         else if ($type == VEG4){
-            $class .= " veg4";
-         }
-         else if ($type == VEG5){
-            $class .= " veg5";
-         }
-         else{ /* default */
-            $class .= " gray";
-         }
+      /* get terrain type */
+      $type = $this->getType();
+
+      if ($type == DIRT1){
+         $class .= " dirt1";
       }
-      else if ($this->getOwner() == I_OWN){
-         $class .= " cyan";
+      else if ($type == DIRT2){
+         $class .= " dirt2";
       }
+      else if ($type == DIRT3){
+         $class .= " dirt3";
+      }
+      else if ($type == DIRT4){
+         $class .= " dirt4";
+      }
+      else if ($type == DIRT5){
+         $class .= " dirt5";
+      }
+      else if ($type == DIRTVEG1){
+         $class .= " dirtveg1";
+      }
+      else if ($type == DIRTVEG2){
+         $class .= " dirtveg2";
+      }
+      else if ($type == DIRTVEG3){
+         $class .= " dirtveg3";
+      }
+      else if ($type == DIRTVEG4){
+         $class .= " dirtveg4";
+      }
+      else if ($type == DIRTVEG5){
+         $class .= " dirtveg5";
+      }
+      else if ($type == URBAN1){
+         $class .= " urban1";
+      }
+      else if ($type == URBAN2){
+         $class .= " urban2";
+      }
+      else if ($type == URBAN3){
+         $class .= " urban3";
+      }
+      else if ($type == URBAN4){
+         $class .= " urban4";
+      }
+      else if ($type == URBAN5){
+         $class .= " urban5";
+      }
+      else if ($type == VEG1){
+         $class .= " veg1";
+      }
+      else if ($type == VEG2){
+         $class .= " veg2";
+      }
+      else if ($type == VEG3){
+         $class .= " veg3";
+      }
+      else if ($type == VEG4){
+         $class .= " veg4";
+      }
+      else if ($type == VEG5){
+         $class .= " veg5";
+      }
+      else{ /* default */
+         $class .= " gray";
+      }
+
+      /*
+      if ($this->getOwner() == I_OWN){
+         $class .= " mark";
+      }
+      */
+
+      /*
       else if ($this->getOwner() == YOU_OWN){
          $class .= " blue";
       }
+      */
 
       return $class;
    }
 
   private function getActionClass($isAction){
       $class = "";
+      $marked = 0;
 
       if ( !$isAction && ($this->getAvailable() == AVAILABLE) ){
-         $class .= " move";
+         if ($this->getOwner() == I_OWN){
+            $class .= " move_mark";
+            $marked = 1;
+         }
+         else{
+            $class .= " move";
+         }
+      }
+
+      if ( !$marked && ($this->getOwner() == I_OWN) ){
+         $class .= " mark";
       }
 
       if ( !$isAction && $this->getExplore() && $this->getCharacter() ){

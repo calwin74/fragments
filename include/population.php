@@ -95,12 +95,18 @@ class Population
          $delta = (1 - $tax/100) * ((CIVILIANS_MAX - $toxicAvg)/CIVILIANS_MAX) * NATIVITY * $intervals;
 
          $maxValue = (CIVILIANS_MAX * count($lands) - $toxicSum) - $explorers - $soldiers - $workers;
-     
-         if($delta + $civilians <= $maxValue){
+
+         if($civilians >= $maxValue){
+            // more civilians then max, no growth
+            $newCivilians = $civilians;
+         }     
+         else if($delta + $civilians <= $maxValue){
+            // normal growth
             $newCivilians = $delta + $civilians;            
          }
          else{
-            $newCivilians = $civilians;
+            // max value...
+            $newCivilians = $maxValue;
          }
 
          $session->logger->LogInfo("--- population growth ---");

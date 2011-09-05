@@ -64,6 +64,22 @@ class Lands
        $this->fixAvailableLands($character_x, $character_y, $explorers, $x_size, $y_size);
      }
 
+     /* mark buildings */
+     $buildings = $database->allBuildings($x, $y, $x_size, $y_size);
+
+     foreach ($buildings as $building){
+       $key = createKey($building["x"], $building["y"]);  
+       $land = $this->getLand($key);
+       if (!$building["constructing"]){
+         if (strcmp("bunker", $building["type"])) {
+            $land->setBuilding($building["type"]);
+         }
+         else {
+            $land->setBunker(1);
+         }
+       }
+     }
+
      /* mark that move is in progress */
      $this->isAction = $isAction;
    }
@@ -115,16 +131,41 @@ class Lands
             $land = $this->getLand($key);
             $land_descr = $land->getDescr($this->isAction());
             $classes = $land_descr["class"];
+            $image = $land_descr["image"];
 
             /* ugly code to mark characters, should use css classes instead */
             if (strstr($classes, "character")){
                $unit = "$";
             }
             else{
-               $unit = "";
+               $unit = NULL;
             }
-
-            echo "<span class=\"$classes $position\" id=$key><p>$unit</p></span>";
+            
+            // start tile
+            $s = "<span ";
+            // classes and position
+            if ($classes && strlen($classes)) {
+               if ($position && strlen($position)) {
+                  $s .= "class=\"$classes $position\" ";
+               }
+               else {
+                  $s .= "class=\"$classes\" ";
+               }
+            }
+            // id
+            $s .= "id=$key> ";
+            // unit
+            if ($unit) {
+               $s .= "<p>$unit</p> ";
+            }
+            // image
+            if ($image){
+               $s .= "<img src=\"$image\"></img> ";
+            }            
+            // close tile
+            $s .= "</span>";
+            
+            echo $s;
          }
   
          if ($is_odd){

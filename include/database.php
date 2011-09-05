@@ -760,6 +760,33 @@ class MySQLDB
       return $dbarray;
    }
 
+  /**
+   * allBuildings - Get buildings based on coordinates and size.
+   * Returns array of units
+   */
+   function allBuildings($x, $y, $x_size, $y_size){
+      global $session;
+
+      $q = "SELECT * FROM ".TBL_BUILDINGS." WHERE (y BETWEEN ".($y - $y_size)." AND ".($y + $y_size).") AND (x BETWEEN ".($x - $x_size)." AND ".($x + $x_size).") ORDER BY y ASC, x ASC";
+      $result = $this->query($q);
+      /* Error occurred */
+      if(!$result){
+         $session->logger->LogError("Error from allBuildings");
+         return NULL;
+      }
+
+      $rows = mysql_numrows($result);
+
+      /* Return result array */
+      $dbarray = array();
+      for ($i=0; $row = mysql_fetch_assoc($result); $i++){
+         $dbarray[$i] = $row;
+      }
+
+      mysql_free_result($result);
+
+      return $dbarray;
+   }
 
    /* ------ building_types table ------ */
         

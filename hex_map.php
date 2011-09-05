@@ -121,9 +121,17 @@ $html->html_end_header();
    </ul>
 </div>
 
+<!--markup for context menu3-->
+<div class="contextMenu" id="myMenu3">
+   <ul>
+      <li id="move"> Move</li>
+      <li id="mark"> Mark</li>
+   </ul>
+</div>
+
 <div id="wrapper">
    <div id="header">
-      <b>Updated 2011 08 11</b> See login page for more information.<br>
+      <b>Updated 2011 09 06</b> See login page for more information.<br>
 	   <?php menu1(); ?>
       <!-- clock -->
       Time: <clock class="jclock"></clock>

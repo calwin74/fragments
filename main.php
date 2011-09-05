@@ -38,22 +38,16 @@ if($session->logged_in){
 else{
 
 ?>
-<b>Updated 2011 08 13</b>
+<b>Updated 2011 09 06</b>
 <br>
 <br>  
 <b>New features:</b>
 <br>
-Fixed bugs described below:<br>
-- gold and civilian didn't grow.<br>
-- attack with no soldiers caused fatal error.<br>
-- explorers doesn't cost upkeep, they should.<br>
-- map editor doesn't work.<br>
-- civilian growth should start from zero, not two.<br>
-- It should cost one explorer to take a new land, not two.
+- many new features
 <br>
 <b>Extra:</b>
 <br>
-See Andreas mockup on http://danielmadsen.se/fragskiss.
+- See Andreas interface on http://danielmadsen.se/fraginterface.
 <br>
 
 <div id="content">
