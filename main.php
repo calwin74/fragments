@@ -32,7 +32,7 @@ if($session->logged_in){
       header('Location: userinit.php');
    }
    else{
-      header("Location: hex_map.php");
+      header("Location: home.php");
    }
 }
 else{

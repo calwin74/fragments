@@ -105,7 +105,6 @@ class Battle
        if($this->my_defender){
          $database->updateCharacterSoldiers(0, $this->my_defender["name"]);
          $this->my_defender_loss = $this->my_n_defender;
-         $database->updateCharacterCivilians(0, $this->my_defender["name"]);
          $database->updateCharacterExplorers(0, $this->my_defender["name"]);
        }
        if($this->my_land["owner"]){
@@ -162,7 +161,6 @@ class Battle
        $database->updateCharacterSoldiers(0, $this->my_attacker["name"]);
        $this->my_attacker_loss = $this->my_n_attacker;
 
-       $database->updateCharacterCivilians(0, $this->my_attacker["name"]);
        $database->updateCharacterExplorers(0, $this->my_attacker["name"]);
 
        /* defender losses */

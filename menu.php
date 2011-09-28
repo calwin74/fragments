@@ -28,7 +28,7 @@ function menu1(){
       echo "<a href=\"userinfo.php?user=$session->username\">My Account</a> &nbsp;"
           ."<a href=\"process.php\">Logout</a> &nbsp;"
           ."<a href=\"hex_editor.php\">MapEditor</a> &nbsp;"
-          ."<a href=\"hex_map.php\">GameMap</a> &nbsp;";
+          ."<a href=\"home.php\">GameMap</a> &nbsp;";
    }
 }
 ?>

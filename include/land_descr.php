@@ -190,7 +190,8 @@ class Land
       $class = "";
 
       if ($this->marked){
-         $class .= " green";
+         $class .= " marked";
+         return $class;
       }
 
       /* get terrain type */

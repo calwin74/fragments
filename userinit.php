@@ -20,7 +20,7 @@ $database = $session->database; // Database connection
  * User has already initialised, so go on to the game or admin center.
  */
 if($session->isInitUser()){
-   header("Location: hex_map.php");
+   header("Location: home.php");
 }
 
 $html = new Html;
