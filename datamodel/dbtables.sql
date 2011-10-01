@@ -134,7 +134,7 @@ CREATE TABLE `building_types` (
 
 INSERT INTO `building_types` (`type`,`cost`) VALUES 
  ("barrack",50),
- ("town hall",0),
+ ("cityhall",0),
  ("bunker",25);
  ("factory", 50);
 
@@ -196,7 +196,7 @@ CREATE TABLE `unit_types` (
 
 INSERT INTO `unit_types` (`type`,`cost`,`upkeep`,`building`) VALUES 
  ("soldier",10,1,"barrack"),
- ("explorer",10,1,"town hall");
+ ("explorer",10,1,"cityhall");
 
 --
 -- Definition of table `garrison`

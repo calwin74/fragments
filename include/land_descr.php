@@ -17,7 +17,8 @@ class Land
    private $available;          //available to enter
    private $toxic;              //toxic level in land
    private $marked;             //marked
-   private $explore;            //available to colonize   
+   private $explore;            //available to colonize
+   private $my_army;            //my army is present in land
    /* Class constructor */
    public function Land(){
      /* nothing yet */
@@ -40,6 +41,7 @@ class Land
      $this->character = 0;
      $this->bunker = 0;
      $this->building = "";
+     $this->my_army = 0;
    }
 
    /* misc get and set functions */
@@ -138,7 +140,7 @@ class Land
    public function getDescr($isAction) {
       $descr = array();
 
-      $classes = $this->getClasses($this->getCharacter(), $isAction);
+      $classes = $this->getClasses($isAction);
       $descr["class"] = $classes;
       
       $image = $this->getImage();
@@ -147,21 +149,25 @@ class Land
       return $descr;
    }
 
+   public function getMyArmy(){
+      return $this->my_army;
+   }
+
+   public function setMyArmy($enable){
+      $this->my_army = $enable;
+   }
+
    /* Private methods */
 
    /**
 ´   * Get land class types.
     */
-   private function getClasses($character, $isAction){
+   private function getClasses($isAction){
       $class = "hex";
 
       $class .= $this->getTerrainClass();
 
       $class .= $this->getActionClass($isAction);
-
-      if ($character){
-         $class .= " character";
-      }
 
       return $class;
     }
@@ -171,16 +177,35 @@ class Land
     */
    private function getImage(){
       $image = NULL;
-      
+
       $building = $this->getBuilding();
-   
+         
       if ($building){
+         $image = "img/".$building;                       
+
          if ($this->getBunker()){
-            $image = "img/".$building."-bunker.png";
+            $image .= "-bunker";
          }
-         else {
-            $image = "img/".$building.".png";
+         if ($this->getCharacter()){
+            $image .= "-army";
+            if ($this->getOwner() == YOU_OWN){
+               $image .= "-enemy";
+            }
          }
+      }
+      else {
+         if ($this->getCharacter()){
+            if ($this->getMyArmy()) {
+               $image .= "img/army";
+            }
+            else{
+               $image .= "img/army-enemy";
+            }
+         }
+      }
+
+      if ($image){
+         $image .= ".png";
       }
       
       return $image;

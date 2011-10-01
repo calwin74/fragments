@@ -56,6 +56,7 @@ class Lands
          $character_x = $unit["x"];
          $character_y = $unit["y"];
          $explorers = $unit["explorers"];
+         $land->setMyArmy(1);
        }
      }
 
@@ -133,14 +134,6 @@ class Lands
             $classes = $land_descr["class"];
             $image = $land_descr["image"];
 
-            /* ugly code to mark characters, should use css classes instead */
-            if (strstr($classes, "character")){
-               $unit = "$";
-            }
-            else{
-               $unit = NULL;
-            }
-            
             // start tile
             $s = "<span ";
             // classes and position
@@ -154,10 +147,6 @@ class Lands
             }
             // id
             $s .= "id=$key> ";
-            // unit
-            if ($unit) {
-               $s .= "<p>$unit</p> ";
-            }
             // image
             if ($image){
                $s .= "<img src=\"$image\"></img> ";
