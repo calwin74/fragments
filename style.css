@@ -242,7 +242,7 @@ z-index:3;
 	position:absolute;
 	top:475px;
 	left:131px;
-	width:184px;
+	width:255px;
 	height:125px;
 	margin:0 auto;
 	border:1px solid #000;
@@ -257,8 +257,8 @@ z-index:3;
 #selected {
 	position:absolute;
 	top:475px;
-	left:321px;
-	width:333px;
+	left:392px;
+	width:296px;
 	height:125px;
 	margin:0 auto;
 	border:1px solid #000;
@@ -273,14 +273,15 @@ z-index:3;
 #action {
 	position:absolute;
 	top:475px;
-	left:660px;
-	width:333px;
+	left:694px;
+	width:296px;
 	height:125px;
 	margin:0 auto;
 	border:1px solid #000;
 	padding-left:1px;
 	padding-top:1px;
-	border-top-left-radius: 11px;		 border-top-right-radius: 11px;
+	border-top-left-radius: 11px;
+	border-top-right-radius: 11px;
 	background-image: url(img/actionbg.png);
 	z-index:3;
 }
