@@ -254,7 +254,7 @@ class Process
 
         /* create town hall */
         $constructing = 0;
-        $database->createBuilding("town hall", $x, $y, $constructing);
+        $database->createBuilding("cityhall", $x, $y, $constructing);
         
         $now = strtotime("now");
         $now = strftime("%Y-%m-%d %H:%M:%S", $now);

@@ -105,7 +105,7 @@ class Lands
 
          for ($x_pos = $x - $x_size; $x_pos <= $x + $x_size; $x_pos++){
             if ($first_row){
-//               $position = "hej";
+               //$position = "even";
             }
             else{
                if ($is_odd){
