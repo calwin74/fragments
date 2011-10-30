@@ -18,13 +18,17 @@ global $session;
 $database = $session->database;  //The database connection
 
 ?>
+<?php
+/* This doesn't work on danielmadsen.se/fragments header problem ...
 <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 if ( ($.browser.msie) && ($.browser.version == '7.0') ){
-  var txt = "IE 7 not supported"
-  alert(txt)
+  var txt = "IE 7 not supported";
+  alert(txt);
 }
 </script>
+*/
+?>
 
 <?php
 
@@ -55,9 +59,9 @@ else{
 <br>  
 <b>New features:</b>
 <br>
-- browser detection
+- browser detection (disabled because this gives header problem on danielmadsen.se)
 <br>
-- presented map is 2 hexagon wider (x coordinate)
+- presented map is 2 hexagon wider (x coordinate), need to create new user.
 <br>
 - rebuilt marking of tiles
 <br>
