@@ -41,7 +41,7 @@ class Land
      $this->character = 0;
      $this->bunker = 0;
      $this->building = "";
-     $this->my_army = 0;
+     $this->my_army = 0; /* this is my character */
    }
 
    /* misc get and set functions */
@@ -105,8 +105,8 @@ class Land
       return $this->toxic;
    }
 
-   public function markLand(){
-      $this->marked = 1;
+   public function markLand($set){
+      $this->marked = $set;
    }
 
    public function isMarkedLand(){
@@ -149,7 +149,7 @@ class Land
       return $descr;
    }
 
-   public function getMyArmy(){
+   public function isMyArmy(){
       return $this->my_army;
    }
 
@@ -195,7 +195,7 @@ class Land
       }
       else {
          if ($this->getCharacter()){
-            if ($this->getMyArmy()) {
+            if ($this->isMyArmy()) {
                $image .= "img/army";
             }
             else{
@@ -305,6 +305,16 @@ class Land
       $class = "";
       $marked = 0;
 
+      if ( !$isAction && ($this->getAvailable() == AVAILABLE) ){ /* available for my army */
+         $class .= " move";
+      }
+      else if (!$this->isMarkedLand()){
+         $class .= " mark";
+      }
+      else{
+         $class .= " unmark";
+      }
+/*
       if ( !$isAction && ($this->getAvailable() == AVAILABLE) ){
          if ($this->getOwner() == I_OWN){
             $class .= " move_mark";
@@ -314,11 +324,13 @@ class Land
             $class .= " move";
          }
       }
+*/
 
+/*
       if ( !$marked && ($this->getOwner() == I_OWN) ){
          $class .= " mark";
       }
-
+*/
       if ( !$isAction && $this->getExplore() && $this->getCharacter() ){
          $class .= " explore";
       }

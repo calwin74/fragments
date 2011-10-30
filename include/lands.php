@@ -15,7 +15,7 @@ class Lands
    private $isAction;
    
    /* Class constructor */
-   public function Lands($x, $y, $characterName, $isAction, $x_size, $y_size){
+   public function Lands($x, $y, $characterName, $isAction, $x_size, $y_size, $marked_key){
      global $session;
      $database = $session->database;
 
@@ -61,8 +61,12 @@ class Lands
      }
 
      if ( ($character_x != NULL) && ($character_y != NULL) ){
-       /* handle available lands */
-       $this->fixAvailableLands($character_x, $character_y, $explorers, $x_size, $y_size);
+       /* handle available lands if character land is marked */
+       $unit_land = $this->getLand(createKey($character_x, $character_y));       
+
+       if ( $marked_key && !strcmp($marked_key, $unit_land->getName()) ){
+         $this->fixAvailableLands($character_x, $character_y, $explorers, $x_size, $y_size);
+       }
      }
 
      /* mark buildings */
@@ -200,8 +204,6 @@ class Lands
    }
 
    private function fixAvailableLands($unit_x, $unit_y, $explorers, $x_size, $y_size){
-     global $session;
-
      /* check if character is within land borders, if so mark land neighbourhood as available */   
      $unit_land = $this->getLand(createKey($unit_x, $unit_y));
 
@@ -242,8 +244,6 @@ class Lands
 
      /* mark character neighbourhood as available */     
      if (isset($unit_x) && isset($unit_y)){
-       global $session;
-
        $nhood = '';
        $this->getNeighbourhood($unit_x, $unit_y, $nhood);
 
@@ -347,7 +347,13 @@ class Lands
 
    public function markLand($key){
      $land = $this->getLand($key);
-     $land->markLand();
+
+     if ($land->isMarkedLand()){
+       $land->markLand(0);
+     }
+     else{
+       $land->markLand(1);
+     }
    }
 
    public function isAction(){

@@ -17,6 +17,17 @@ include_once("include/constants.php");
 global $session;
 $database = $session->database;  //The database connection
 
+?>
+<script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+if ( ($.browser.msie) && ($.browser.version == '7.0') ){
+  var txt = "IE 7 not supported"
+  alert(txt)
+}
+</script>
+
+<?php
+
 /**
  * User has already logged in, so display relavent links, including
  * a link to the admin center if the user is an administrator.
@@ -38,16 +49,17 @@ if($session->logged_in){
 else{
 
 ?>
-<b>Updated 2011 09 06</b>
+
+<b>Updated 2011 10 18</b>
 <br>
 <br>  
 <b>New features:</b>
 <br>
-- many new features
+- browser detection
 <br>
-<b>Extra:</b>
+- presented map is 2 hexagon wider (x coordinate)
 <br>
-- See Andreas interface on http://danielmadsen.se/fraginterface.
+- rebuilt marking of tiles
 <br>
 
 <div id="content">

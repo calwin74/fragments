@@ -57,22 +57,39 @@ $garrison = new Garrison($character->getName());
 $x = 0;
 $y = 0;
 
+/* get marked land */
+if(isset($_GET['mark_key'])) {
+  $mark_key = $_GET['mark_key'];
+}
+else {
+  $mark_key = null;
+}
+
 /* get lands */
-$lands = new Lands($x, $y, $character->getName(), $action->isAction(), X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
+$lands = new Lands($x, $y, $character->getName(), $action->isAction(), X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE,
+                   $mark_key);
+
+/* action or build link used in timers below*/
+$lnk = "home.php";
+if ($mark_key) {
+  $lnk = "home.php?mark_key=".$mark_key;
+}
 
 /* get marked land */
-if (isset($_GET['mark_key'])) {
+if ($mark_key) {
   $mark_key = $_GET['mark_key'];
   $lands->markLand($mark_key);
   $marked_land = $lands->getLand($mark_key);
   $marked_toxic = $marked_land->getToxic();
-  /* buildings */
-  $current_buildings = $buildings->getBuildingsDone($marked_land->getX(), $marked_land->getY());
-  $new_buildings = $buildings->getNewBuildings($marked_land->getX(), $marked_land->getY());
-  $buildings->readBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
-  /* units */
-  $new_units = $units->getAvailableUnits($current_buildings);
-  $units->readUnitBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
+  if ($marked_land->getOwner() == I_OWN){
+    /* buildings */
+    $current_buildings = $buildings->getBuildingsDone($marked_land->getX(), $marked_land->getY());
+    $new_buildings = $buildings->getNewBuildings($marked_land->getX(), $marked_land->getY());
+    $buildings->readBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
+    /* units */
+    $new_units = $units->getAvailableUnits($current_buildings);
+    $units->readUnitBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
+  }
 }
 
 /* get land character stays in */
@@ -156,7 +173,8 @@ $html->html_end_header();
 <!--action form for hex map actions-->
 <form action="action_process.php" id="actionForm" method="POST">
    <input name="subaction" value="1" type="hidden">
-   <input name="action" value="" type="hidden">                        
+   <input name="action" value="" type="hidden">
+   <input name="mark_key" value="<?php echo $mark_key;?>" type="hidden">
    <input name="key" value="" type="hidden">
 </form>
 
@@ -264,6 +282,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
       <input type="text" id="soldiers" name="soldiers" value="<?php echo $character->getSoldiers();?>" size="2">
       <input type="hidden" name="subaction" value="1">
       <input type="hidden" name="action" value="army">
+      <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
       <input type="hidden" name="key" value="<?php echo $character_land->getName();?>">
       <input type="hidden" name="character" value="<?php echo $character->getSoldiers();?>">
       <input type="hidden" name="garrison" value="<?php echo $garrison->getSoldiers();?>">
@@ -288,6 +307,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
       <input type="text" id="explorers" name="explorers" value="<?php echo $character->getExplorers();?>" size="2">
       <input type="hidden" name="subaction" value="1">
       <input type="hidden" name="action" value="army">
+      <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
       <input type="hidden" name="key" value="<?php echo $character_land->getName();?>">
       <input type="hidden" name="character" value="<?php echo $character->getExplorers();?>">
       <input type="hidden" name="land" value="<?php echo $population->getExplorers();?>">
@@ -312,7 +332,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
          $diff = $action->getDiff($row["due_time"]);
          $type = $action->typeToString($row["type"]);
 
-      echo " ".$type." (".$row["x"]."|".$row["y"].") <span id='".$i."'>".$diff."</span> <script type='text/javascript'> var id=new Array(50); timer('".$i."', 'home.php');</script><br>";
+      echo " ".$type." (".$row["x"]."|".$row["y"].") <span id='".$i."'>".$diff."</span> <script type='text/javascript'> var id=new Array(50); timer('".$i."', '".$lnk."');</script><br>";
       }
       echo "</div><br>";
    }
@@ -345,7 +365,7 @@ if($mark_key){
       $diff = $buildings->getDiff($row["due_time"]);
       $type = $row["type"];
 
-      echo " ".$type." <span id='".$i."'>".$diff."</span> <script type='text/javascript'> var id=new Array(50); timer('".$i."', 'home.php');</script><br>";
+      echo " ".$type." <span id='".$i."'>".$diff."</span> <script type='text/javascript'> var id=new Array(50); timer('".$i."', '".$lnk."');</script><br>";
       }
       echo "</div><br>";
    }
@@ -361,7 +381,7 @@ if($mark_key){
          $diff = $units->getDiff($row["due_time"]);
          $type = $row["type"];
 
-         echo " ".$type." <span id='".$i."'>".$diff."</span> <script type='text/javascript'> var id=new Array(50); timer('".$i."', 'home.php');</script><br>";
+         echo " ".$type." <span id='".$i."'>".$diff."</span> <script type='text/javascript'> var id=new Array(50); timer('".$i."', '".$lnk."');</script><br>";
       }
       echo "</div><br>";
    }
@@ -387,6 +407,7 @@ if(count($new_buildings)){
       <font size="2">
       <input type="hidden" name="subaction" value="1">
       <input type="hidden" name="action" value="build">
+      <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
       <input type="hidden" name="key" value="<?php echo $marked_land->getName();?>">
       <input type="hidden" name="name" value="<?php echo $character->getName();?>">
       <input type="submit" value="Build"></td></tr>
@@ -413,6 +434,7 @@ if(count($new_units) && ($population->getCivilians() > 0)){
    <font size="2">
    <input type="hidden" name="subaction" value="1">
    <input type="hidden" name="action" value="train">
+   <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
    <input type="hidden" name="key" value="<?php echo $marked_land->getName();?>">
    <input type="hidden" name="name" value="<?php echo $character->getName();?>">
    <input type="submit" value="Train"></td></tr>

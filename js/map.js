@@ -42,6 +42,7 @@ $(function() {
          },
       }
    });
+
    $("span.mark").click(function(t) {
       var actionForm = document.forms["actionForm"];
 
@@ -49,6 +50,15 @@ $(function() {
       actionForm.elements["key"].value = this.id; 
       actionForm.submit();
    });
+
+   $("span.unmark").click(function(t) {
+      var actionForm = document.forms["actionForm"];
+
+      actionForm.elements["action"].value = "unmark";
+      actionForm.elements["key"].value = this.id; 
+      actionForm.submit();
+   });
+
    $('span.explore').contextMenu('myMenu2', {
       bindings: {
          'explore': function(t) {
@@ -82,4 +92,14 @@ $(function() {
       var id = this.id
       document.getElementById('coordinates').innerHTML = id;
    });
+/*
+   $(".hex").click(function() {
+      var actionForm = document.forms["actionForm"];
+
+      actionForm.elements["action"].value = "mark";
+      actionForm.elements["key"].value = this.id; 
+      actionForm.submit();
+   });
+*/
+
 });

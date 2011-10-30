@@ -68,6 +68,13 @@ class ActionProcess
 
       $action = $_POST['action'];
       $key = $_POST['key'];
+      $mark_key = $_POST['mark_key'];
+
+      $lnk = "home.php";
+      if ($mark_key) {
+         $lnk = "home.php?mark_key=".$mark_key;
+      }
+      
 
       if (!strcmp($action, "army")){
          if (isset($_POST['soldiers'])){
@@ -83,7 +90,7 @@ class ActionProcess
                /* update character */
                $database->updateCharacterSoldiers($soldiers, $name);
             }
-            header("Location: ".$session->referrer);
+            header("Location: ".$lnk);
          }
 
          if (isset($_POST['explorers'])){
@@ -100,7 +107,7 @@ class ActionProcess
                /* update character */
                $database->updateCharacterExplorers($explorers, $name);
             }
-            header("Location: ".$session->referrer);
+            header("Location: ".$lnk);
          }
       }
       else if (!strcmp($action, "build")){
@@ -121,8 +128,7 @@ class ActionProcess
             /* add to build queue */
             $database->addToBuildQueue(getXFromKey($key), getYFromKey($key), $name, getNow(BUILD_TIME), $type, B_CREATE);
          }
-
-         header("Location: ".$session->referrer);
+         header("Location: ".$lnk);
       }
       else if (!strcmp($action, "train")){
          $type = $_POST['type'];
@@ -145,8 +151,7 @@ class ActionProcess
             /* add to unit queue */
             $database->addToUnitQueue(getXFromKey($key), getYFromKey($key), $name, getNow(UNIT_BUILD_TIME), $type);
          }
-
-         header("Location: ".$session->referrer);
+         header("Location: ".$lnk);
       }
       else if (!strcmp($action, "economy")){
          if (isset($_POST['tax'])){
@@ -154,13 +159,15 @@ class ActionProcess
             $name = $_POST['name'];
 
             $database->updateTax($name, $tax);
-         }
-         
-         header("Location: ".$session->referrer);
+         }         
+         header("Location: ".$lnk);
       }
       else if (!strcmp($action, "mark")){
          header("Location: ".$session->referrer."?mark_key=".$key);
       }
+      else if (!strcmp($action, "unmark")){
+         header("Location: ".$session->referrer);
+      }      
       else{
          $x = getXfromKey($key);
          $y = getYfromKey($key);
@@ -169,11 +176,13 @@ class ActionProcess
 
          if (!strcmp($action, "move")){
             $database->addToActionQueue($x, $y, $character["name"], getNow(MOVE_TIME), MOVE, 0);
-            header("Location: ".$session->referrer);
+            //header("Location: ".$session->referrer);
+            header("Location: ".$lnk);
          }
          else if (!strcmp($action, "explore")){
             $database->addToActionQueue($x, $y, $character["name"], getNow(EXPLORE_TIME), EXPLORE, 0);
-            header("Location: ".$session->referrer);
+            //header("Location: ".$session->referrer);
+            header("Location: ".$lnk);
          }
          else{
             /**

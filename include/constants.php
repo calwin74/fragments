@@ -141,7 +141,7 @@ define("SEA", 21);
  *  Map constants
  */
 
-define("X_LOCAL_MAP_SIZE", 7);
+define("X_LOCAL_MAP_SIZE", 8);
 define("Y_LOCAL_MAP_SIZE", 20);
 
 /**
