@@ -47,16 +47,19 @@ class Lands
      /* mark units */
      $units = $database->units($x, $y, $x_size, $y_size);
 
-     foreach ($units as $unit){
-       $key = createKey($unit["x"], $unit["y"]);
-       $land = $this->getLand($key);
-       $land->setCharacter(1);
 
-       if (!strcmp($unit["name"], $characterName)) {
-         $character_x = $unit["x"];
-         $character_y = $unit["y"];
-         $explorers = $unit["explorers"];
-         $land->setMyArmy(1);
+     if ($units) {
+       foreach ($units as $unit){
+         $key = createKey($unit["x"], $unit["y"]);
+         $land = $this->getLand($key);
+         $land->setCharacter(1);
+
+         if (!strcmp($unit["name"], $characterName)) {
+           $character_x = $unit["x"];
+           $character_y = $unit["y"];
+           $explorers = $unit["explorers"];
+           $land->setMyArmy(1);
+         }
        }
      }
 

@@ -60,6 +60,8 @@ else{
 <br>
 - rebuilt marking of tiles
 <br>
+- added some map editor features
+<br>
 
 <div id="content">
 <h1>Login</h1>
