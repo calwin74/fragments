@@ -46,8 +46,52 @@ class ActionProcess
 
       if (!strcmp($action, "terrain")){
          $terrain = $_POST['terrain'];
-         
-         $database->updateLandType($terrain, getXFromKey($key), getYFromKey($key));
+         $radius = $_POST['radius'];
+         $x = getXFromKey($key);
+         $y = getYFromKey($key);
+
+         if ($radius == 0) {
+            /* update just this tile */         
+            $database->updateLandType($terrain, $x, $y);
+         }
+         else if ($radius == 1) {
+            /* identify terrain base */
+            if ($terrain >= DIRT1 && $terrain <= DIRT5) {
+               $terrain = DIRT1;
+            }
+            else if ($terrain >= DIRTVEG1 && $terrain <= DIRTVEG5) {
+               $terrain = DIRTVEG1;
+            }
+            else if ($terrain >= URBAN1 && $terrain <= URBAN5) {
+               $terrain = URBAN1;
+            }
+            else if ($terrain >= VEG1 && $terrain <= VEG5) {
+               $terrain = VEG1;
+            }
+
+            /* update marked land */ 
+            if ($terrain != SEA) {
+               $database->updateLandType(rand($terrain, $terrain + 4), $x, $y);
+            }
+            else {
+               $database->updateLandType($terrain, $x, $y);
+            }
+
+            /* find neighbourhood and update using random mix */
+            $lands = new Lands($x, $y, null, 0, 2, 2, null);
+
+            $nhood = '';
+            $lands->getSurrounding($x, $y, $nhood);
+
+            foreach($nhood as $land){
+               if ($terrain != SEA) {
+                  $database->updateLandType(rand($terrain, $terrain + 4), $land->getX(), $land->getY());
+               }
+               else {
+                  $database->updateLandType($terrain, $land->getX(), $land->getY());               
+               }
+            }
+         }
          header("Location: ".$session->referrer);
       }
       else{

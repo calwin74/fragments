@@ -116,7 +116,7 @@ class Battle
          $database->updateExplorers(0, $this->my_x, $this->my_y);
        }
        /* defender moves to neighbourhood */
-       $lands = new Lands($this->my_x, $this->my_y, $this->my_defender["name"], 0, 2, 2);
+       $lands = new Lands($this->my_x, $this->my_y, $this->my_defender["name"], 0, 2, 2, null);
 
        $nhood = '';
        $lands->getSurrounding($this->my_x, $this->my_y, $nhood);

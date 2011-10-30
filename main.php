@@ -17,8 +17,6 @@ include_once("include/constants.php");
 global $session;
 $database = $session->database;  //The database connection
 
-?>
-<?php
 /* This doesn't work on danielmadsen.se/fragments header problem ...
 <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -28,9 +26,6 @@ if ( ($.browser.msie) && ($.browser.version == '7.0') ){
 }
 </script>
 */
-?>
-
-<?php
 
 /**
  * User has already logged in, so display relavent links, including

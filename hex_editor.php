@@ -21,7 +21,7 @@ $x = 0;
 $y = 0;
 
 /* get lands */
-$lands = new Lands($x, $y, NULL, 0, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE);
+$lands = new Lands($x, $y, NULL, 0, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE, null);
 
 /* get marked land */
 if (isset($_GET['mark_key'])) {
@@ -86,6 +86,10 @@ $html->html_end_header();
             <input type="hidden" name="subadmin" value="1">
             <input name="action" value="terrain" type="hidden">
             <input type="hidden" name="key" value="<?php echo $mark_key; ?>">
+            <select name="radius">
+               <option value="0">0
+               <option value="1">1
+            </select>
             <input type="submit" value="Change"></td></tr>
             </form>
             </div>
