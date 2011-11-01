@@ -311,7 +311,7 @@ class Land
       else if (!$this->isMarkedLand()){
          $class .= " mark";
       }
-      else{
+      else if ($this->isMarkedLand() && !$this->isMyArmy()){
          $class .= " unmark";
       }
 /*
