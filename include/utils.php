@@ -26,3 +26,22 @@ function getNow($future){
 
    return $now;
 }
+
+/**
+ * createLnk - create a link based on destination, mark and focus key.
+ */
+function createLnk($dst, $mark_key, $focus_key) {
+   $lnk = $dst;
+
+   if ($mark_key && $focus_key) {
+      $lnk = $lnk."?mark_key=".$mark_key."&focus_key=".$focus_key;
+   }
+   else if ($mark_key) {
+      $lnk = $lnk."?mark_key=".$mark_key;
+   }
+   else if ($focus_key) {
+      $lnk = $lnk."?focus_key=".$focus_key;
+   }
+
+   return $lnk;
+}

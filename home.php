@@ -19,6 +19,7 @@ include_once("include/action.php");
 include_once("include/buildings.php");
 include_once("include/units.php");
 include_once("include/garrison.php");
+include_once("include/land_utils.php");
 
 global $session;
 
@@ -54,8 +55,23 @@ $treasury->updateAllTreasury();
 $garrison = new Garrison($character->getName());
 
 /* get lands */
-$x = 0;
-$y = 0;
+if(isset($_GET['focus_key'])) {
+  $focus_key = $_GET['focus_key'];
+  $x = getXfromKey($focus_key);
+  $y = getYfromKey($focus_key);
+}
+else if ($character) {
+  $x = $character->getHomeX();
+  $y = $character->getHomeY();
+  $focus_key = createKey($x, $y);
+}
+else {
+  /* default */
+  $x = 0;
+  $y = 0;
+  $focus_key = createKey($x, $y);
+
+}
 
 /* get marked land */
 if(isset($_GET['mark_key'])) {
@@ -69,28 +85,27 @@ else {
 $lands = new Lands($x, $y, $character->getName(), $action->isAction(), X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE,
                    $mark_key);
 
-/* action or build link used in timers below*/
-$lnk = "home.php";
-if ($mark_key) {
-  $lnk = "home.php?mark_key=".$mark_key;
-}
-
 /* get marked land */
 if ($mark_key) {
-  $mark_key = $_GET['mark_key'];
   $lands->markLand($mark_key);
   $marked_land = $lands->getLand($mark_key);
-  $marked_toxic = $marked_land->getToxic();
-  if ($marked_land->getOwner() == I_OWN){
-    /* buildings */
-    $current_buildings = $buildings->getBuildingsDone($marked_land->getX(), $marked_land->getY());
-    $new_buildings = $buildings->getNewBuildings($marked_land->getX(), $marked_land->getY());
-    $buildings->readBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
-    /* units */
-    $new_units = $units->getAvailableUnits($current_buildings);
-    $units->readUnitBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
+
+  if ($marked_land) {
+    $marked_toxic = $marked_land->getToxic();
+    if ($marked_land->getOwner() == I_OWN){
+      /* buildings */
+      $current_buildings = $buildings->getBuildingsDone($marked_land->getX(), $marked_land->getY());
+      $new_buildings = $buildings->getNewBuildings($marked_land->getX(), $marked_land->getY());
+      $buildings->readBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
+      /* units */
+      $new_units = $units->getAvailableUnits($current_buildings);
+      $units->readUnitBuilds($character->getName(), $marked_land->getX(), $marked_land->getY());
+    }
   }
 }
+
+/* create link */
+$lnk = createLnk("home.php", $mark_key, $focus_key);
 
 /* get land character stays in */
 $character_land = $lands->getLand(createKey($character->getX(), $character->getY()));
@@ -175,6 +190,7 @@ $html->html_end_header();
    <input name="subaction" value="1" type="hidden">
    <input name="action" value="" type="hidden">
    <input name="mark_key" value="<?php echo $mark_key;?>" type="hidden">
+   <input name="focus_key" value="<?php echo $focus_key;?>" type="hidden">
    <input name="key" value="" type="hidden">
 </form>
 
@@ -244,6 +260,10 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
 <div id="map">
 <?php $lands->printMap($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE); ?>
 </div>
+
+<?php
+/* arrows used to move local map view */
+?>
 <div id="frametop"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Scroll-up','','img/arrowupon.png',1)"><img src="img/arrowupoff.png" alt="Scroll Up" name="Scroll-up" width="819" height="30" border="0" id="Scroll-up" /></a>
 </div>
 <div id="frameleft"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Scroll-Left','','img/arrowlefton.png',1)"><img src="img/arrowleftoff.png" alt="Scroll Left" name="Scroll-Left" width="30" height="292" border="0" id="Scroll-Left" /></a>
@@ -258,8 +278,6 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
 </div>
 <div id="framecornerbr">
 </div>
-<div id="frameright">
-</div>
 <div id="frameright"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Scroll-Right','','img/arrowrighton.png',1)"><img src="img/arrowrightoff.png" alt="Scroll-Right" name="Scroll-Right" width="30" height="523" border="0" id="Scroll-Right" /></a>
 </div>
 
@@ -271,8 +289,8 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
    <td width="35%"><img src="img/mark.png" width="45" height="15" hspace="0" vspace="0" align="top" /></td>
    <td width="68%">
    <?php
-   echo $character->getName();
-   if ($character_land->getOwner() == I_OWN){
+   echo "<a id=\"army_home\" href=\"#\">".$character->getName()."</a>";
+   if ($character_land && $character_land->getOwner() == I_OWN){
       ?>
       <form action="action_process.php" method="POST">
       <table align="left" border="0" cellspacing="0" cellpadding="3">
@@ -283,6 +301,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
       <input type="hidden" name="subaction" value="1">
       <input type="hidden" name="action" value="army">
       <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
+      <input type="hidden" name="focus_key" value="<?php echo $focus_key;?>">
       <input type="hidden" name="key" value="<?php echo $character_land->getName();?>">
       <input type="hidden" name="character" value="<?php echo $character->getSoldiers();?>">
       <input type="hidden" name="garrison" value="<?php echo $garrison->getSoldiers();?>">
@@ -297,7 +316,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
       echo " | soldiers: ".$character->getSoldiers();
    }
 
-   if ($character_land->getOwner() == I_OWN){
+   if ($character_land && $character_land->getOwner() == I_OWN){
       ?>
       <form action="action_process.php" method="POST">
       <table align="left" border="0" cellspacing="0" cellpadding="3">
@@ -308,6 +327,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
       <input type="hidden" name="subaction" value="1">
       <input type="hidden" name="action" value="army">
       <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
+      <input type="hidden" name="focus_key" value="<?php echo $focus_key;?>">
       <input type="hidden" name="key" value="<?php echo $character_land->getName();?>">
       <input type="hidden" name="character" value="<?php echo $character->getExplorers();?>">
       <input type="hidden" name="land" value="<?php echo $population->getExplorers();?>">
@@ -408,6 +428,7 @@ if(count($new_buildings)){
       <input type="hidden" name="subaction" value="1">
       <input type="hidden" name="action" value="build">
       <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
+      <input type="hidden" name="focus_key" value="<?php echo $focus_key;?>">      
       <input type="hidden" name="key" value="<?php echo $marked_land->getName();?>">
       <input type="hidden" name="name" value="<?php echo $character->getName();?>">
       <input type="submit" value="Build"></td></tr>
@@ -435,6 +456,7 @@ if(count($new_units) && ($population->getCivilians() > 0)){
    <input type="hidden" name="subaction" value="1">
    <input type="hidden" name="action" value="train">
    <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
+   <input type="hidden" name="focus_key" value="<?php echo $focus_key;?>">
    <input type="hidden" name="key" value="<?php echo $marked_land->getName();?>">
    <input type="hidden" name="name" value="<?php echo $character->getName();?>">
    <input type="submit" value="Train"></td></tr>

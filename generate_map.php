@@ -9,9 +9,9 @@ $database = $session->database;  //The database connection
 /* set this to override php max execute timeout */
 ini_set('max_execution_time', 0);
 
-for ($y=Y_LOCAL_MAP_SIZE; $y>=-Y_LOCAL_MAP_SIZE; $y--)
+for ($y=Y_GLOBAL_MAP_SIZE; $y>=-Y_GLOBAL_MAP_SIZE; $y--)
 {
-  for ($x=-X_LOCAL_MAP_SIZE; $x<=X_LOCAL_MAP_SIZE; $x++)
+  for ($x=-X_GLOBAL_MAP_SIZE; $x<=X_GLOBAL_MAP_SIZE; $x++)
   {
     $type = rand(1,5);
     $toxic = DEFAULT_TOXIC;
@@ -19,5 +19,8 @@ for ($y=Y_LOCAL_MAP_SIZE; $y>=-Y_LOCAL_MAP_SIZE; $y--)
     $database->addLand($x, $y, $type, $toxic);
   } 
 }
+
+/* add admin user */
+$database->addNewUser('admin', md5("aaa123"), 'admin@home.org')
 
 ?>

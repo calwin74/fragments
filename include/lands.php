@@ -351,11 +351,13 @@ class Lands
    public function markLand($key){
      $land = $this->getLand($key);
 
-     if ($land->isMarkedLand()){
-       $land->markLand(0);
-     }
-     else{
-       $land->markLand(1);
+     if ($land) {
+       if ($land->isMarkedLand()){
+         $land->markLand(0);
+       }
+       else{
+         $land->markLand(1);
+       }
      }
    }
 

@@ -92,14 +92,41 @@ $(function() {
       var id = this.id
       document.getElementById('coordinates').innerHTML = id;
    });
-/*
-   $(".hex").click(function() {
-      var actionForm = document.forms["actionForm"];
 
-      actionForm.elements["action"].value = "mark";
-      actionForm.elements["key"].value = this.id; 
+   $("#frametop").click(function() {
+      var actionForm = document.forms["actionForm"];
+      actionForm.elements["action"].value = 'up';
       actionForm.submit();
    });
-*/
+
+   $("#framebottom").click(function() {
+      var actionForm = document.forms["actionForm"];
+      actionForm.elements["action"].value = 'down';
+      actionForm.submit();
+   });
+
+   $("#frameright").click(function() {
+      var actionForm = document.forms["actionForm"];
+      actionForm.elements["action"].value = 'right';
+      actionForm.submit();
+   });
+
+   $("#frameleft").click(function() {
+      var actionForm = document.forms["actionForm"];
+      actionForm.elements["action"].value = 'left';
+      actionForm.submit();
+   });
+
+   $("#minimap").click(function() {
+      var actionForm = document.forms["actionForm"];
+      actionForm.elements["action"].value = 'home';
+      actionForm.submit();
+   });
+
+   $("#army_home").click(function() {
+      var actionForm = document.forms["actionForm"];
+      actionForm.elements["action"].value = 'army_home';
+      actionForm.submit();
+   });
 
 });

@@ -144,6 +144,9 @@ define("SEA", 21);
 define("X_LOCAL_MAP_SIZE", 8);
 define("Y_LOCAL_MAP_SIZE", 20);
 
+define("X_GLOBAL_MAP_SIZE", 50);
+define("Y_GLOBAL_MAP_SIZE", 100);
+
 /**
  * Toxic levels
  */

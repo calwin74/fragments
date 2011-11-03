@@ -11,6 +11,7 @@ include_once("include/constants.php");
 include_once("include/form.php");
 include_once("include/lands.php");
 include_once("include/utils.php");
+include_once("include/land_utils.php");
 
 class ActionProcess
 {
@@ -113,12 +114,8 @@ class ActionProcess
       $action = $_POST['action'];
       $key = $_POST['key'];
       $mark_key = $_POST['mark_key'];
-
-      $lnk = "home.php";
-      if ($mark_key) {
-         $lnk = "home.php?mark_key=".$mark_key;
-      }
-      
+      $focus_key = $_POST['focus_key'];
+      $dst = "home.php";
 
       if (!strcmp($action, "army")){
          if (isset($_POST['soldiers'])){
@@ -134,6 +131,7 @@ class ActionProcess
                /* update character */
                $database->updateCharacterSoldiers($soldiers, $name);
             }
+            $lnk = createLnk($dst, $mark_key, $focus_key);
             header("Location: ".$lnk);
          }
 
@@ -151,6 +149,7 @@ class ActionProcess
                /* update character */
                $database->updateCharacterExplorers($explorers, $name);
             }
+            $lnk = createLnk($dst, $mark_key, $focus_key);
             header("Location: ".$lnk);
          }
       }
@@ -172,6 +171,7 @@ class ActionProcess
             /* add to build queue */
             $database->addToBuildQueue(getXFromKey($key), getYFromKey($key), $name, getNow(BUILD_TIME), $type, B_CREATE);
          }
+         $lnk = createLnk($dst, $mark_key, $focus_key);
          header("Location: ".$lnk);
       }
       else if (!strcmp($action, "train")){
@@ -195,6 +195,7 @@ class ActionProcess
             /* add to unit queue */
             $database->addToUnitQueue(getXFromKey($key), getYFromKey($key), $name, getNow(UNIT_BUILD_TIME), $type);
          }
+         $lnk = createLnk($dst, $mark_key, $focus_key);
          header("Location: ".$lnk);
       }
       else if (!strcmp($action, "economy")){
@@ -204,14 +205,62 @@ class ActionProcess
 
             $database->updateTax($name, $tax);
          }         
+         $lnk = createLnk($dst, $mark_key, $focus_key);
          header("Location: ".$lnk);
       }
       else if (!strcmp($action, "mark")){
-         header("Location: ".$session->referrer."?mark_key=".$key);
+         $lnk = createLnk($dst, $key, $focus_key);
+         header("Location: ".$lnk);
       }
       else if (!strcmp($action, "unmark")){
-         header("Location: ".$session->referrer);
-      }      
+         $lnk = createLnk($dst, null, $focus_key);
+         header("Location: ".$lnk);
+      }
+      else if (!strcmp($action, "up") ||
+               !strcmp($action, "down") ||
+               !strcmp($action, "right") ||
+               !strcmp($action, "left"))
+      {
+         $focus_x = getXfromKey($focus_key);
+         $focus_y = getYfromKey($focus_key);
+
+         if (!strcmp($action, "up")) {
+            $focus_y += 2;
+         }
+         else if (!strcmp($action, "down")) {
+            $focus_y -= 2;
+         }
+         else if (!strcmp($action, "right")) {
+            $focus_x++;
+         }
+         else {
+            $focus_x--;
+         }
+
+         /* create new focus key */
+         $focus_key = $focus_x."_".$focus_y;
+
+         $lnk = createLnk($dst, $mark_key, $focus_key);
+         header("Location: ".$lnk);
+      }
+      else if (!strcmp($action, "home")) {
+         /* set mark and focus key to home */
+         $character = $database->getCharacterByUser($session->username);
+         $home_x = $character["home_x"];
+         $home_y = $character["home_y"];
+         $home_key = createKey($home_x, $home_y);
+         $lnk = createLnk($dst, $home_key, $home_key);
+         header("Location: ".$lnk);
+      }
+      else if (!strcmp($action, "army_home")) {
+         /* set mark and focus key to army */
+         $character = $database->getCharacterByUser($session->username);
+         $army_x = $character["x"];
+         $army_y = $character["y"];
+         $army_key = createKey($army_x, $army_y);
+         $lnk = createLnk($dst, $army_key, $army_key);
+         header("Location: ".$lnk);
+      }
       else{
          $x = getXfromKey($key);
          $y = getYfromKey($key);
@@ -220,12 +269,12 @@ class ActionProcess
 
          if (!strcmp($action, "move")){
             $database->addToActionQueue($x, $y, $character["name"], getNow(MOVE_TIME), MOVE, 0);
-            //header("Location: ".$session->referrer);
+            $lnk = createLnk($dst, $mark_key, $focus_key);
             header("Location: ".$lnk);
          }
          else if (!strcmp($action, "explore")){
             $database->addToActionQueue($x, $y, $character["name"], getNow(EXPLORE_TIME), EXPLORE, 0);
-            //header("Location: ".$session->referrer);
+            $lnk = createLnk($dst, $mark_key, $focus_key);
             header("Location: ".$lnk);
          }
          else{
@@ -233,10 +282,11 @@ class ActionProcess
             * Should not get here, which means user is viewing this page
             * by mistake and therefore is redirected.
             */
-            header("Location: ".$session->referrer);
+            $lnk = createLnk($dst, $key, $focus_key);
+            header("Location: ".$lnk);
          }
       }
-   }   
+   }
 };
 
 /* Initialize process */

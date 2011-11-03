@@ -13,6 +13,8 @@ class Character
    private $my_y;              //character y coordinate
    private $my_soldiers;       //soldiers in army
    private $my_explorers;      //explorers in army
+   private $my_home_x;         //home x coordinate
+   private $my_home_y;         //home y coordinate
 
    /* Class constructor */
    public function Character(){
@@ -27,7 +29,10 @@ class Character
      $this->my_y = $character["y"];     
 
      $this->my_soldiers = $character["soldiers"];
-     $this->my_explorers = $character["explorers"]; 
+     $this->my_explorers = $character["explorers"];
+
+     $this->my_home_x = $character["home_x"];     
+     $this->my_home_y = $character["home_y"];        
    }
 
    public function getName(){
@@ -48,6 +53,14 @@ class Character
 
    public function getExplorers(){
      return $this->my_explorers;
+   }
+
+   public function getHomeX(){
+     return $this->my_home_x;
+   }
+
+   public function getHomeY(){
+     return $this->my_home_y;
    }
 }
 ?>

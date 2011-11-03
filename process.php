@@ -247,7 +247,7 @@ class Process
       }
 
       $session->logger->LogInfo("addNewCharacter");
-      if($database->addNewCharacter($charName, $username, $tribe, $x, $y)){
+      if($database->addNewCharacter($charName, $username, $tribe, $x, $y, $x, $y)){
         // Init land
         $database->setLandOwner($x, $y, $charName);
         $database->setLandToxic($x, $y, INIT_USER_TOXIC);

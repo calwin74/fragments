@@ -1074,8 +1074,8 @@ class MySQLDB
     * addNewCharacter - Inserts the given character info into the database.
     * Returns true on success, false otherwise.
     */
-   function addNewCharacter($charname, $username, $tribe, $x, $y){
-      $q = "INSERT INTO ".TBL_CHARACTERS." (name, username, tribe, x, y) VALUES ('$charname', '$username', '$tribe', '$x', '$y')";
+   function addNewCharacter($charname, $username, $tribe, $x, $y, $home_x, $home_y){
+      $q = "INSERT INTO ".TBL_CHARACTERS." (name, username, tribe, x, y, home_x, home_y) VALUES ('$charname', '$username', '$tribe', '$x', '$y', '$home_x', '$home_y')";
       return mysql_query($q, $this->connection);
    }
 

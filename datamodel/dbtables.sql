@@ -75,6 +75,8 @@ CREATE TABLE `characters` (
   `y` int(10) NOT NULL default '0',
   `soldiers` int(10) NOT NULL default '0',
   `explorers` int(10) NOT NULL default '0',
+  `home_x` int(10) NOT NULL default '0',
+  `home_y` int(10) NOT NULL default '0',
   PRIMARY KEY  (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
