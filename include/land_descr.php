@@ -214,13 +214,24 @@ class Land
    private function getTerrainClass(){
       $class = "";
 
+     /* get terrain type */
+      $type = $this->getType();
+
       if ($this->marked){
-         $class .= " marked";
+         if (($type == DIRT1) || ($type == DIRT2) || ($type == DIRT3) || ($type == DIRT4) || ($type == DIRT5)) {
+            $class .= " markeddirt";
+         }
+         else if (($type == VEG1) || ($type == VEG2) || ($type == VEG3) || ($type == VEG4) || ($type == VEG5)) {
+            $class .= " markedveg";
+         }
+         else if (($type == DIRTVEG1) || ($type == DIRTVEG2) || ($type == DIRTVEG3) || ($type == DIRTVEG4) || ($type == DIRTVEG5)) {
+            $class .= " markeddirtveg";         
+         }
+         else {
+            $class .= " markeddirt";
+         }
          return $class;
       }
-
-      /* get terrain type */
-      $type = $this->getType();
 
       if ($type == DIRT1){
          $class .= " dirt1";

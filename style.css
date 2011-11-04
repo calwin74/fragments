@@ -74,11 +74,23 @@ body,td,th {
 #head {
 	position:absolute;
 	left:110px;
-	width:846px;
+	width:910px;
 	height:25px;
 	margin:0 auto;
 	border:0px solid #000;
-	background-image: url(img/head.jpg);
+	background-image: url(img/framebg.jpg);
+	z-index:5;
+	color: #0F0;
+}
+
+#right {
+	position:absolute;
+	left:1000px;
+	width:52px;
+	height:599px;
+	margin:0 auto;
+	border:0px solid #000;
+	background-image: url(img/right.jpg);
 	z-index:5;
 	color: #0F0;
 }
@@ -131,14 +143,14 @@ z-index:3;
 }
 #map {
 	position:absolute;
-	top:25px;
+	top:17px;
 	left:0px;
-	width:1030px;
+	width:1031px;
 	height:580px;
 	margin:0 auto;
 	z-index:0;
 	border:0px solid #000;
-	background-image: url(img/mappic.jpg);
+	background-image: url(img/mapbg.gif);
 }
 
 #frametop {

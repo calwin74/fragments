@@ -64,6 +64,18 @@ background: url(../img/blue.gif) no-repeat;
 background: url(../img/marked.png) no-repeat;
 }
 
+.markeddirt {
+background: url(../img/markeddirt.png) no-repeat;
+}
+
+.markedveg {
+background: url(../img/markedveg.png) no-repeat;
+}
+
+.markeddirtveg {
+background: url(../img/markeddirtveg.png) no-repeat;
+}
+
 .green {
 background: url(../img/green.gif) no-repeat;
 }

@@ -117,6 +117,9 @@ class ActionProcess
       $focus_key = $_POST['focus_key'];
       $dst = "home.php";
 
+      $q = "here: ".$action;
+      $session->logger->LogInfo($q);
+
       if (!strcmp($action, "army")){
          if (isset($_POST['soldiers'])){
             $character_soldiers = $_POST['character'];
@@ -209,7 +212,16 @@ class ActionProcess
          header("Location: ".$lnk);
       }
       else if (!strcmp($action, "mark")){
-         $lnk = createLnk($dst, $key, $focus_key);
+         $lnk = createLnk($session->referrer, $key, $focus_key);
+         header("Location: ".$lnk);
+      }
+      else if (!strcmp($action, "edit_mark")){
+         global $session;
+         $lnk = createLnk("hex_editor.php", $key, $focus_key);
+
+         $q = "edit_mark";
+         $session->logger->LogInfo($q);
+
          header("Location: ".$lnk);
       }
       else if (!strcmp($action, "unmark")){
@@ -259,6 +271,11 @@ class ActionProcess
          $army_y = $character["y"];
          $army_key = createKey($army_x, $army_y);
          $lnk = createLnk($dst, $army_key, $army_key);
+         header("Location: ".$lnk);
+      }
+      else if (!strcmp($action, "mark_home")) {
+         /* set focus key to mark key  */ 
+         $lnk = createLnk($dst, $mark_key, $mark_key);
          header("Location: ".$lnk);
       }
       else{

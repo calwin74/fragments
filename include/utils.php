@@ -7,6 +7,8 @@
  * Written by: matkar01
  */
 
+include_once("land_utils.php");
+
 /**
  * getNow - get time now
  * Optional to add positive time jump
@@ -44,4 +46,17 @@ function createLnk($dst, $mark_key, $focus_key) {
    }
 
    return $lnk;
+}
+
+/**
+ * coordinatePP - Pretty print a coordinate.
+ * The key format x_y is transformed to pretty format (x|y)
+ */
+function coordinatePP($key) {
+   $x = getXfromKey($key);
+   $y = getYfromKey($key);
+
+   $pp = "(".$x."|".$y.")";
+   
+   return $pp;   
 }

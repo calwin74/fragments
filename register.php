@@ -14,7 +14,7 @@ include_once("include/constants.php");
 ?>
 
 <html>
-<title>Register <?php echo LAK_TITLE;?></title>
+<title>Register <?php echo FRAGMENTS_TITLE;?></title>
 <body>
 
 <?php
@@ -24,7 +24,7 @@ include_once("include/constants.php");
 if($session->logged_in){
    echo "<h1>Registered</h1>";
    echo "<p>We're sorry <b>$session->username</b>, but you've already registered. "
-       ."<a href=\"main.php\">Main</a>.</p>";
+       ."<a href=\"login.php\">Login</a>.</p>";
 }
 /**
  * The user has submitted the registration form and the
@@ -35,7 +35,7 @@ else if(isset($_SESSION['regsuccess'])){
    if($_SESSION['regsuccess']){
       echo "<h1>Registered!</h1>";
       echo "<p>Thank you <b>".$_SESSION['reguname']."</b>, your information has been added to the system, "
-          ."you may now <a href=\"main.php\">log in</a>.</p>";
+          ."you may now <a href=\"login.php\">log in</a>.</p>";
    }
    /* Registration failed */
    else{

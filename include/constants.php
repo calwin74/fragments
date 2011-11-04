@@ -105,7 +105,7 @@ define("ALL_LOWERCASE", false);
 /**
  * title prefix constant
  */
-define("FRAGMENTS_TITLE", "Fragments Project - made in STHLM");
+define("FRAGMENTS_TITLE", "FR4GMENTS - made in STHLM");
 
 /**
  * terrain types

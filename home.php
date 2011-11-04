@@ -3,7 +3,6 @@
  * This model handles the home command center
  */
 
-
 include_once("include/session.php");
 include_once("include/map_utils.php");
 include_once("menu.php");
@@ -20,6 +19,7 @@ include_once("include/buildings.php");
 include_once("include/units.php");
 include_once("include/garrison.php");
 include_once("include/land_utils.php");
+include_once("include/generate_js.php");
 
 global $session;
 
@@ -70,7 +70,6 @@ else {
   $x = 0;
   $y = 0;
   $focus_key = createKey($x, $y);
-
 }
 
 /* get marked land */
@@ -113,6 +112,12 @@ $character_land = $lands->getLand(createKey($character->getX(), $character->getY
 $html = new Html;
 $html->html_header(FRAGMENTS_TITLE);
 
+/* generate some javascript */
+$generateJS = new GenerateJS();
+$generateJS->bindArrowEvents($x, $y);
+if ($mark_key) {
+   $generateJS->bindMarkHomeEvent(getXfromKey($mark_key), getYfromKey($mark_key));
+}
 ?>
 
 <link rel="stylesheet" type="text/css" href="style.css" />
@@ -241,6 +246,10 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
  Upkeep: <?php echo $treasury->getCost(); ?>
  Time: <clock class="jclock"></clock>
 </div>
+
+<div id="right">
+</div>
+
 <div id="headc">
 </div>
 <div id="speaker">
@@ -286,8 +295,11 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
 <div id="army">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
    <tr valign="top">
-   <td width="35%"><img src="img/mark.png" width="45" height="15" hspace="0" vspace="0" align="top" /></td>
-   <td width="68%">
+      <td colspan="2"><img src="img/wmark1.png" width="255" height="7" hspace="0" vspace="0" align="top" /></td>
+   </tr>
+   <tr valign="top">
+      <td width="22%">&nbsp;</td>
+      <td width="78%">
    <?php
    echo "<a id=\"army_home\" href=\"#\">".$character->getName()."</a>";
    if ($character_land && $character_land->getOwner() == I_OWN){
@@ -359,13 +371,17 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
 ?>
    </td>
    </tr>
-</table>
-
+ </table>
 </div>
 
-<div id="selected"><img src="img/mark.png" width="35" height="15" />
-Coordinate: <?php echo $mark_key; ?> <br>Toxic: <?php echo $marked_toxic; ?>
-
+<div id="selected">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr valign="top">
+      <td><img src="img/wmark.png" width="296" height="7" hspace="0" vspace="0" align="top" /></td>
+    </tr>
+    <tr valign="top">
+      <td>
+Coordinate: <a id="mark_home" href="#"> <?php echo coordinatePP($mark_key); ?> </a><br>Toxic: <?php echo $marked_toxic; ?>
 <?php
 if($mark_key){
    if(count($current_buildings)){         
@@ -407,12 +423,20 @@ if($mark_key){
    }
 }
 ?>
+      </td>
+   </table>
 </div>
 
-<div id="action"><img src="img/mark.png" width="35" height="15">
+<div id="action">
+   <table width="100%" border="0" cellpadding="0" cellspacing="0">
+	   <tr valign="top">
+	      <td><img src="img/wmark.png" alt="" width="296" height="7" hspace="0" vspace="0" align="top" /></td>
+      </tr>
+	   <tr valign="top">
+	   <td>
 <?php
 if(count($new_buildings)){
-   ?>
+?>
    <form action="action_process.php" method="POST">
       <table align="left" border="0" cellspacing="0" cellpadding="3">
       <tr><td>
@@ -425,13 +449,14 @@ if(count($new_buildings)){
       </select>
       <tr><td colspan="2" align="left">
       <font size="2">
+      <div class="buttons">
       <input type="hidden" name="subaction" value="1">
       <input type="hidden" name="action" value="build">
       <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
       <input type="hidden" name="focus_key" value="<?php echo $focus_key;?>">      
       <input type="hidden" name="key" value="<?php echo $marked_land->getName();?>">
       <input type="hidden" name="name" value="<?php echo $character->getName();?>">
-      <input type="submit" value="Build"></td></tr>
+      <button type="submit">Build</button></td></tr>
       </table>
    </form>
    <?php 
@@ -453,21 +478,24 @@ if(count($new_units) && ($population->getCivilians() > 0)){
    </select>
    <tr><td colspan="2" align="left">
    <font size="2">
+   <div class="buttons">
    <input type="hidden" name="subaction" value="1">
    <input type="hidden" name="action" value="train">
    <input type="hidden" name="mark_key" value="<?php echo $mark_key;?>">
    <input type="hidden" name="focus_key" value="<?php echo $focus_key;?>">
    <input type="hidden" name="key" value="<?php echo $marked_land->getName();?>">
    <input type="hidden" name="name" value="<?php echo $character->getName();?>">
-   <input type="submit" value="Train"></td></tr>
+   <button type="submit">Train</button></td></tr>
+   </div>
    </table>
    </form>
    <?php
 }
 ?>
-
+         </td>
+      </tr>
+   </table>
 </div>
-
 
 <div id="footer">
 </div>

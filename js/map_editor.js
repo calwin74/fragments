@@ -10,7 +10,7 @@ $(function() {
    $(".hex").click(function(t) {
       var actionForm = document.forms["actionForm"];
 
-      actionForm.elements["action"].value = "mark";
+      actionForm.elements["action"].value = "edit_mark";
       actionForm.elements["key"].value = this.id; 
       actionForm.submit();
    });

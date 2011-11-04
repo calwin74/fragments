@@ -51,7 +51,7 @@ class Process
        * by mistake and therefore is redirected.
        */
        else{
-          header("Location: main.php");
+          header("Location: login.php");
        }
    }
 
@@ -84,7 +84,7 @@ class Process
    function procLogout(){
       global $session;
       $retval = $session->logout();
-      header("Location: main.php");
+      header("Location: login.php");
    }
    
    /**

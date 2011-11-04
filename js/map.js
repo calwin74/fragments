@@ -30,7 +30,11 @@ function timer(data, lnk)
 }
 
 $(function() {
-   //   $(".cyan,.character").click(function(t) {
+   // disable default right click menu
+   $(this).bind("contextmenu", function(t) {
+      t.preventDefault();
+   });
+
    $('span.move').contextMenu('myMenu1', {
       bindings: {
          'move': function(t) {
@@ -70,6 +74,7 @@ $(function() {
          },         
       }
    });
+
    $('span.move_mark').contextMenu('myMenu3', {
       bindings: {
          'move': function(t) {
@@ -88,33 +93,14 @@ $(function() {
          },
       }
    });
+
    $(".hex").mouseover(function() {
-      var id = this.id
-      document.getElementById('coordinates').innerHTML = id;
-   });
-
-   $("#frametop").click(function() {
-      var actionForm = document.forms["actionForm"];
-      actionForm.elements["action"].value = 'up';
-      actionForm.submit();
-   });
-
-   $("#framebottom").click(function() {
-      var actionForm = document.forms["actionForm"];
-      actionForm.elements["action"].value = 'down';
-      actionForm.submit();
-   });
-
-   $("#frameright").click(function() {
-      var actionForm = document.forms["actionForm"];
-      actionForm.elements["action"].value = 'right';
-      actionForm.submit();
-   });
-
-   $("#frameleft").click(function() {
-      var actionForm = document.forms["actionForm"];
-      actionForm.elements["action"].value = 'left';
-      actionForm.submit();
+      var id = this.id;
+      var coordinates = id.split("_");
+      var x_coord = coordinates[0];
+      var y_coord = coordinates[1];
+      var str = "(".concat(x_coord).concat("|").concat(y_coord).concat(")");
+      document.getElementById('coordinates').innerHTML = str;
    });
 
    $("#minimap").click(function() {
@@ -128,5 +114,4 @@ $(function() {
       actionForm.elements["action"].value = 'army_home';
       actionForm.submit();
    });
-
 });
