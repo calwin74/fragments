@@ -117,9 +117,6 @@ class ActionProcess
       $focus_key = $_POST['focus_key'];
       $dst = "home.php";
 
-      $q = "here: ".$action;
-      $session->logger->LogInfo($q);
-
       if (!strcmp($action, "army")){
          if (isset($_POST['soldiers'])){
             $character_soldiers = $_POST['character'];
@@ -216,12 +213,7 @@ class ActionProcess
          header("Location: ".$lnk);
       }
       else if (!strcmp($action, "edit_mark")){
-         global $session;
          $lnk = createLnk("hex_editor.php", $key, $focus_key);
-
-         $q = "edit_mark";
-         $session->logger->LogInfo($q);
-
          header("Location: ".$lnk);
       }
       else if (!strcmp($action, "unmark")){

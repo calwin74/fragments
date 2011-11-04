@@ -93,7 +93,6 @@ if ( ($.browser.msie) && ($.browser.version == '7.0') ){
   alert(txt);
 }
 </script>
-*/
 
 <body>
 <div id="apDiv1"><a href="#">Login</a>
