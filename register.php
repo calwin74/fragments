@@ -14,7 +14,7 @@ include_once("include/constants.php");
 ?>
 
 <html>
-<title>Register <?php echo FRAGMENTS_TITLE;?></title>
+<title><?php echo FRAGMENTS_TITLE;?></title>
 <body>
 
 <?php
@@ -26,16 +26,29 @@ if($session->logged_in){
    echo "<p>We're sorry <b>$session->username</b>, but you've already registered. "
        ."<a href=\"login.php\">Login</a>.</p>";
 }
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="css/login_style.css"></link>
+</head>
+
+<body>
+<div id="apDiv1"></a>
+
+<?php
 /**
  * The user has submitted the registration form and the
  * results have been processed.
  */
-else if(isset($_SESSION['regsuccess'])){
+if(isset($_SESSION['regsuccess'])){
    /* Registration was successful */
    if($_SESSION['regsuccess']){
       echo "<h1>Registered!</h1>";
       echo "<p>Thank you <b>".$_SESSION['reguname']."</b>, your information has been added to the system, "
-          ."you may now <a href=\"login.php\">log in</a>.</p>";
+          ."you may now [<a href=\"login.php\">log in</a>].</p>";
    }
    /* Registration failed */
    else{
@@ -46,21 +59,21 @@ else if(isset($_SESSION['regsuccess'])){
    unset($_SESSION['regsuccess']);
    unset($_SESSION['reguname']);
 }
+else {
 /**
  * The user has not filled out the registration form yet.
  * Below is the page with the sign-up form, the names
  * of the input fields are important and should not
  * be changed.
  */
-else{
 ?>
-
 <h1>Register</h1>
 <?php
 if($form->num_errors > 0){
    echo "<td><font size=\"2\" color=\"#ff0000\">".$form->num_errors." error(s) found</font></td>";
 }
 ?>
+
 <form action="process.php" method="POST">
 <table align="left" border="0" cellspacing="0" cellpadding="3">
 
@@ -78,10 +91,10 @@ if($form->num_errors > 0){
 <input type="submit" value="Join!"></td></tr>
 </table>
 </form>
+</div>
 
 <?php
 }
 ?>
-
 </body>
 </html>

@@ -386,7 +386,7 @@ Coordinate: <a id="mark_home" href="#"> <?php echo coordinatePP($mark_key); ?> <
 if($mark_key){
    if(count($current_buildings)){         
       ?>
-      <br>Buildings:<?php for($b = 0; $b < count($current_buildings); $b++){echo $current_buildings[$b]["type"].",";}?>
+      <br><?php for($b = 0; $b < count($current_buildings); $b++){echo $current_buildings[$b]["type"].",";}?>
       <br>
       <?php
    }

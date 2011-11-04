@@ -91,10 +91,10 @@ CREATE TABLE `tribe` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `tribe` (`name`) VALUES 
- ("Empire fragment"),
- ("Human fragment"),
- ("Rebels fragment"),
- ("Mutant fragment");
+ ("Eastern Empire"),
+ ("Western Empire"),
+ ("Rebels"),
+ ("Mutants");
 
 --
 -- Definition of table `move_queue`

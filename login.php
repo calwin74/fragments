@@ -30,60 +30,9 @@ if($session->logged_in){
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Untitled Document</title>
-<style type="text/css">
-body,td,th {
-	font-family: Verdana, Geneva, sans-serif;
-	font-size: x-small;
-	color: #0F0;
-}
-body {
-	background-color: #000;
-	background-image: url(img/login.jpg);
-	background-repeat: no-repeat;
-}
-#apDiv1 {
-	position:absolute;
-	left:452px;
-	top:356px;
-	width:364px;
-	height:122px;
-	z-index:1;
-}
-#apDiv2 {
-	position:absolute;
-	left:452px;
-	top:619px;
-	width:364px;
-	height:138px;
-	z-index:3;
-}
-#updatetext {
-	position:absolute;
-	left:190px;
-	top:27px;
-	width:863px;
-	height:162px;
-	z-index:2;
-}
-a:link {
-	color: #0F0;
-	text-decoration: none;
-}
-a:visited {
-	color: #0F0;
-	text-decoration: none;
-}
-a:hover {
-	color: #090;
-	text-decoration: none;
-}
-a:active {
-	color: #060;
-	text-decoration: none;
-}
-</style>
-</head>
+<title><?php echo FRAGMENENTS_TITLE ?></title>
+
+<link rel="stylesheet" type="text/css" href="css/login_style.css"></link>
 
 <!-- This doesn't work on danielmadsen.se/fragments because of header problem -->
 <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
@@ -93,6 +42,8 @@ if ( ($.browser.msie) && ($.browser.version == '7.0') ){
   alert(txt);
 }
 </script>
+
+</head>
 
 <body>
 <div id="apDiv1"><a href="#">Login</a>
@@ -118,8 +69,8 @@ if($form->num_errors > 0){
 <font size="2">Remember me next time &nbsp;&nbsp;&nbsp;&nbsp;
 <input type="hidden" name="sublogin" value="1">
 <input type="submit" value="Login"></td></tr>
-<tr><td colspan="2" align="left"><br><font size="2">[<a href="forgotpass.php">Forgot Password?</a>]</font></td><td align="right"></td></tr>
-<tr><td colspan="2" align="left"><br>Not registered? <a href="register.php">Sign-Up!</a></td></tr>
+<tr><td colspan="2" align="left"><br>[<a href="forgotpass.php">Forgot Password?</a>]</td><td align="right"></td></tr>
+<tr><td colspan="2" align="left"><br>Not registered? [<a href="register.php">Sign-Up!</a>]</td></tr>
 </table>
 </form>
 
@@ -143,13 +94,6 @@ include("include/view_active.php");
 </div>
 
 <div id="updatetext">
-<b>Updated 2011 11 04</b>
-<br>
-<br>  
-<b>New features:</b>
-<br>
-- updating all the time ...
-<br>
 </div>
 
 </body>

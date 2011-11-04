@@ -1,0 +1,50 @@
+body,td,th {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: x-small;
+	color: #0F0;
+}
+body {
+	background-color: #000;
+	background-image: url(../img/login.jpg);
+	background-repeat: no-repeat;
+}
+#apDiv1 {
+	position:absolute;
+	left:452px;
+	top:356px;
+	width:364px;
+	height:122px;
+	z-index:1;
+}
+#apDiv2 {
+	position:absolute;
+	left:452px;
+	top:619px;
+	width:364px;
+	height:138px;
+	z-index:3;
+}
+#updatetext {
+	position:absolute;
+	left:190px;
+	top:27px;
+	width:863px;
+	height:162px;
+	z-index:2;
+}
+a:link {
+	color: #0F0;
+	text-decoration: none;
+}
+a:visited {
+	color: #0F0;
+	text-decoration: none;
+}
+a:hover {
+	color: #090;
+	text-decoration: none;
+}
+a:active {
+	color: #060;
+	text-decoration: none;
+}
