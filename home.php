@@ -298,8 +298,8 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
       <td colspan="2"><img src="img/wmark1.png" width="255" height="7" hspace="0" vspace="0" align="top" /></td>
    </tr>
    <tr valign="top">
-      <td width="22%">&nbsp;</td>
-      <td width="78%">
+      <td width="56">&nbsp;</td>
+      <td width="199">
    <?php
    echo "<a id=\"army_home\" href=\"#\">".$character->getName()."</a>";
    if ($character_land && $character_land->getOwner() == I_OWN){

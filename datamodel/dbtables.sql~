@@ -93,7 +93,6 @@ CREATE TABLE `tribe` (
 INSERT INTO `tribe` (`name`) VALUES 
  ("Empire fragment"),
  ("Human fragment"),
- ("Rebels fragment"),
  ("Mutant fragment");
 
 --
