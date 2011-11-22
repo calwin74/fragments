@@ -127,6 +127,7 @@ if ($mark_key) {
 
 <script src="SpryAssets/SpryMenuBar.js" type="text/javascript"></script>
 <link href="SpryAssets/SpryMenuBarHorizontal.css" rel="stylesheet" type="text/css" />
+
 <style type="text/css">
 #apDiv1 {
 	position:absolute;
@@ -201,24 +202,33 @@ $html->html_end_header();
 
 <!--markup for context menu1-->
 <div class="contextMenu" id="myMenu1">
-   <ul>
+  <ul class="MenuBarHorizontal">
+      <li id="move"><a>Move</a></li>
+  </ul>
+</div>
+<?php
+/*
+<div class="contextMenu" id="myMenu1">
+   <ul class="MenuBarHorizontal">
       <li id="move"> Move</li>
    </ul>
 </div>
+*/
+?>
 
 <!--markup for context menu2-->
 <div class="contextMenu" id="myMenu2">
-   <ul>
-      <li id="explore"> Explore</li>
-   </ul>
+  <ul class="MenuBarHorizontal">
+      <li id="explore"><a>Explore</a></li>
+  </ul>
 </div>
 
 <!--markup for context menu3-->
 <div class="contextMenu" id="myMenu3">
-   <ul>
-      <li id="move"> Move</li>
-      <li id="mark"> Mark</li>
-   </ul>
+  <ul class="MenuBarHorizontal">
+      <li id="move"><a>Move</a></li>
+      <li id="mark"><a>Mark</a></li>
+  </ul>
 </div>
 
 <div id="wrapper">
@@ -232,7 +242,9 @@ $html->html_end_header();
       </ul>
     </li>
   </ul>
+
 <?php
+
 $civilians = $population->getCivilians();
 $explorers = $population->getExplorers() + $character->getExplorers();
 ?>
