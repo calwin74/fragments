@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>Hex Test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+ <script src="jquery.js"></script>
+
+<script>
+
+   $(document).ready(function()
+                 {
+                 $("a").click(function()
+                         {
+                         alert("Yes!");
+                         }
+                 );
+                 }
+         );
+
+</script>
+
+<style type="text/css">
+	
+#map {
+width:3000px;
+}
+
+
+.hex {
+float:left;
+width:34px;
+height:30px;
+margin:0 18px 0 0;
+background: url(hexagon-red.png) no-repeat;
+}
+
+.fog {
+background: url(fog.png) no-repeat;
+z-index: 10;
+}
+
+p {
+color:white;
+font: 10px/10px arial, helvetica, sans-serif;
+padding:8px 0 0 0;
+margin:0;
+text-align:center;
+width:32px;
+}
+
+a {
+text-decoration:none;
+}
+
+a:hover {
+background: url(hexagon-red.png) no-repeat;
+cursor:pointer;
+}
+
+.green {
+background: url(hexagon-red.png) no-repeat;
+}
+
+.mousedown {
+background: url(hexagon-red.png) no-repeat;
+
+}
+
+.br {
+clear:both;
+}
+
+.firstodd {
+margin:-16px 0 0 26px;
+}
+
+.odd {
+margin:-16px 0 0 18px;
+}
+
+.even {
+margin:-14px 18px 0 0;
+}
+
+
+</style>
+
+</head>
+
+<body>
+
+<div id="map" "display: inline">
+
+<a class="hex"><p>0</p></a>
+<a class="hex"><p>1</p></a>
+<a class="hex"><p>2</p></a>
+<a class="hex"><p>3</p></a>
+<a class="hex"><p>4</p></a>
+<a class="hex"><p>5</p></a>
+<a class="hex"><p>6</p></a>
+<a class="hex"><p>7</p></a>
+<a class="hex"><p>8</p></a>
+<a class="hex"><p>9</p></a>
+
+<a class="hex br firstodd"><p>10</p></a>
+<a class="hex odd"><p>11</p></a>
+<a class="hex odd"><p>12</p></a>
+<a class="hex odd"><p>13</p></a>
+<a class="hex odd"><p>14</p></a>
+<a class="hex odd"><p>15</p></a>
+<a class="hex odd"><p>16</p></a>
+<a class="hex odd"><p>17</p></a>
+<a class="hex odd"><p>18</p></a>
+<a class="hex odd"><p>19</p></a>
+
+<a class="hex br even"><p>20</p></a>
+<a class="hex even"><p>21</p></a>
+<a class="hex even"><p>22</p></a>
+<a class="hex even"><p>23</p></a>
+<a class="hex even"><p>24</p></a>
+<a class="hex even"><p>25</p></a>
+<a class="hex even"><p>26</p></a>
+<a class="hex even"><p>27</p></a>
+<a class="hex even"><p>28</p></a>
+<a class="hex even"><p>29</p></a>
+
+</div>
+
+</body>
+</html>

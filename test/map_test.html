@@ -24,15 +24,60 @@
 	
 #map {
 width:3000px;
+position:absolute;
+z-index:1;
 }
 
+#map2 {
+width:3000px;
+position:absolute;
+z-index:10;
+}
 
-.hex {
+.hex,
+.dirt,
+.dirtveg,
+.veg {
 float:left;
-width:34px;
-height:30px;
-margin:0 18px 0 0;
-background: url(hexagon-red.png) no-repeat;
+width:40px;
+height:28px;
+margin:0 20px 0 0;
+}
+
+.dirt {
+background: url(dirt1.png) no-repeat;
+}
+
+.dirtveg {
+background: url(dirtveg1.png) no-repeat;
+}
+
+.veg {
+background: url(veg1.png) no-repeat;
+}
+
+.fog {
+float:left;
+width:40px;
+height:28px;
+margin:0 20px 0 0;
+background: url(fog.png) no-repeat;
+}
+
+.transparent {
+float:left;
+width:40px;
+height:28px;
+margin:0 20px 0 0;
+background: url(transparent.png) no-repeat;
+}
+
+.army {
+float:left;
+width:40px;
+height:28px;
+margin:0 20px 0 0;
+background: url(army.png) no-repeat;
 }
 
 p {
@@ -63,19 +108,19 @@ background: url(hexagon-red.png) no-repeat;
 }
 
 .br {
-clear:all;
+clear:both;
 }
 
 .firstodd {
-margin:-16px 0 0 26px;
+margin:-14px 0 0 30px;
 }
 
 .odd {
-margin:-16px 0 0 18px;
+margin:-14px 0 0 20px;
 }
 
 .even {
-margin:-14px 18px 0 0;
+margin:-14px 20px 0 0;
 }
 
 
@@ -87,38 +132,75 @@ margin:-14px 18px 0 0;
 
 <div id="map" "display: inline">
 
-<a class="hex"><p>0</p></a>
-<a class="hex"><p>1</p></a>
-<a class="hex"><p>2</p></a>
-<a class="hex"><p>3</p></a>
-<a class="hex"><p>4</p></a>
-<a class="hex"><p>5</p></a>
-<a class="hex"><p>6</p></a>
-<a class="hex"><p>7</p></a>
-<a class="hex"><p>8</p></a>
-<a class="hex"><p>9</p></a>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
+<span class="dirt"></span>
 
-<a class="br hex firstodd"><p>10</p></a>
-<a class="hex odd"><p>11</p></a>
-<a class="hex odd"><p>12</p></a>
-<a class="hex odd"><p>13</p></a>
-<a class="hex odd"><p>14</p></a>
-<a class="hex odd"><p>15</p></a>
-<a class="hex odd"><p>16</p></a>
-<a class="hex odd"><p>17</p></a>
-<a class="hex odd"><p>18</p></a>
-<a class="hex odd"><p>19</p></a>
+<span class="veg br firstodd"></span>
+<span class="veg odd"><img src="barrack.png"></img></span>
+<span class="veg odd"></span>
+<span class="veg odd"></span>
+<span class="veg odd"></span>
+<span class="veg odd"></span>
+<span class="veg odd"></span>
+<span class="veg odd"></span>
+<span class="veg odd"></span>
+<span class="veg odd"></span>
 
-<a class="hex br even"><p>20</p></a>
-<a class="hex even"><p>21</p></a>
-<a class="hex even"><p>22</p></a>
-<a class="hex even"><p>23</p></a>
-<a class="hex even"><p>24</p></a>
-<a class="hex even"><p>25</p></a>
-<a class="hex even"><p>26</p></a>
-<a class="hex even"><p>27</p></a>
-<a class="hex even"><p>28</p></a>
-<a class="hex even"><p>29</p></a>
+<span class="dirtveg br even"></span>
+<span class="dirtveg even"><img src="barrack.png"></span>
+<span class="dirtveg even"></span>
+<span class="dirtveg even"></span>
+<span class="dirtveg even"></span>
+<span class="dirtveg even"></span>
+<span class="dirtveg even"></span>
+<span class="dirtveg even"></span>
+<span class="dirtveg even"></span>
+<span class="dirtveg even"></span>
+
+</div>
+
+<div id="map2" "display: inline">
+
+<span class="transparent"><p>0</p></span>
+<span class="army"><p>1</p></span>
+<span class="transparent"><p>2</p></span>
+<span class="fog"><p>3</p></span>
+<span class="fog"><p>4</p></span>
+<span class="transparent"><p>5</p></span>
+<span class="transparent"><p>6</p></span>
+<span class="fog"><p>7</p></span>
+<span class="transparent"><p>8</p></span>
+<span class="transparent"><p>9</p></span>
+
+<span class="transparent br firstodd"><p>10</p></span>
+<span class="transparent odd"><p>11</p></span>
+<span class="fog odd"><p>12</p></span>
+<span class="fog odd"><p>13</p></span>
+<span class="transparent odd"><p>14</p></span>
+<span class="transparent odd"><p>15</p></span>
+<span class="fog odd"><p>16</p></span>
+<span class="transparent odd"><p>17</p></span>
+<span class="fog odd"><p>18</p></span>
+<span class="transparent odd"><p>19</p></span>
+
+<span class="fog br even"><p>20</p></span>
+<span class="fog even"><p>21</p></span>
+<span class="fog even"><p>22</p></span>
+<span class="fog even"><p>23</p></span>
+<span class="transparent even"><p>24</p></span>
+<span class="transparent even"><p>25</p></span>
+<span class="transparent even"><p>26</p></span>
+<span class="fog even"><p>27</p></span>
+<span class="transparent even"><p>28</p></span>
+<span class="fog even"><p>29</p></span>
 
 </div>
 

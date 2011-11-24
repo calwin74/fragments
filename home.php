@@ -307,7 +307,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
 <div id="army">
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
    <tr valign="top">
-      <td colspan="2"><img src="img/wmark1.png" width="255" height="7" hspace="0" vspace="0" align="top" /></td>
+      <td colspan="2"><img src="img/wmark1.png" width="255" height="10" hspace="0" vspace="0" align="top" /></td>
    </tr>
    <tr valign="top">
       <td width="56">&nbsp;</td>
@@ -389,7 +389,7 @@ Population: <?php echo $civilians + $explorers + $garrison->getSoldiers() + $cha
 <div id="selected">
   <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr valign="top">
-      <td><img src="img/wmark.png" width="296" height="7" hspace="0" vspace="0" align="top" /></td>
+      <td><img src="img/wmark.png" width="296" height="10" hspace="0" vspace="0" align="top" /></td>
     </tr>
     <tr valign="top">
       <td>
@@ -442,7 +442,7 @@ if($mark_key){
 <div id="action">
    <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	   <tr valign="top">
-	      <td><img src="img/wmark.png" alt="" width="296" height="7" hspace="0" vspace="0" align="top" /></td>
+         <td><img src="img/wmarkcommand.png" alt="" width="296" height="10" hspace="0" vspace="0" align="top" /></td>
       </tr>
 	   <tr valign="top">
 	   <td>
