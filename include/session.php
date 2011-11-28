@@ -488,7 +488,7 @@ class Session
     * createLogger - Creates logger object.
     */
    function createLogger(){
-      $this->logger = new KLogger ("c:\log.txt", KLogger::INFO);
+      $this->logger = new KLogger ("log.txt", KLogger::INFO);
    }
 
    /**

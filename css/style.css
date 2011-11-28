@@ -2,8 +2,6 @@
 
 #header {height:40px; border:1px solid #000;}
 
-#map {position:relative; width:100%; height:430px; border:1px solid #000;}
-
 #land {position:relative;bottom:0px;width:100%;height:130px; border:1px solid #000;}
 
 #character {position:relative;bottom:0px;width:100%;height:80px; border:1px solid #000;}
@@ -24,6 +22,14 @@ width:40px;
 height:28px;
 margin:0 20px 0 0;
 background: url(../img/gray.gif) no-repeat;
+}
+
+.front {
+float:left;
+width:40px;
+height:28px;
+margin:0 20px 0 0;
+background: url(../img/transparent.png) no-repeat;
 }
 
 p {
@@ -181,4 +187,12 @@ background: url(../img/veg4.png) no-repeat;
 
 .veg5 {
 background: url(../img/veg5.png) no-repeat;
+}
+
+.army {
+background: url(../img/army.png) no-repeat;
+}
+
+.army-enemy {
+background: url(../img/army-enemy.png) no-repeat;
 }

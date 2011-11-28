@@ -137,15 +137,26 @@ class Land
       return $this->building;
    }
    
-   public function getDescr($isAction) {
+   public function getDescrBack() {
       $descr = array();
 
-      $classes = $this->getClasses($isAction);
+      $classes = $this->getClassesBack();
       $descr["class"] = $classes;
       
-      $image = $this->getImage();
+      $image = $this->getBuildingImg();
       $descr["image"] = $image;
  
+      return $descr;
+   }
+
+   public function getDescrFront($isAction) {
+      $descr = array();
+
+      $classes = $this->getClassesFront($isAction);
+      $descr["class"] = $classes;
+      
+      $descr["image"] = NULL;
+
       return $descr;
    }
 
@@ -160,23 +171,38 @@ class Land
    /* Private methods */
 
    /**
-´   * Get land class types.
+    * Get land class types.
     */
-   private function getClasses($isAction){
+   private function getClassesBack(){
       $class = "hex";
 
       $class .= $this->getTerrainClass();
+
+      return $class;
+    }
+
+   private function getClassesFront($isAction){
+      $class = "front";
+
+      $army = NULL;
+
+      $army = $this->getArmyClass();
+
+      if ($army) {
+         $class .= $army;
+      }
 
       $class .= $this->getActionClass($isAction);
 
       return $class;
     }
 
+
    /**
     * Get image of building(s)
     */
-   private function getImage(){
-      $image = NULL;
+   private function getBuildingImg(){
+      $img = NULL;
 
       $building = $this->getBuilding();
          
@@ -186,22 +212,6 @@ class Land
          if ($this->getBunker()){
             $image .= "-bunker";
          }
-         if ($this->getCharacter()){
-            $image .= "-army";
-            if ($this->getOwner() == YOU_OWN){
-               $image .= "-enemy";
-            }
-         }
-      }
-      else {
-         if ($this->getCharacter()){
-            if ($this->isMyArmy()) {
-               $image .= "img/army";
-            }
-            else{
-               $image .= "img/army-enemy";
-            }
-         }
       }
 
       if ($image){
@@ -209,6 +219,21 @@ class Land
       }
       
       return $image;
+   }
+
+   private function getArmyClass(){
+      $class = NULL;
+
+      if ($this->getCharacter()){
+         if ($this->isMyArmy()) {
+            $class = " army";
+         }
+         else{
+            $class = " army-enemy";
+         }
+      }
+
+      return $class;
    }
 
    private function getTerrainClass(){
@@ -297,18 +322,6 @@ class Land
          $class .= " gray";
       }
 
-      /*
-      if ($this->getOwner() == I_OWN){
-         $class .= " mark";
-      }
-      */
-
-      /*
-      else if ($this->getOwner() == YOU_OWN){
-         $class .= " blue";
-      }
-      */
-
       return $class;
    }
 
@@ -325,23 +338,7 @@ class Land
       else if ($this->isMarkedLand() && !$this->isMyArmy()){
          $class .= " unmark";
       }
-/*
-      if ( !$isAction && ($this->getAvailable() == AVAILABLE) ){
-         if ($this->getOwner() == I_OWN){
-            $class .= " move_mark";
-            $marked = 1;
-         }
-         else{
-            $class .= " move";
-         }
-      }
-*/
 
-/*
-      if ( !$marked && ($this->getOwner() == I_OWN) ){
-         $class .= " mark";
-      }
-*/
       if ( !$isAction && $this->getExplore() && $this->getCharacter() ){
          $class .= " explore";
       }

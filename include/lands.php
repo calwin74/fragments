@@ -47,7 +47,6 @@ class Lands
      /* mark units */
      $units = $database->units($x, $y, $x_size, $y_size);
 
-
      if ($units) {
        foreach ($units as $unit){
          $key = createKey($unit["x"], $unit["y"]);
@@ -99,9 +98,11 @@ class Lands
       1. First row is always even.   
       2. The first odd tile is special.
       3. NOTE: The x and y coordinates in the for-loops are there to set up the map
+      4. $level 0: background is terrain, img is buildings
+         $level 1: background is unit, img is effect.
    */
 
-   public function printMap($x, $y, $x_size, $y_size){
+   public function printMap($x, $y, $x_size, $y_size, $level){
       $first_row = 1;
       $is_odd = 0;
 
@@ -112,9 +113,9 @@ class Lands
 
          for ($x_pos = $x - $x_size; $x_pos <= $x + $x_size; $x_pos++){
             if ($first_row){
-               //$position = "even";
+               /* test */
             }
-            else{
+            else {
                if ($is_odd){
                   if ($is_first_odd){
                      $is_first_odd = 0;
@@ -137,10 +138,20 @@ class Lands
 
             $key = createKey($x_pos, $y_pos);
             $land = $this->getLand($key);
-            $land_descr = $land->getDescr($this->isAction());
-            $classes = $land_descr["class"];
-            $image = $land_descr["image"];
 
+            if ($level == 1) {
+               /* handle tile in the back */
+               $land_descr = $land->getDescrBack();
+               $classes = $land_descr["class"];
+               $image = $land_descr["image"];   
+            }
+            else if ($level == 2) {
+               /* handle tile in the front */
+               $land_descr = $land->getDescrFront($this->isAction);
+               $classes = $land_descr["class"];
+               $image = NULL;
+            }
+         
             // start tile
             $s = "<span ";
             // classes and position
@@ -153,11 +164,17 @@ class Lands
                }
             }
             // id
-            $s .= "id=$key> ";
+            if ($level == 1){
+               /* id for back end tile is b%key% */
+               $s .= "id=b$key> ";
+            }
+            else if ($level == 2) {
+               $s .= "id=$key> ";
+            }  
             // image
             if ($image){
                $s .= "<img src=\"$image\"></img> ";
-            }            
+            }
             // close tile
             $s .= "</span>";
             
@@ -247,10 +264,17 @@ class Lands
 
      /* mark character neighbourhood as available */     
      if (isset($unit_x) && isset($unit_y)){
+       global $session;
+
+       //$session->logger->LogInfo("start logging lands");
+
        $nhood = '';
        $this->getNeighbourhood($unit_x, $unit_y, $nhood);
 
        foreach ($nhood as $l){
+         //$q = $l->getX()."|".$l->getY();
+         //$session->logger->LogInfo($q);
+
          $this->setAvailableLand($l->getX(), $l->getY(), $x_size, $y_size);
        }                     
      } 

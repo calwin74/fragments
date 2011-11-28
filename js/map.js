@@ -94,7 +94,7 @@ $(function() {
       }
    });
 
-   $(".hex").mouseover(function() {
+   $(".front").mouseover(function() {
       var id = this.id;
       var coordinates = id.split("_");
       var x_coord = coordinates[0];
