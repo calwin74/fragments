@@ -19,6 +19,7 @@ class Land
    private $marked;             //marked
    private $explore;            //available to colonize
    private $my_army;            //my army is present in land
+   private $my_soldiers;        //soldiers in land
    /* Class constructor */
    public function Land(){
      /* nothing yet */
@@ -136,6 +137,14 @@ class Land
    public function getBuilding(){
       return $this->building;
    }
+
+   public function setSoldiers($count){
+      $this->my_soldiers = $count;
+   }
+
+   public function getSoldiers(){
+      return $this->my_soldiers;
+   }
    
    public function getDescrBack() {
       $descr = array();
@@ -155,7 +164,7 @@ class Land
       $classes = $this->getClassesFront($isAction);
       $descr["class"] = $classes;
       
-      $descr["image"] = NULL;
+      $descr["soldiers"] = $this->getSoldiers();
 
       return $descr;
    }
