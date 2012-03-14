@@ -20,7 +20,7 @@ if($session->logged_in){
       header('Location: userinit.php');
    }
    else{
-      header("Location: home.php");
+      header("Location: board.php");
    }
 }
 

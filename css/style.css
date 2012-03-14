@@ -18,16 +18,15 @@
 
 .hex {
 float:left;
-width:40px;
-height:28px;
+width:70px;
+height:49px;
 margin:0 20px 0 0;
-background: url(../img/gray.gif) no-repeat;
 }
 
 .front {
 float:left;
-width:40px;
-height:28px;
+width:70px;
+height:49px;
 margin:0 20px 0 0;
 background: url(../img/transparent.png) no-repeat;
 }
@@ -95,15 +94,15 @@ clear:both;
 }
 
 .firstodd {
-margin:-14px 0 0 30px;
+margin:-24px 0 0 52px;
 }
 
 .odd {
-margin:-14px 0 0 20px;
+margin:-27px 0 0 33px;
 }
 
 .even {
-margin:-14px 20px 0 0;
+margin:-27px 33px 0 0;
 }
 
 .character {
@@ -195,4 +194,28 @@ background: url(../img/army.png) no-repeat;
 
 .army-enemy {
 background: url(../img/army-enemy.png) no-repeat;
+}
+
+.barrack {
+background: url(../img/barrack.png) no-repeat;
+}
+
+.barrack-bunker {
+background: url(../img/barrack-bunker.png) no-repeat;
+}
+
+.cityhall {
+background: url(../img/cityhall.png) no-repeat;
+}
+
+.cityhall-bunker {
+background: url(../img/cityhall-bunker.png) no-repeat;
+}
+
+.factory {
+background: url(../img/factory.png) no-repeat;
+}
+
+.factory-bunker {
+background: url(../img/factory-bunker.png) no-repeat;
 }

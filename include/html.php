@@ -3,40 +3,24 @@
 		function Html(){
   	 	}
 
-		function html_header($title) {
+		function header($title) {
 			echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 			echo '<html>';
 			echo '<head>';
 			echo "<title>".$title."</title>";
 
+         /*
+          * jquery-1.3.2.min.js
+          * jquery library
+          */
+
          echo '<script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>';
-                        
-         /* 
-          * Menu
-          * http://www.trendskitchens.co.nz/jquery/contextmenu/
-          */
-         echo '<script src="js/jquery.contextmenu.r2.left.js" type="text/javascript"></script>';
-
-         /* 
-          * Clock
-          * http://www.techiegyan.com/2008/11/16/jquery-clock-plugin-jclock/
-          */
-         echo '<script src="js/jquery.jclock-1.2.0.js" type="text/javascript"></script>';
 
          /*
-          * Timer
-          * http://plugins.jquery.com/project/timers
+          * taffy-min.js
+          * TaffyDB library
           */
-         echo '<script src="js/jquery.timers-1.2.js" type="text/javascript"></script>';
-
-         /*
-          * Spinner
-          * https://github.com/btburnett3/jquery.ui.spinner
-          */
-         echo '<link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.8.13.custom.css" >';
-         echo '<link rel="stylesheet" type="text/css" href="css/ui.spinner.css" >';
-         echo '<script type="text/javascript" src="js/jquery-ui-1.8.13.custom.min.js"></script>';
-         echo '<script type="text/javascript" src="js/ui.spinner.min.js"></script>';
+         echo '<script src="js/taffy-min.js" type="text/javascript"></script>';
 
          /*
           * map.js
@@ -44,20 +28,19 @@
           */
          echo '<script src="js/map.js" type="text/javascript"></script>';
 
-
          /*
           * style.css
-          * Site specific css.
+          * Site specific css. Note there are two files ...for now.
           */
 			echo '<link rel="stylesheet" type="text/css" href="css/style.css"></link>';
+         echo '<link rel="stylesheet" type="text/css" href="style.css"></link>';
 		}
 
-      function html_end_header() {
+      function end_header() {
          echo '</head>';
-			echo '<body>';
       }
 
-		function html_footer() {
+		function footer() {
 			echo '</body>';
 			echo '</html>';
 		}

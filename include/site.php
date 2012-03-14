@@ -21,7 +21,6 @@ define("DB_USER", "root");
 define("DB_PASS", "aaa123");
 define("DB_NAME", "fragments");
 
-
 /*
 define("DB_SERVER", "mysql.u1000431.fsdata.se");
 define("DB_USER", "u1000431");

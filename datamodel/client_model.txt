@@ -1,0 +1,42 @@
+#
+#Client data model 
+#  	Model in TaffyDB
+#	Data produced in land_description.php
+#
+
+	Column		Description
+
+	x		x coordinate
+	y 		y coordinate
+	toxic		toxic level
+	bclasses	background classes
+				terrain
+				buildings and bunkers
+
+	classes		foreground classes
+				army
+				action events
+
+
+
+#
+#Client class model
+#	Classes produced in land_description.php: getClassesBack and getClassesFront
+#
+
+	Name		Type				Description
+background
+	hex		default background tile		geometry for terrain
+	first odd	modify for first odd tile	geometry for terrain
+	odd		modify for odd tile		geometry for terrain
+	even		modify for even tile		geometry for terrain
+	terrain		terrain type			terrain image
+
+
+foreground
+	front		default background tile		geometry for terrain
+	xy_%X%_%Y%	Coordinate information		(x|y) coordinates, created in the client
+	first odd	modify for first odd tile	geometry for terrain
+	odd		modify for odd tile		geometry for terrain
+	even		modify for even tile		geometry for terrain
+	army		army				army is present in tile	

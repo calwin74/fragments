@@ -105,7 +105,7 @@ define("ALL_LOWERCASE", false);
 /**
  * title prefix constant
  */
-define("FRAGMENTS_TITLE", "FR4GMENTS - made in STHLM");
+define("FRAGMENTS_TITLE", "FR4GMENTS 2.0 - made in STHLM");
 
 /**
  * terrain types
@@ -141,11 +141,11 @@ define("SEA", 21);
  *  Map constants
  */
 
-define("X_LOCAL_MAP_SIZE", 8);
-define("Y_LOCAL_MAP_SIZE", 20);
+define("X_LOCAL_MAP_SIZE", 5);
+define("Y_LOCAL_MAP_SIZE", 13);
 
-define("X_GLOBAL_MAP_SIZE", 50);
-define("Y_GLOBAL_MAP_SIZE", 100);
+define("X_GLOBAL_MAP_SIZE", 250);
+define("Y_GLOBAL_MAP_SIZE", 500);
 
 /**
  * Toxic levels

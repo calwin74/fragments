@@ -146,27 +146,31 @@ class Land
       return $this->my_soldiers;
    }
    
-   public function getDescrBack() {
+   public function getArrayDescr($isAction) {
       $descr = array();
 
-      $classes = $this->getClassesBack();
-      $descr["class"] = $classes;
-      
-      $image = $this->getBuildingImg();
-      $descr["image"] = $image;
- 
-      return $descr;
-   }
+      //key
+      //$descr["key"] = $this->getName();
 
-   public function getDescrFront($isAction) {
-      $descr = array();
+      //x
+      $descr["x"] = $this->getX();
 
-      $classes = $this->getClassesFront($isAction);
-      $descr["class"] = $classes;
-      
-      $descr["soldiers"] = $this->getSoldiers();
+      //y
+      $descr["y"] = $this->getY();
 
-      return $descr;
+      //toxic
+      $descr["toxic"] = $this->getToxic();
+
+      //background classes
+      $descr["bclasses"] = $this->getClassesBack();
+
+      //background image
+      //$descr["bimage"] = $this->getBuildingAnimation();
+
+      //front classes
+      $descr["classes"] = $this->getClassesFront($isAction);
+
+      return $descr; 
    }
 
    public function isMyArmy(){
@@ -184,11 +188,22 @@ class Land
     */
    private function getClassesBack(){
       $class = "hex";
+      $building = "";
 
-      $class .= $this->getTerrainClass();
+      $building = $this->getBuilding();
+      if (strlen($building)){
+         $class .= " ".$building;                       
+
+         if ($this->getBunker()){
+            $class .= "-bunker";
+         }
+      }      
+      else {
+         $class .= $this->getTerrainClass();   
+      }
 
       return $class;
-    }
+   }
 
    private function getClassesFront($isAction){
       $class = "front";
@@ -201,7 +216,7 @@ class Land
          $class .= $army;
       }
 
-      $class .= $this->getActionClass($isAction);
+      //$class .= $this->getActionClass($isAction);
 
       return $class;
     }
@@ -210,23 +225,20 @@ class Land
    /**
     * Get image of building(s)
     */
-   private function getBuildingImg(){
+   private function getBuildingAnimation(){
       $img = NULL;
 
       $building = $this->getBuilding();
          
       if ($building){
-         $image = "img/".$building;                       
-
-         if ($this->getBunker()){
-            $image .= "-bunker";
+         if (!strcmp("factory", $building)) {
+            $image = "img/factoryinprogres.gif";
+         }
+         else if (!strcmp("cityhall", $building) && $this->getBunker()) {
+            $image = "img/cityhall-bunker-onfire.gif";
          }
       }
 
-      if ($image){
-         $image .= ".png";
-      }
-      
       return $image;
    }
 

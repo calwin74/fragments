@@ -13,7 +13,7 @@ for ($y=Y_GLOBAL_MAP_SIZE; $y>=-Y_GLOBAL_MAP_SIZE; $y--)
 {
   for ($x=-X_GLOBAL_MAP_SIZE; $x<=X_GLOBAL_MAP_SIZE; $x++)
   {
-    $type = rand(1,5);
+    $type = rand(1,20);
     $toxic = DEFAULT_TOXIC;
  
     $database->addLand($x, $y, $type, $toxic);

@@ -32,7 +32,7 @@ $database = $session->database; // Database connection
  * User has already initialised, so go on to the game or admin center.
  */
 if($session->isInitUser()){
-   header("Location: home.php");
+   header("Location: board.php");
 }
 ?>
 
