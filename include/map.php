@@ -84,7 +84,22 @@ class Map {
                $s .= "id=$key> ";
             }  
 
-	    // Doesn't work with empty src values except for FireFox.
+            if ($level == 1 && 
+               (($x_pos == 0 && $y_pos == 0) ||
+               ($x_pos == 0 && $y_pos == 2) ||
+               ($x_pos == -4 && $y_pos == 2) ||  
+               ($x_pos == 0 && $y_pos == 4)))
+            {
+               $s .= "<img src=\"\"></img> ";
+
+               $s .= "<div class=\"smoke\">";
+		         $s .= "<img src=\"img/smoke1.png\" width=\"70\" height=\"49\" />";
+		         $s .= "<img src=\"img/smoke2.png\" width=\"70\" height=\"49\" />";
+		         $s .= "<img src=\"img/smoke3.png\" width=\"70\" height=\"49\" />";
+	            $s .= "</div>";
+            }
+
+	         // Doesn't work with empty src values except for FireFox.
             //$s .= "<img src=\"\"></img> ";
 
             // close tile

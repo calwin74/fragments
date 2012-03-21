@@ -41,9 +41,10 @@ var y_pos_boarder = 0;
 var y_neg_boarder = 0;
 
 /*
- * Army selected on board
+ * Selected army position on board
+ * NULL och coordinate array
  */
-var army_selected = false;
+var army_selected = null;
 
 // ---------------------------------------------------------------------------
 // Code to run on data load
@@ -207,7 +208,9 @@ function checkBoarder(x,y) {
   return outside;
 }
 
-// Check if a move is valid.
+/*
+ * Check if a move is valid
+ */
 function checkMove(x,y) {
    if (checkBoarder(x, y)) {
       loadMapBatch();
@@ -216,6 +219,175 @@ function checkMove(x,y) {
       var records = getBoard();
       updateBoard(records);
    }
+}
+
+/*
+ * Check if current is same as stop
+ */
+function atDestination(current, stop) {
+   var done = 0;
+   if ((current[0] == stop[0]) && (current[1] == stop[1])) {
+	   done = 1;
+   }
+
+   return done;
+}
+
+/*
+ * Check if movement is pure vertical from now on
+ * This means that x_current equals x_stop
+ */
+function checkVertical(current, stop) {
+   var ok = 0;
+
+   if (current[0] == stop[0]) {
+	   ok = 1;
+   }
+
+   return ok;
+}
+
+function createCoord(x,y) {
+   var coord = new Array();
+   coord[0] = x;
+   coord[1] = y;
+
+   return coord;
+}
+
+function walkVertical(current, stop, road) {
+   var x = current[0];
+   var yc = current[1];
+   var ys = stop[1];
+
+   road.push(current);
+
+   if (yc > ys) {
+      //walk down two steps
+      alert("walk down");
+      yc--;
+      yc--;
+      var coord = createCoord(x, yc);
+      walkVertical(coord, stop, road);
+   }
+   else if (yc < ys) {
+      //walk up 2 steps
+      alert("walk up");
+      yc++;
+      yc++;
+      var coord = createCoord(x, yc);
+      walkVertical(coord, stop, road);
+   }
+   else {
+      alert("done walking vertical");
+   }
+}
+
+/*
+ * String representation of road
+ */
+function roadToString(road) {
+   var i = 0;
+   var str = "|";
+   var tile = null;
+
+   while(tile = road[i++]) {
+	   str = str.concat(tile).concat("|");
+   }
+
+   return str;
+}
+
+/*
+ * Get an array of coordinates representing the road map from start to
+ * destination. This is just one of the shortest ways.
+ */
+function getRoadMap(current, stop, road) {
+   var str = "generate road map from " + current + " to " + stop;
+   alert(str);
+
+   //road.push(current);
+
+   if (atDestination(current, stop)) {
+	   alert("at destination");
+	   str = roadToString(road);
+	   alert(str);
+   }
+   //xs == xd -> just go up or down
+   if (checkVertical(current, stop)) {
+	   walkVertical(current, stop, road);
+      str = roadToString(road);
+      alert(str);
+   }
+}
+
+function markRoadMap(road) {
+   var i = 0;
+   var tile = null;
+   
+   while(tile = road[i++]) {
+       var coord = ".xy_" + tile[0] + "_" + tile[1];
+       alert(coord);
+       $(coord).removeClass("front").addClass("marked");
+   }
+}
+
+function isBoarder(current, stop) {
+   var xc = parseInt(current[0]);
+   var yc = parseInt(current[1]);
+   var xs = parseInt(stop[0]);
+   var ys = parseInt(stop[1]);
+}
+
+function getBoarders(x,y) {
+   var boarders = new Array();
+
+   str = "getBoarders " + x + " " + y;
+   alert(str);
+
+   if (y % 2) {
+      //y is odd
+      
+	   //x,y+2
+	   boarders.push(createCoord(x,y+2));
+	   //x-1,y+1
+	   boarders.push(createCoord(x-1,y+1));
+	   //x-1,y-1
+	   boarders.push(createCoord(x-1,y-1));
+	   //x,y-2
+	   boarders.push(createCoord(x,y-2));
+	   //x,y-1
+	   boarders.push(createCoord(x,y-1));	
+	   //x,y+1
+	   boarders.push(createCoord(x,y+1));
+   }
+   else {
+	   //y is even
+	
+	   //x,y+2
+      boarders.push(createCoord(x,y+2));
+   	//x,y+1
+      boarders.push(createCoord(x,y+1));
+	   //x,y-1
+      boarders.push(createCoord(x,y-1));
+	   //x,y-2
+      boarders.push(createCoord(x,y-2));
+	   //x+1,y-1
+      boarders.push(createCoord(x+1,y-1));
+	   //x+1,y+1
+      boarders.push(createCoord(x+1,y+1));
+   }
+   
+   alert(roadToString(boarders));
+}
+
+/*
+ * Get (x|y) coordinates
+ */
+function getXY(coords_str) {
+    var parts = coords_str.split("xy_");
+    var xy_coords = parts[1].split("_");
+    return xy_coords;
 }
 
 // ---------------------------------------------------------------------------
@@ -237,17 +409,16 @@ $(function() {
       //foreground class
       var fclasses = $("#"+id).attr("class");
       document.getElementById('fclasses').innerHTML = fclasses;
-      //get first part with hover information
-      var hover_part = fclasses.split(" ");
-      //(x|y) coordinates      
-      var coords = hover_part[0].split("xy_");
-      var xy_coords = coords[1].split("_");
-      var x_coord = xy_coords[0];
-      var y_coord = xy_coords[1];
-      str = "(".concat(x_coord).concat("|").concat(y_coord).concat(")");
+
+      var parts = fclasses.split(" ");
+
+      //(x|y)
+      xy_coords = getXY(parts[0]);
+      str = "(" + xy_coords[0] + "|" + xy_coords[1] + ")";
       document.getElementById('coord').innerHTML = str;
-      //get toxic part
-      var toxic_part = hover_part[1].split(" ");
+
+      //toxic
+      var toxic_part = parts[1].split(" ");
       var toxic = toxic_part[0].split("_");
       var str = toxic[1];
       document.getElementById('toxic').innerHTML = str;
@@ -258,19 +429,29 @@ $(function() {
       var army = $(this).hasClass('army');
 
       if (army == true) {
-         //toggle army_selected
-	 army_selected = !army_selected;
-	 if (army_selected == true) {
-	    alert("marked army");
-	 }
-	 else {
-	    alert("unmarked army");
-	 }
+	      if (army_selected) {
+	         army_selected = null;
+	         alert("unmark army");
+	      }
+	      else {
+	         var fclasses = $("#"+this.id).attr("class");
+	         var parts = fclasses.split(" ");
+	         xy_coords = getXY(parts[0]);
+	         army_selected = xy_coords;
+	         alert("mark army");
+	      }
       }
+      else if (army == false && army_selected) {
+	      //generate road map
+	      var fclasses = $("#"+this.id).attr("class");
+	      var parts = fclasses.split(" ");
+	      xy_coords = getXY(parts[0]);
 
-      if (army_selected == true && army == false) {
-	 //generate road map
-	 alert("generate road map");
+         //getBoarders(parseInt(xy_coords[0]), parseInt(xy_coords[1]));
+
+	      //var road = new Array();
+	      //getRoadMap(army_selected, xy_coords, road);
+	      //markRoadMap(road);
       }
    });
 });
@@ -296,4 +477,21 @@ $(function() {
       x_position++;
       checkMove(x_position, y_position);
    });
+});
+
+$(document).ready(function() {
+    $('.smoke').cycle({
+/*
+      fx: 'shuffle',
+      shuffle: {
+         top: -23,
+         left: 23
+      },
+      speed: 1000,
+      timeout: 1
+*/
+		fx: 'fade',
+      timeout:375,
+      speed:33
+	});
 });

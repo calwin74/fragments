@@ -232,10 +232,7 @@ class Land
          
       if ($building){
          if (!strcmp("factory", $building)) {
-            $image = "img/factoryinprogres.gif";
-         }
-         else if (!strcmp("cityhall", $building) && $this->getBunker()) {
-            $image = "img/cityhall-bunker-onfire.gif";
+            $image = "img/smoke2.png";
          }
       }
 

@@ -23,6 +23,12 @@
          echo '<script src="js/taffy-min.js" type="text/javascript"></script>';
 
          /*
+          * cycle.all.js
+          * Cycle library
+          */
+         echo '<script src="js/jquery.cycle.all.js" type="text/javascript"></script>';
+
+         /*
           * map.js
           * Site specific javascript code included in the map description.
           */
