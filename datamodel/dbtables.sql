@@ -40,6 +40,8 @@ DROP TABLE IF EXISTS `lands`;
 CREATE TABLE `lands` (
   `x` int(10) NOT NULL default '0',
   `y` int(10) NOT NULL default '0',
+  `x_hex` int(10) NOT NULL default '0',
+  `y_hex` int(10) NOT NULL default '0',
   `type` int(10) NOT NULL default '0',
   `owner` varchar(30) default NULL,
   `toxic` int(10) NOT NULL default '0',

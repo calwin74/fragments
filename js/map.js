@@ -19,18 +19,26 @@ var y_position = 0;
 
 /*
  * Size of board.
- * This should be alligned with the sizes in constants.php
+ * The variables are set in initialize.
  */
-var x_board_max = 5;
-var x_board_min = -5;
-var y_board_max = 13;
-var y_board_min = -13;
+var x_board_max = 0;
+var x_board_min = 0;
+var y_board_max = 0;
+var y_board_min = 0;
 
 /*
  * Size of map data in client database
+ * The variables are set in initialize.
  */
-var x_batch_size = 20;
-var y_batch_size = 40;
+var x_batch_size = 0;
+var y_batch_size = 0;
+
+/*
+ * Size of data in database, needed to make sure a line is odd or not.
+ * The variables are set in initialize.
+ */
+var x_global = 0;
+var y_global = 0;
 
 /*
  * Boarder for loaded data in client database.
@@ -72,19 +80,88 @@ if (!request) {
    alert("Error initializing XMLHttpRequest!");
 }
 
+//Client initialization
+initialize();
+//Read board
 loadMapBatch();
 
 // ---------------------------------------------------------------------------
-// Local functions
+// async functions
+
+function initialize() {
+   // This is a sync call, need to get init data before any other data.
+   var url = "initialize.php";
+   request.open("GET", url, false);
+   request.onreadystatechange = handleInitialize;
+   request.send(null);
+}
 
 function loadMapBatch() {
-   // set load status
    var url = "map_update.php?x_position=" + escape(x_position) + "&y_position=" + escape(y_position) + "&x_batch_size=" + escape(x_batch_size) + "&y_batch_size=" + escape(y_batch_size);
    request.open("GET", url, true);
    request.onreadystatechange = handleMapUpdate;
    request.send(null);
 
    updateBoarderXY(x_position, y_position);
+}
+
+// ---------------------------------------------------------------------------
+// callbacks for async functions
+
+function handleInitialize() {
+   if (request.readyState == 4) {
+      if (request.status == 200) {
+         var response = request.responseText;
+
+	 // This might not be secure. Use a Jaason parser instead?
+	 var initObj = eval('(' + response + ')');
+
+	 x_board_max = initObj.x_local_map_size;
+	 x_board_min = -initObj.x_local_map_size;
+	 y_board_max = initObj.y_local_map_size;
+	 y_board_min = -initObj.y_local_map_size;
+	 
+	 x_global = initObj.x_global_map_size;
+	 y_global = initObj.y_global_map_size;
+
+	 x_batch_size = initObj.x_batch_map_size;
+	 y_batch_size = initObj.y_batch_map_size;
+      }
+      else if (request.status == 404) {
+         alert("Request URL does not exist");
+      }
+      else {
+         alert("Error: status code is " + request.status);
+      }
+   }
+}
+
+// ---------------------------------------------------------------------------
+// local functions
+
+function handleMapUpdate() {
+   if (request.readyState == 4) {
+      if (request.status == 200) {
+         var response = request.responseText;
+
+	 // remove all rows from database
+	 mapDB().remove();
+         // insert json response into database
+         mapDB.insert(response);
+
+         // create selection for map based on (x_position|y_position)
+         records = getBoard();
+
+         //update board
+         updateBoard(records);
+      }
+      else if (request.status == 404) {
+         alert("Request URL does not exist");
+      }
+      else {
+         alert("Error: status code is " + request.status);
+      }
+   }
 }
 
 function updateBoard(records) {
@@ -139,6 +216,14 @@ function updateBoard(records) {
          $("#"+b_id).children("img").attr("src", animation);
       }
 
+      //add coordinates to front tile
+      //$("#"+id).children("p").attr("src", animation);
+      
+      //var coord = x + "|" + y;
+      var coord_hex = r.x_hex + "|" + r.y_hex
+      //var coord_hex = r.x + "|" + r.y;
+      $("#"+id).children("p").html(coord_hex);
+
       //edit x and y ...
       if (x >= x_board_max) {
          x = x_board_min;
@@ -156,34 +241,20 @@ function getBoard() {
    var y_top = y_position + y_board_max;
    var y_bottom = y_position - y_board_max;
 
+
+   var y_diff = y_global - y_top;
+   if (y_diff % 2) {
+       /* 
+	* First line should be even, need to modify the y coordinates.
+	* Increase by one.
+        */
+       y_top++;
+       y_bottom++;
+   }
+
    var records = mapDB( {y:{lte:y_top}}, {y:{gte:y_bottom}}, {x:{gte:x_left}}, {x:{lte:x_right}} );
    
    return records;
-}
-
-function handleMapUpdate() {
-   if (request.readyState == 4) {
-      if (request.status == 200) {
-         var response = request.responseText;
-
-	 // remove all rows from database
-	 mapDB().remove();
-         // insert json response into database
-         mapDB.insert(response);
-         
-         // create selection for map based on (x_position|y_position)
-         records = getBoard();
-
-         //update board
-         updateBoard(records);
-      }
-      else if (request.status == 404) {
-         alert("Request URL does not exist");
-      }
-      else {
-         alert("Error: status code is " + request.status);
-      }
-   }
 }
 
 // Update boarders of client database map data.
@@ -199,10 +270,15 @@ function updateBoarderXY(x,y)
 function checkBoarder(x,y) {
   var outside = 0;
 
-  if ( (x + x_board_max > x_pos_boarder) || (x + x_board_min < x_neg_boarder) ||
+  if ( (x + x_board_max > x_global) || (x + x_board_min < -x_global) ||
+       (y + y_board_max > y_global) || (y + y_board_min < -y_global))
+  {
+      outside = 2
+  }
+  else if ( (x + x_board_max > x_pos_boarder) || (x + x_board_min < x_neg_boarder) ||
        (y + y_board_max > y_pos_boarder) || (y + y_board_min < y_neg_boarder))
   {
-     outside = 1;
+      outside = 1;
   }
 
   return outside;
@@ -211,40 +287,34 @@ function checkBoarder(x,y) {
 /*
  * Check if a move is valid
  */
-function checkMove(x,y) {
-   if (checkBoarder(x, y)) {
-      loadMapBatch();
-   }
-   else {
-      var records = getBoard();
-      updateBoard(records);
+function checkMoveMap(x,y) {
+    var status = checkBoarder(x, y);
+    
+    if (status == 1) {
+	// load more map data from database
+	loadMapBatch();
+    }
+    else if (status == 2) {
+	// totally out of map
+	alert("Out of map");
+    }
+    else {
+	// get map from cache
+	var records = getBoard();
+	updateBoard(records);
    }
 }
 
 /*
  * Check if current is same as stop
  */
-function atDestination(current, stop) {
+function atDestination(current_hex, stop_hex) {
    var done = 0;
-   if ((current[0] == stop[0]) && (current[1] == stop[1])) {
-	   done = 1;
+   if ((current_hex[0] == stop_hex[0]) && (current_hex[1] == stop_hex[1])) {
+       done = 1;
    }
 
    return done;
-}
-
-/*
- * Check if movement is pure vertical from now on
- * This means that x_current equals x_stop
- */
-function checkVertical(current, stop) {
-   var ok = 0;
-
-   if (current[0] == stop[0]) {
-	   ok = 1;
-   }
-
-   return ok;
 }
 
 function createCoord(x,y) {
@@ -255,139 +325,176 @@ function createCoord(x,y) {
    return coord;
 }
 
-function walkVertical(current, stop, road) {
-   var x = current[0];
-   var yc = current[1];
-   var ys = stop[1];
-
-   road.push(current);
-
-   if (yc > ys) {
-      //walk down two steps
-      alert("walk down");
-      yc--;
-      yc--;
-      var coord = createCoord(x, yc);
-      walkVertical(coord, stop, road);
-   }
-   else if (yc < ys) {
-      //walk up 2 steps
-      alert("walk up");
-      yc++;
-      yc++;
-      var coord = createCoord(x, yc);
-      walkVertical(coord, stop, road);
-   }
-   else {
-      alert("done walking vertical");
-   }
-}
-
-/*
- * String representation of road
- */
-function roadToString(road) {
-   var i = 0;
-   var str = "|";
-   var tile = null;
-
-   while(tile = road[i++]) {
-	   str = str.concat(tile).concat("|");
-   }
-
-   return str;
-}
-
-/*
- * Get an array of coordinates representing the road map from start to
- * destination. This is just one of the shortest ways.
- */
-function getRoadMap(current, stop, road) {
-   var str = "generate road map from " + current + " to " + stop;
-   alert(str);
-
-   //road.push(current);
-
-   if (atDestination(current, stop)) {
-	   alert("at destination");
-	   str = roadToString(road);
-	   alert(str);
-   }
-   //xs == xd -> just go up or down
-   if (checkVertical(current, stop)) {
-	   walkVertical(current, stop, road);
-      str = roadToString(road);
-      alert(str);
-   }
-}
-
 function markRoadMap(road) {
    var i = 0;
    var tile = null;
-   
+
    while(tile = road[i++]) {
-       var coord = ".xy_" + tile[0] + "_" + tile[1];
-       alert(coord);
+       var cartesian = hexToCartesian(tile);
+       var coord = ".xy_" + cartesian[0] + "_" + cartesian[1];
        $(coord).removeClass("front").addClass("marked");
    }
 }
 
-function isBoarder(current, stop) {
-   var xc = parseInt(current[0]);
-   var yc = parseInt(current[1]);
-   var xs = parseInt(stop[0]);
-   var ys = parseInt(stop[1]);
-}
-
-function getBoarders(x,y) {
-   var boarders = new Array();
-
-   str = "getBoarders " + x + " " + y;
-   alert(str);
-
-   if (y % 2) {
-      //y is odd
-      
-	   //x,y+2
-	   boarders.push(createCoord(x,y+2));
-	   //x-1,y+1
-	   boarders.push(createCoord(x-1,y+1));
-	   //x-1,y-1
-	   boarders.push(createCoord(x-1,y-1));
-	   //x,y-2
-	   boarders.push(createCoord(x,y-2));
-	   //x,y-1
-	   boarders.push(createCoord(x,y-1));	
-	   //x,y+1
-	   boarders.push(createCoord(x,y+1));
-   }
-   else {
-	   //y is even
-	
-	   //x,y+2
-      boarders.push(createCoord(x,y+2));
-   	//x,y+1
-      boarders.push(createCoord(x,y+1));
-	   //x,y-1
-      boarders.push(createCoord(x,y-1));
-	   //x,y-2
-      boarders.push(createCoord(x,y-2));
-	   //x+1,y-1
-      boarders.push(createCoord(x+1,y-1));
-	   //x+1,y+1
-      boarders.push(createCoord(x+1,y+1));
-   }
-   
-   alert(roadToString(boarders));
-}
-
 /*
- * Get (x|y) coordinates
+ * Get (x|y) coordinates in the form of an array.
  */
 function getXY(coords_str) {
     var parts = coords_str.split("xy_");
     var xy_coords = parts[1].split("_");
     return xy_coords;
+}
+
+/*
+ * Get one record from cache using cartesian coordinates.
+ */
+function getRecord(x, y) {
+    var records = mapDB( {x:{is:x.toString()}}, {y:{is:y.toString()}} );
+    var my_record = null;
+
+    if (records.count() == 1) {
+	records.each(function (r){
+            my_record = r;
+	})
+    }
+
+    return my_record;
+}
+
+/*
+ * Get one record from cache using hex coordinates.
+ */
+function getRecordHex(x_hex, y_hex) {
+    var records = mapDB( {x_hex:{is:x_hex.toString()}}, {y_hex:{is:y_hex.toString()}} );
+    var my_record = null;
+
+    if (records.count() == 1) {
+	records.each(function (r){
+	    my_record = r;
+	})
+    }
+
+    return my_record;
+}
+
+function cartesianToHex(cartesian) {
+    var hex = new Array();
+
+    record = getRecord(cartesian[0], cartesian[1]);
+
+    hex[0] = record.x_hex;
+    hex[1] = record.y_hex;
+
+    return hex;
+}
+
+function hexToCartesian(hex) {
+    var cartesian = new Array();
+    
+    record = getRecordHex(hex[0], hex[1]);
+    cartesian[0] = record.x;
+    cartesian[1] = record.y;
+    
+    return cartesian;
+}
+
+function getHexX(hex) {
+    return hex[0];
+}
+
+function getHexY(hex) {
+    return hex[1];
+}
+
+/*
+ * Get distance based on hex coordinates and delta distances
+ */
+
+function getDistance(start_hex, stop_hex) {
+    var deltaX = getHexX(stop_hex) - getHexX(start_hex);
+    var deltaY = getHexY(stop_hex) - getHexY(start_hex);
+    var deltaXY = deltaX - deltaY;
+    var absX = Math.abs(deltaX);
+    var absY = Math.abs(deltaY);
+    var absXY = Math.abs(deltaXY);    
+    var distance = 0;
+
+    if ( (absX >= absY) && (absX >= absXY) ) {
+	distance = absX;
+    }
+    else if ( (absY >= absX) && (absY >= absXY) ) {
+	distance = absY;
+    }
+    else {
+	distance = absXY;
+    }
+
+    return distance;
+}
+
+function getNextStep(current_hex, stop_hex) {
+    var distance = getDistance(current_hex, stop_hex);
+    var coord;
+    var tile_distance;
+
+    //alert(distance);
+
+    //North
+    coord = createCoord(getHexX(current_hex), parseInt(getHexY(current_hex)) + 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	return coord;
+    }
+    //NorthEast
+    coord = createCoord(parseInt(getHexX(current_hex)) + 1, parseInt(getHexY(current_hex)) + 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	return coord;
+    }
+    //SouthEast
+    coord = createCoord(parseInt(getHexX(current_hex)) + 1, getHexY(current_hex));
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	return coord;
+    }
+    //South
+    coord = createCoord(getHexX(current_hex), parseInt(getHexY(current_hex)) - 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	return coord;
+    }
+    //SouthWest
+    coord = createCoord(parseInt(getHexX(current_hex)) - 1, parseInt(getHexY(current_hex)) - 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	return coord;
+    }
+    //NorthWest
+    coord = createCoord(parseInt(getHexX(current_hex)) - 1, getHexY(current_hex));
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	return coord;
+    }
+}
+
+function getRoadMap(current, destination) {
+    var road = new Array();
+
+    //Transform to hex coordinates
+    current_hex = cartesianToHex(current);
+    destination_hex = cartesianToHex(destination);
+    
+    while(!atDestination(current_hex, destination_hex)) {
+	 var next_step;
+
+	//alert(current_hex);
+	next_step = getNextStep(current_hex, destination_hex);
+	road.push(next_step);
+	//alert(next_step);
+	current_hex = next_step;
+    }
+
+    return road;
 }
 
 // ---------------------------------------------------------------------------
@@ -424,58 +531,54 @@ $(function() {
       document.getElementById('toxic').innerHTML = str;
    });
 
-   $(".front").click(function() {
-      // find classes
-      var army = $(this).hasClass('army');
-
-      if (army == true) {
-	      if (army_selected) {
-	         army_selected = null;
-	         alert("unmark army");
-	      }
-	      else {
-	         var fclasses = $("#"+this.id).attr("class");
-	         var parts = fclasses.split(" ");
-	         xy_coords = getXY(parts[0]);
-	         army_selected = xy_coords;
-	         alert("mark army");
-	      }
-      }
-      else if (army == false && army_selected) {
-	      //generate road map
-	      var fclasses = $("#"+this.id).attr("class");
-	      var parts = fclasses.split(" ");
-	      xy_coords = getXY(parts[0]);
-
-         //getBoarders(parseInt(xy_coords[0]), parseInt(xy_coords[1]));
-
-	      //var road = new Array();
-	      //getRoadMap(army_selected, xy_coords, road);
-	      //markRoadMap(road);
-      }
-   });
-});
-
-$(function() {
+   /* click on arrows to move map */
    $("#frametop").click(function() {
       // move 2 steps to keep board in line.
       y_position++;
       y_position++;
-      checkMove(x_position, y_position);
+      checkMoveMap(x_position, y_position);
    });
    $("#framebottom").click(function() {
       // move 2 steps to keep board in line.
       y_position--;
       y_position--;
-      checkMove(x_position, y_position);
+      checkMoveMap(x_position, y_position);
    });
    $("#frameleft").click(function() {
       x_position--;
-      checkMove(x_position, y_position);
+      checkMoveMap(x_position, y_position);
    });
    $("#frameright").click(function() {
       x_position++;
-      checkMove(x_position, y_position);
+      checkMoveMap(x_position, y_position);
+   });
+
+   /* click on tile */
+   $(".front").click(function() {
+      // find classes
+      var army = $(this).hasClass('army');
+
+      if (army == true) {
+	  if (army_selected) {
+	      army_selected = null;
+	      alert("unmark army");
+	  }
+	  else {
+	      var fclasses = $("#"+this.id).attr("class");
+	      var parts = fclasses.split(" ");
+	      xy_coords = getXY(parts[0]);
+	      army_selected = xy_coords;
+	  }
+      }
+      else if (army == false && army_selected) {
+	  //generate road map
+	  var fclasses = $("#"+this.id).attr("class");
+	  var parts = fclasses.split(" ");
+	  xy_coords = getXY(parts[0]);
+
+	  var road = getRoadMap(army_selected, xy_coords);
+	  markRoadMap(road);
+      }
    });
 });
 

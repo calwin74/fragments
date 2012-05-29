@@ -27,7 +27,7 @@ class Lands
 
      foreach ($land_rows as $row){
        $land = new Land;
-       $land->init($row["x"], $row["y"], $row["type"], $row["toxic"]);
+       $land->init($row["x"], $row["y"], $row["x_hex"], $row["y_hex"], $row["type"], $row["toxic"]);
 
        /* handle land ownership */
        if ($row["owner"] && ($characterName != NULL)){

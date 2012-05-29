@@ -141,11 +141,16 @@ define("SEA", 21);
  *  Map constants
  */
 
+/* base is x = 5 and y = 13 */
+
 define("X_LOCAL_MAP_SIZE", 5);
 define("Y_LOCAL_MAP_SIZE", 13);
 
-define("X_GLOBAL_MAP_SIZE", 250);
-define("Y_GLOBAL_MAP_SIZE", 500);
+define("X_GLOBAL_MAP_SIZE", 20);
+define("Y_GLOBAL_MAP_SIZE", 40);
+
+define("X_BATCH_MAP_SIZE", 10);
+define("Y_BATCH_MAP_SIZE", 20);
 
 /**
  * Toxic levels

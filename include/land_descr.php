@@ -28,9 +28,13 @@ class Land
    /* Public methods */
 
    /* Init object, need to be called first */
-   public function init($x, $y, $type, $toxic){
+   public function init($x, $y, $x_hex, $y_hex,$type, $toxic){
      $this->x = $x;
      $this->y = $y;
+
+     $this->x_hex = $x_hex;
+     $this->y_hex = $y_hex;
+
      $this->type = $type;
      $this->name = createKey($x, $y);
      $this->toxic = $toxic;
@@ -60,6 +64,22 @@ class Land
 
    public function getY(){
       return $this->y;
+   }
+
+   public function setXHex($x_hex){
+      $this->x_hex = $x_hex;
+   }
+
+   public function getXHex(){
+      return $this->x_hex;
+   }
+
+   public function setYHex($y_hex){
+      $this->y_hex = $y_hex;
+   }
+
+   public function getYHex(){
+      return $this->y_hex;
    }
 
    public function setType($type){
@@ -157,6 +177,12 @@ class Land
 
       //y
       $descr["y"] = $this->getY();
+
+      //x_hex
+      $descr["x_hex"] = $this->getXHex();
+
+      //y_hex
+      $descr["y_hex"] = $this->getYHex();
 
       //toxic
       $descr["toxic"] = $this->getToxic();

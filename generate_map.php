@@ -7,17 +7,60 @@ global $session;
 $database = $session->database;  //The database connection
 
 /* set this to override php max execute timeout */
-ini_set('max_execution_time', 0);
+ini_set('max_execution_time', 300);
+
+$is_odd = 0;
+$y_hex_start = Y_GLOBAL_MAP_SIZE + 1;
 
 for ($y=Y_GLOBAL_MAP_SIZE; $y>=-Y_GLOBAL_MAP_SIZE; $y--)
 {
-  for ($x=-X_GLOBAL_MAP_SIZE; $x<=X_GLOBAL_MAP_SIZE; $x++)
-  {
-    $type = rand(1,20);
-    $toxic = DEFAULT_TOXIC;
- 
-    $database->addLand($x, $y, $type, $toxic);
-  } 
+   if ($is_odd) {
+      $y_hex_start = $y_hex_start;
+   }
+   else {
+      $y_hex_start = $y_hex_start - 1; 
+   }
+
+   $x_hex = -X_GLOBAL_MAP_SIZE;
+   $y_hex = $y_hex_start;
+
+   if ($is_odd) {
+      $x_hex++;
+   }
+
+   for ($x=-X_GLOBAL_MAP_SIZE; $x<=X_GLOBAL_MAP_SIZE; $x++)
+   {
+      $type = rand(1,20);
+      $toxic = DEFAULT_TOXIC;
+
+      if ($type == 11) {
+      	 $type = 1;
+      }
+      else if ($type == 12) {
+      	 $type = 2;
+      }
+      else if ($type == 13) {
+      	 $type = 3;
+      }
+      else if ($type == 14) {
+      	 $type = 4;
+      }
+      else if ($type == 15) {
+      	 $type = 5;
+      }
+
+      $database->addLand($x, $y, $x_hex, $y_hex, $type, $toxic);
+
+      $x_hex = $x_hex + 2;
+      $y_hex = $y_hex + 1;
+   }
+
+   if ($is_odd) {
+      $is_odd = 0;
+   }
+   else {
+      $is_odd = 1;
+   }
 }
 
 /* add admin user */

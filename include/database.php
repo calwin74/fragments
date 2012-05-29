@@ -1092,8 +1092,8 @@ class MySQLDB
     * addLand - Add land
     * Returns true on success, false otherwise.
     */
-   function addLand($x, $y, $type, $toxic){
-      $q = "INSERT into ".TBL_LANDS." (x, y, type, toxic) VALUES (".$x.", ".$y.", ".$type.", ".$toxic.")";
+   function addLand($x, $y, $x_hex, $y_hex, $type, $toxic){
+      $q = "INSERT into ".TBL_LANDS." (x, y, x_hex, y_hex, type, toxic) VALUES (".$x.", ".$y.", ".$x_hex.", ".$y_hex.", ".$type.", ".$toxic.")";
       return $this->query($q);
    }
 

@@ -29,10 +29,20 @@ class Map {
       $first_row = 1;
       $is_odd = 0;
 
+      $y_key_start = round(($y + $y_size)/2);
+
       for ($y_pos = $y + $y_size; $y_pos >= $y - $y_size; $y_pos--) {
          $is_first_odd = 1;
          $is_first_even = 1;
          $position = "";
+
+	      $x_key = $x - $x_size * 2;
+	      $y_key = $y_key_start;
+
+	      if ($is_odd) {
+	         $x_key++;
+	         $y_key_start--;
+	      }
 
          for ($x_pos = $x - $x_size; $x_pos <= $x + $x_size; $x_pos++) {
             if ($is_odd) {
@@ -55,24 +65,27 @@ class Map {
             }
 
             $key = createKey($x_pos, $y_pos);
+	         $hex_key = createKey($x_key, $y_key);
+	         $x_key = $x_key + 2;
+	         $y_key = $y_key + 1;
 
             // start tile
             $s = "<span ";
             if ($position && strlen($position)) {
-              if ($level == 1) {
-                $s .= "class=\"$position hex\" ";
-              }
-              else {
-                $s .= "class=\"$position front\" ";            
-              }
+               if ($level == 1) {
+                  $s .= "class=\"$position hex\" ";
+               }
+               else {
+                  $s .= "class=\"$position front\" ";            
+               }
             }
             else {
-              if ($level == 1) {
-                $s .= "class=\"hex\" ";
-              }
-              else {
-                $s .= "class=\"front\" ";
-              }
+               if ($level == 1) {
+                  $s .= "class=\"hex\" ";
+               }
+               else {
+                  $s .= "class=\"front\" ";
+               }
             }
 
             // id
@@ -84,6 +97,7 @@ class Map {
                $s .= "id=$key> ";
             }  
 
+/*
             if ($level == 1 && 
                (($x_pos == 0 && $y_pos == 0) ||
                ($x_pos == 0 && $y_pos == 2) ||
@@ -98,10 +112,16 @@ class Map {
 		         $s .= "<img src=\"img/smoke3.png\" width=\"70\" height=\"49\" />";
 	            $s .= "</div>";
             }
-
-	         // Doesn't work with empty src values except for FireFox.
+*/
+	         //Doesn't work with empty src values except for FireFox.
             //$s .= "<img src=\"\"></img> ";
 
+	         //Add this to allow for coordinates
+	         if ($level == 2) {
+	            $s .= "<p>";
+	            //$s .= $key;
+	            $s .= "</p>";
+            }
             // close tile
             $s .= "</span>";
             

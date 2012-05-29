@@ -1,7 +1,6 @@
 <?php
 /*
- * This model creates XML map updates
- *
+ * This model creates JSON map updates
  */
 
 include_once("include/session.php");

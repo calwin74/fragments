@@ -31,6 +31,14 @@ margin:0 20px 0 0;
 background: url(../img/transparent.png) no-repeat;
 }
 
+.marked {
+float:left;
+width:70px;
+height:49px;
+margin:0 20px 0 0;
+background: url(../img/marked.png) no-repeat;
+}
+
 p {
 color:white;
 font: 10px/10px arial, helvetica, sans-serif;
@@ -63,10 +71,6 @@ background: url(../img/gray.gif) no-repeat;
 
 .blue {
 background: url(../img/blue.gif) no-repeat;
-}
-
-.marked {
-background: url(../img/marked.png) no-repeat;
 }
 
 .markeddirt {
