@@ -14,6 +14,13 @@ include_once("include/html.php");
 
 global $session;
 $database = $session->database; // Database connection
+
+/**
+ * User has already initialised, so go on to the game or admin center.
+ */
+if($session->isInitUser()){
+   header("Location: board.php");
+}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -27,14 +34,6 @@ $database = $session->database; // Database connection
 <body>
 
 <div id="apDiv1"><a href="#"></a>
-<?php
-/**
- * User has already initialised, so go on to the game or admin center.
- */
-if($session->isInitUser()){
-   header("Location: board.php");
-}
-?>
 
 <form action="process.php" method="POST">
 <table align="left" border="0" cellspacing="0" cellpadding="3">
