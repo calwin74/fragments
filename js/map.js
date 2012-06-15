@@ -54,6 +54,12 @@ var y_neg_boarder = 0;
  */
 var army_selected = null;
 
+/*
+ * Road proposed for movement
+ */
+var road = null;
+
+
 // ---------------------------------------------------------------------------
 // Code to run on data load
 
@@ -332,8 +338,21 @@ function markRoadMap(road) {
    while(tile = road[i++]) {
        var cartesian = hexToCartesian(tile);
        var coord = ".xy_" + cartesian[0] + "_" + cartesian[1];
-       $(coord).removeClass("front").addClass("marked");
+       $(coord).removeClass("front").addClass("way");
    }
+}
+
+function printRoad(road) {
+   var i = 0;
+   var tile = null;
+   var desc = "walk:";
+
+   while(tile = road[i++]) {
+      var cartesian = hexToCartesian(tile);
+      desc = desc.concat("(", cartesian[0], "|", cartesian[1], ")");
+   }
+
+   return desc;
 }
 
 /*
@@ -554,14 +573,21 @@ $(function() {
    });
 
    /* click on tile */
-   $(".front").click(function() {
+   $(".front, .way").live("click", function() {
+      // remove marked tiles
+      $(".marked").removeClass("marked").addClass("front");
+      // mark tile
+      $(this).removeClass("front").addClass("marked");
+      // remove way tile
+      $(".way").removeClass("way").addClass("front");      
+      
       // find classes
       var army = $(this).hasClass('army');
 
       if (army == true) {
 	  if (army_selected) {
 	      army_selected = null;
-	      alert("unmark army");
+	      road = null;
 	  }
 	  else {
 	      var fclasses = $("#"+this.id).attr("class");
@@ -576,10 +602,20 @@ $(function() {
 	  var parts = fclasses.split(" ");
 	  xy_coords = getXY(parts[0]);
 
-	  var road = getRoadMap(army_selected, xy_coords);
+	  road = getRoadMap(army_selected, xy_coords);
 	  markRoadMap(road);
       }
    });
+
+   $(".marked.way").live("click", function(){
+      alert(printRoad(road));
+   });
+
+   $(".marked").live("click", function(){
+      //remove marked tile if clicked
+      $(this).removeClass("marked").addClass("front");
+   });
+
 });
 
 $(document).ready(function() {

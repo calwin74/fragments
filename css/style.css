@@ -36,7 +36,15 @@ float:left;
 width:70px;
 height:49px;
 margin:0 20px 0 0;
-background: url(../img/marked.png) no-repeat;
+background: url(../img/marked_black.png) no-repeat;
+}
+
+.way {
+float:left;
+width:70px;
+height:49px;
+margin:0 20px 0 0;
+background: url(../img/marked_black.png) no-repeat;
 }
 
 p {
