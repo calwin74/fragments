@@ -111,8 +111,30 @@ function loadMapBatch() {
    updateBoarderXY(x_position, y_position);
 }
 
+function setWalk(steps) {
+   var url = "walk_update.php?steps=" + escape(steps);
+   request.open("GET", url, true);
+   request.onreadystatechange = handleDefaultUpdate;
+   request.send(null);
+}
+
 // ---------------------------------------------------------------------------
 // callbacks for async functions
+
+function handleDefaultUpdate() {
+   if (request.readyState == 4) {
+       if (request.status == 200) {
+	  var response = request.responseText;
+	  alert (response);
+       }
+       else if (request.status == 404) {
+          alert("handleDefaultUpdate: Request URL does not exist");
+       }
+       else {
+	  alert("handleDefaultUpdate: Error - status code is " + request.status);
+       }
+   }
+}
 
 function handleInitialize() {
    if (request.readyState == 4) {
@@ -142,9 +164,6 @@ function handleInitialize() {
    }
 }
 
-// ---------------------------------------------------------------------------
-// local functions
-
 function handleMapUpdate() {
    if (request.readyState == 4) {
       if (request.status == 200) {
@@ -169,6 +188,9 @@ function handleMapUpdate() {
       }
    }
 }
+
+// ---------------------------------------------------------------------------
+// local functions
 
 function updateBoard(records) {
    var x = x_board_min;
@@ -345,11 +367,31 @@ function markRoadMap(road) {
 function printRoad(road) {
    var i = 0;
    var tile = null;
-   var desc = "walk:";
+   var desc = "road:";
 
    while(tile = road[i++]) {
       var cartesian = hexToCartesian(tile);
       desc = desc.concat("(", cartesian[0], "|", cartesian[1], ")");
+   }
+
+   return desc;
+}
+
+/*
+ * fromat way using comma separated list
+ * x|y,x|y, ...
+ */
+function formatWay(road) {
+   var i = 0;
+   var tile = null;
+   var desc = "";
+
+   while(tile = road[i++]) {
+      if(i != 1) {
+         desc = desc.concat(",");
+      }
+      var cartesian = hexToCartesian(tile);
+      desc = desc.concat(cartesian[0], "|", cartesian[1]);
    }
 
    return desc;
@@ -609,6 +651,10 @@ $(function() {
 
    $(".marked.way").live("click", function(){
       alert(printRoad(road));
+      var steps = formatWay(road);
+      setWalk(steps);
+      //clear way tiles
+      $(".way").removeClass("way").addClass("front");
    });
 
    $(".marked").live("click", function(){
