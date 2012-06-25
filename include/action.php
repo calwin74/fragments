@@ -77,23 +77,25 @@ class Action
          $name = $action["name"];
 
          if($action["type"] == MOVE){
-            /* move action */
+	    if (0){
+	       $battle = new Battle($x, $y, $name);            
 
-            $database->removeFromActionQueue($x, $y, $name);
-
-            $battle = new Battle($x, $y, $name);            
-
-            if($battle->isBattle()){
-               /* there will be blood ... */
-               if($battle->executeBattle()){
-                 /* attacker won, move into position */
-                 $database->moveCharacter($x, $y, $name);
+               if($battle->isBattle()){
+                  /* there will be blood ... */
+                  if($battle->executeBattle()){
+                     /* attacker won, move into position */
+                     $database->moveCharacter($x, $y, $name);
+                  }
+                  $battle->reportBattle();
                }
-               $battle->reportBattle();
-            }
-            else{
-              $database->moveCharacter($x, $y, $name);
-            }
+               else{
+                  $database->moveCharacter($x, $y, $name);
+               }
+	    }
+	    else{
+	       $database->moveCharacter($x, $y, $name);
+	    }
+            $database->removeFromActionQueue($x, $y, $name);
          }
          else if($action["type"] == EXPLORE){
             /* explore action */

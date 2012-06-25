@@ -59,6 +59,11 @@ var army_selected = null;
  */
 var road = null;
 
+/*
+ * Timer to handle delta updates
+ */
+var timer = null;
+var interval = 5000;
 
 // ---------------------------------------------------------------------------
 // Code to run on data load
@@ -67,6 +72,7 @@ var road = null;
  * Create XMLHttpRequest object for all browsers.
  */
 var request = false;
+var request_delta = false;
 
 try {
    request = new XMLHttpRequest();
@@ -86,13 +92,41 @@ if (!request) {
    alert("Error initializing XMLHttpRequest!");
 }
 
-//Client initialization
+try {
+   request_delta = new XMLHttpRequest();
+} catch (trymicrosoft) {
+   try {
+      request_delta = new ActiveXObject("Msxml2.XMLHTTP");
+   } catch (othermicrosoft) {
+      try {
+         request_delta = new ActiveXObject("Microsoft.XMLHTTP");
+      } catch (failed) {
+         request_delta = false;
+      }  
+   }
+}
+
+if (!request_delta) {
+   alert("Error initializing XMLHttpRequest! (request_delta)");
+}
+
+//Client initialization (sync)
 initialize();
 //Read board
 loadMapBatch();
+//Start delta updates
+timer = setInterval(function(){deltaMapFunction()}, interval);
 
 // ---------------------------------------------------------------------------
 // async functions
+
+function deltaMapFunction() {
+   // need a dedicated channel???
+   var url = "map_delta_update.php?x_position=" + escape(x_position) + "&y_position=" + escape(y_position) + "&x_batch_size=" + escape(x_batch_size) + "&y_batch_size=" + escape(y_batch_size);;
+   request_delta.open("GET", url, true);
+   request_delta.onreadystatechange = handleDeltaMapUpdate;
+   request_delta.send(null);
+}
 
 function initialize() {
    // This is a sync call, need to get init data before any other data.
@@ -121,11 +155,43 @@ function setWalk(steps) {
 // ---------------------------------------------------------------------------
 // callbacks for async functions
 
+function handleDeltaMapUpdate() {
+   if (request_delta.readyState == 4) {
+       if (request_delta.status == 200) {
+	  var response = request_delta.responseText;
+	  //alert(response);
+
+	  //This might not be secure. Use a JSON parser instead?
+	  //For instance use $.parseJSON(response);
+	  var units = eval('(' + response + ')');
+
+	  //Reset armies from mapDB and DOM
+	  mapDB({army:{is:"army"}}).update({army:null});
+	  mapDB({army:{is:"army-enemy"}}).update({army:null});	  
+	  $(".army").removeClass("army");
+	  $(".army-enemy").removeClass("army-enemy");
+
+	  //Set army in mapDB and DOM using delta updates
+	  for (var i = 0; i < units.length; i++) {
+	      var unit = units[i];
+	      mapDB( {x:{is:unit.x}}, {y:{is:unit.y}} ).update( {army: unit.army} );
+	      updateTile(unit);
+	  }
+       }
+       else if (request_delta.status == 404) {
+          alert("handleDeltaMapUpdate: Request URL does not exist");
+       }
+       else {
+	  alert("handleDeltaMapUpdate: Error - status code is " + request_delta.status);
+       }
+   }
+}
+
 function handleDefaultUpdate() {
    if (request.readyState == 4) {
        if (request.status == 200) {
-	  var response = request.responseText;
-	  alert (response);
+	  //var response = request.responseText;
+	  //alert (response);
        }
        else if (request.status == 404) {
           alert("handleDefaultUpdate: Request URL does not exist");
@@ -141,7 +207,7 @@ function handleInitialize() {
       if (request.status == 200) {
          var response = request.responseText;
 
-	 // This might not be secure. Use a Jaason parser instead?
+	 // This might not be secure. Use a JSON parser instead?
 	 var initObj = eval('(' + response + ')');
 
 	 x_board_max = initObj.x_local_map_size;
@@ -192,6 +258,12 @@ function handleMapUpdate() {
 // ---------------------------------------------------------------------------
 // local functions
 
+function updateTile(record) {
+   var class_coord = ".xy_" + record.x + "_" + record.y;
+   var army_class = " " + record.army;
+   $(class_coord).addClass(army_class);
+}
+
 function updateBoard(records) {
    var x = x_board_min;
    var y = y_board_max; 
@@ -231,8 +303,12 @@ function updateBoard(records) {
       // The xy coordinate and toxic classes must always be first in the class attribute list.
       var class_coord = "xy_" + r.x + "_" + r.y;
       var toxic_class = "toxic_" + r.toxic;
+      var army_class = "";
+      if (r.army) {
+	 army_class = " " + r.army;
+      }
 
-      var class_f = class_coord + " " + toxic_class + " "  + c + " " + r.classes;      
+      var class_f = class_coord + " " + toxic_class + " "  + c + " " + r.classes + army_class; 
 
       // class attribute
       $("#"+b_id).attr("class", class_b);
@@ -650,7 +726,7 @@ $(function() {
    });
 
    $(".marked.way").live("click", function(){
-      alert(printRoad(road));
+      //alert(printRoad(road));
       var steps = formatWay(road);
       setWalk(steps);
       //clear way tiles

@@ -41,6 +41,7 @@ $(function($) {
 </script>
 
 <script type="text/javascript">
+
 $(function() { 
    var resource_div = $("div.resources");
    var resource_active = false;
@@ -48,6 +49,7 @@ $(function() {
    var action_div = $("div.action");
    var action_active = false;
 
+/*
    $('.resource-interval', resource_div).find('.start').css("cursor", "pointer").click(function() {
       if (!resource_active) {
          resource_active = !resource_active;
@@ -70,12 +72,12 @@ $(function() {
          $(this).parents("div").find('ul').stopTime('resource');
        }
    });
-
+*/
    $('.action-interval', action_div).find('.start').css("cursor", "pointer").click(function() {
       if (!action_active) {
          action_active = !action_active;
          document.getElementById('action_agent').innerHTML = "Running";
-         $(this).parents("div").find('ul').everyTime("1s", "action", function() {
+         $(this).parents("div").find('ul').everyTime("5s", "action", function() {
             $.ajax({
                type: "POST",
                url: "agent_process.php",
@@ -93,7 +95,6 @@ $(function() {
          $(this).parents("div").find('ul').stopTime("action");
        }
    });
-
 });
 </script>
 
@@ -109,25 +110,6 @@ $(function() {
 <b>::::::::::::::::::::::::::::::::::::::::::::</b></font>
 <font size="4">Logged in as <b><?php echo $session->username; ?></b></font><br><br>
 
-<b>Resource Agent </b><br>
-
-<!-- Resource agent status -->
-<div id="resource_agent">
-Not running
-</div>
-
-<div class="resources">
-   <div class="resource-interval">
-      <ul></ul>
-      <p><span class="start">Start</span> | <span class="stop">Stop</span></p>
-   </div>
-</div>
-
-<!-- AJAX resource response -->
-Last agent event:
-<div id="resource_response"></div>
-
-<br><br>
 <b>Action Agent </b><br>
 
 <!-- Action agent status -->
@@ -146,6 +128,22 @@ Not running
 Last agent event:
 <div id="action_response"></div>
 
+<br><br>
+<!-- Resource agent status -->
+<div id="resource_agent">
+Not running
+</div>
+
+<div class="resources">
+   <div class="resource-interval">
+      <ul></ul>
+      <p><span class="start">Start</span> | <span class="stop">Stop</span></p>
+   </div>
+</div>
+
+<!-- AJAX resource response -->
+Last agent event:
+<div id="resource_response"></div>
 
 </body>
 </html>

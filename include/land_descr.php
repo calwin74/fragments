@@ -196,6 +196,9 @@ class Land
       //front classes
       $descr["classes"] = $this->getClassesFront($isAction);
 
+      //army class
+      $descr["army"] = $this->getArmyClass();
+
       return $descr; 
    }
 
@@ -234,19 +237,10 @@ class Land
    private function getClassesFront($isAction){
       $class = "front";
 
-      $army = NULL;
-
-      $army = $this->getArmyClass();
-
-      if ($army) {
-         $class .= $army;
-      }
-
       //$class .= $this->getActionClass($isAction);
 
       return $class;
-    }
-
+   }
 
    /**
     * Get image of building(s)
@@ -266,14 +260,14 @@ class Land
    }
 
    private function getArmyClass(){
-      $class = NULL;
+      $class = "";
 
       if ($this->getCharacter()){
          if ($this->isMyArmy()) {
-            $class = " army";
+            $class = "army";
          }
          else{
-            $class = " army-enemy";
+            $class = "army-enemy";
          }
       }
 

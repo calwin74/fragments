@@ -16,6 +16,9 @@ if($session->logged_in){
    if($session->isAdmin()){
       header('Location: admin.php');
    }
+   else if ($session->isAgent()){
+      header('Location: agent.php');
+   }
    else if(!$session->isInitUser()){
       header('Location: userinit.php');
    }
