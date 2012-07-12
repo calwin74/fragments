@@ -10,10 +10,19 @@ include_once("include/land_descr.php");
 include_once("include/land_utils.php");
 include_once("include/lands.php");
 include_once("include/utils.php"); //needed?
-include_once("include/character.php");
 include_once("include/map.php");
+include_once("include/character.php");
+include_once("include/population.php");
+include_once("include/treasury.php");
 
 global $session;
+
+/* get character */
+$character = new Character();
+
+/* get resources */
+$population = new Population($character->getName());
+$treasury = new Treasury($character->getName());
 
 $x = 0;
 $y = 0;
@@ -90,6 +99,15 @@ function MM_swapImage() { //v3.0
       </ul>
     </li>
   </ul>
+
+
+  <div id="overview">
+       Gold: <?php echo $treasury->getGold(); ?>
+       | Total Civilians: <?php echo $population->getCivilians();?> 
+       | Tax: <?php echo $treasury->getTax(); ?>%
+       | Total Income: <?php echo $treasury->getIncome(); ?>
+       | Total Cost: Not done
+  </div>
 </div>
 
 <div id="right">

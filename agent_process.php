@@ -10,6 +10,8 @@ include_once("include/session.php");
 //include_once("include/resources.php");
 include_once("include/utils.php");
 include_once("include/action.php");
+include_once("include/population.php");
+include_once("include/treasury.php");
 
 class AgentProcess
 {
@@ -37,15 +39,20 @@ class AgentProcess
 
       if (!strcmp($type, "resources")){
          /* calculate all clients productions */
-         calculateResources();         
+
+	 /* population */
+	 $population = new Population("");
+	 $population->updateAllCivilians();
+
+	 /* treasury */
+	 $treasury = new Treasury("");
+	 $treasury->updateAllTreasury();
          
          /* Report timestamp back to agent */
          echo getNow(0);
       }
       else if (!strcmp($type, "actions")){
          /* handle all actions */                  
-         //$this->handleActionQueue();
-
 	 $action = new Action();
 	 $action->processActions();	 
 

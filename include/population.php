@@ -16,13 +16,15 @@ class Population
 
    /* Class constructor */
    public function Population($owner){
-      $population = $this->getPopulation($owner);
+      if ($owner && strlen($owner)){
+      	 $population = $this->getPopulation($owner);
 
-      $this->my_owner = $population["owner"];
-      $this->my_civilians = $population["civilians"];
-      $this->my_explorers = $population["explorers"];
+      	 $this->my_owner = $population["owner"];
+      	 $this->my_civilians = $population["civilians"];
+      	 $this->my_explorers = $population["explorers"];
+      }
    }
-
+   
    public function getPopulation($owner){
       global $session;
       $database = $session->database;
@@ -68,11 +70,6 @@ class Population
             $newTime = strftime("%Y-%m-%d %H:%M:%S", $now);
 
             $database->updateCivilians($newCivilians, $owner, $newTime);
-
-            if(!strcmp($this->my_owner, $population["owner"])){
-               /* refreash civilian count */
-               $this->my_civilians = $newCivilians;
-            }
          }
       }
    }

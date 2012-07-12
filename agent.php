@@ -49,12 +49,11 @@ $(function() {
    var action_div = $("div.action");
    var action_active = false;
 
-/*
    $('.resource-interval', resource_div).find('.start').css("cursor", "pointer").click(function() {
       if (!resource_active) {
          resource_active = !resource_active;
          document.getElementById('resource_agent').innerHTML = "Running";
-         $(this).parents("div").find('ul').everyTime("1s", "resource", function() {
+         $(this).parents("div").find('ul').everyTime("5s", "resource", function() {
             $.ajax({
                type: "POST",
                url: "agent_process.php",
@@ -72,7 +71,7 @@ $(function() {
          $(this).parents("div").find('ul').stopTime('resource');
        }
    });
-*/
+
    $('.action-interval', action_div).find('.start').css("cursor", "pointer").click(function() {
       if (!action_active) {
          action_active = !action_active;
@@ -129,6 +128,9 @@ Last agent event:
 <div id="action_response"></div>
 
 <br><br>
+
+<b>Resource Agent </b><br>
+
 <!-- Resource agent status -->
 <div id="resource_agent">
 Not running

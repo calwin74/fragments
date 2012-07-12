@@ -18,10 +18,12 @@ class Treasury
       global $session;
       $database = $session->database;
 
-      $treasury = $database->getTreasuryFromOwner($owner);
-      $this->my_gold = $treasury["gold"];
-      $this->my_tax = $treasury["tax"];
-      $this->my_owner = $treasury["character_name"];
+      if ($owner && strlen($owner)){
+      	 $treasury = $database->getTreasuryFromOwner($owner);
+	 $this->my_gold = $treasury["gold"];
+	 $this->my_tax = $treasury["tax"];
+	 $this->my_owner = $treasury["character_name"];
+      }
    }
 
    public function getGold(){
@@ -38,13 +40,11 @@ class Treasury
 
    public function getIncome(){
       $income = $this->calculateIncome($this->my_owner, $this->my_tax);
-
       return $income;      
    }
 
    public function getCost(){
       $cost = $this->calculateCost($this->my_owner);
-
       return $cost;
    }
 
@@ -70,11 +70,6 @@ class Treasury
 
             $newTime = strftime("%Y-%m-%d %H:%M:%S", $now);
             $database->updateGold($newGold, $owner, $newTime);
-
-            if(!strcmp($this->my_owner, $owner)){
-               /* refresh gold count */
-               $this->my_gold = $newGold;
-            }
          }
       }
    }
