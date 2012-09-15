@@ -305,7 +305,7 @@ function updateBoard(records) {
       var toxic_class = "toxic_" + r.toxic;
       var army_class = "";
       if (r.army) {
-	 army_class = " " + r.army;
+	      army_class = " " + r.army;
       }
 
       var class_f = class_coord + " " + toxic_class + " "  + c + " " + r.classes + army_class; 
@@ -432,11 +432,17 @@ function createCoord(x,y) {
 function markRoadMap(road) {
    var i = 0;
    var tile = null;
+   var len = road.length;
 
    while(tile = road[i++]) {
-       var cartesian = hexToCartesian(tile);
-       var coord = ".xy_" + cartesian[0] + "_" + cartesian[1];
-       $(coord).removeClass("front").addClass("way");
+      var cartesian = hexToCartesian(tile);
+      var coord = ".xy_" + cartesian[0] + "_" + cartesian[1];
+      if (i < len) {
+         $(coord).removeClass("front").addClass("way");
+      }
+      else {
+         $(coord).removeClass("front").addClass("wayend");
+      }
    }
 }
 
@@ -557,19 +563,19 @@ function getDistance(start_hex, stop_hex) {
     var distance = 0;
 
     if ( (absX >= absY) && (absX >= absXY) ) {
-	distance = absX;
+	    distance = absX;
     }
     else if ( (absY >= absX) && (absY >= absXY) ) {
-	distance = absY;
+	    distance = absY;
     }
     else {
-	distance = absXY;
+	    distance = absXY;
     }
 
     return distance;
 }
 
-function getNextStep(current_hex, stop_hex) {
+function getNextStepEast(current_hex, stop_hex) {
     var distance = getDistance(current_hex, stop_hex);
     var coord;
     var tile_distance;
@@ -580,55 +586,106 @@ function getNextStep(current_hex, stop_hex) {
     coord = createCoord(getHexX(current_hex), parseInt(getHexY(current_hex)) + 1);
     tile_distance = getDistance(coord, stop_hex);
     if (tile_distance < distance) {
-	return coord;
+	    return coord;
     }
     //NorthEast
     coord = createCoord(parseInt(getHexX(current_hex)) + 1, parseInt(getHexY(current_hex)) + 1);
     tile_distance = getDistance(coord, stop_hex);
     if (tile_distance < distance) {
-	return coord;
+	    return coord;
     }
     //SouthEast
     coord = createCoord(parseInt(getHexX(current_hex)) + 1, getHexY(current_hex));
     tile_distance = getDistance(coord, stop_hex);
     if (tile_distance < distance) {
-	return coord;
+	    return coord;
     }
     //South
     coord = createCoord(getHexX(current_hex), parseInt(getHexY(current_hex)) - 1);
     tile_distance = getDistance(coord, stop_hex);
     if (tile_distance < distance) {
-	return coord;
+	    return coord;
     }
     //SouthWest
     coord = createCoord(parseInt(getHexX(current_hex)) - 1, parseInt(getHexY(current_hex)) - 1);
     tile_distance = getDistance(coord, stop_hex);
     if (tile_distance < distance) {
-	return coord;
+	    return coord;
     }
     //NorthWest
     coord = createCoord(parseInt(getHexX(current_hex)) - 1, getHexY(current_hex));
     tile_distance = getDistance(coord, stop_hex);
     if (tile_distance < distance) {
-	return coord;
+	    return coord;
+    }
+}
+
+function getNextStepWest(current_hex, stop_hex) {
+    var distance = getDistance(current_hex, stop_hex);
+    var coord;
+    var tile_distance;
+
+    //NorthWest
+    coord = createCoord(parseInt(getHexX(current_hex)) - 1, getHexY(current_hex));
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	    return coord;
+    }
+    //SouthWest
+    coord = createCoord(parseInt(getHexX(current_hex)) - 1, parseInt(getHexY(current_hex)) - 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	    return coord;
+    }
+    //South
+    coord = createCoord(getHexX(current_hex), parseInt(getHexY(current_hex)) - 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	    return coord;
+    }
+    //SouthEast
+    coord = createCoord(parseInt(getHexX(current_hex)) + 1, getHexY(current_hex));
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	    return coord;
+    }
+    //NorthEast
+    coord = createCoord(parseInt(getHexX(current_hex)) + 1, parseInt(getHexY(current_hex)) + 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	    return coord;
+    }
+    //North
+    coord = createCoord(getHexX(current_hex), parseInt(getHexY(current_hex)) + 1);
+    tile_distance = getDistance(coord, stop_hex);
+    if (tile_distance < distance) {
+	    return coord;
     }
 }
 
 function getRoadMap(current, destination) {
     var road = new Array();
-
+    var spin = 0; // 0 = east, 1 = west.
+ 
     //Transform to hex coordinates
     current_hex = cartesianToHex(current);
     destination_hex = cartesianToHex(destination);
     
     while(!atDestination(current_hex, destination_hex)) {
-	 var next_step;
+	    var next_step;
 
-	//alert(current_hex);
-	next_step = getNextStep(current_hex, destination_hex);
-	road.push(next_step);
-	//alert(next_step);
-	current_hex = next_step;
+	    //alert(current_hex);
+       if (spin == 0) {
+	       next_step = getNextStepEast(current_hex, destination_hex);
+          spin = 1;
+       }
+       else {
+          next_step = getNextStepWest(current_hex, destination_hex);
+          spin = 0;
+       }
+	    road.push(next_step);
+	    //alert(next_step);
+	    current_hex = next_step;
     }
 
     return road;
@@ -691,46 +748,53 @@ $(function() {
    });
 
    /* click on tile */
-   $(".front, .way").live("click", function() {
+   $(".front, .way .wayend").live("click", function() {
       // remove marked tiles
       $(".marked").removeClass("marked").addClass("front");
+
       // mark tile
       $(this).removeClass("front").addClass("marked");
+
       // remove way tile
       $(".way").removeClass("way").addClass("front");      
+
+      // remove wayend tile
+      $(".wayend").removeClass("wayend").addClass("front");
       
       // find classes
       var army = $(this).hasClass('army');
 
       if (army == true) {
-	  if (army_selected) {
-	      army_selected = null;
-	      road = null;
-	  }
-	  else {
+	      if (army_selected) {
+	         army_selected = null;
+	         road = null;
+	      }
+	      else {
+	         var fclasses = $("#"+this.id).attr("class");
+	         var parts = fclasses.split(" ");
+	         xy_coords = getXY(parts[0]);
+	         army_selected = xy_coords;
+	      }
+      }
+      else if (army == false && army_selected) {
+	      //generate road map
 	      var fclasses = $("#"+this.id).attr("class");
 	      var parts = fclasses.split(" ");
 	      xy_coords = getXY(parts[0]);
-	      army_selected = xy_coords;
-	  }
-      }
-      else if (army == false && army_selected) {
-	  //generate road map
-	  var fclasses = $("#"+this.id).attr("class");
-	  var parts = fclasses.split(" ");
-	  xy_coords = getXY(parts[0]);
 
-	  road = getRoadMap(army_selected, xy_coords);
-	  markRoadMap(road);
+	      road = getRoadMap(army_selected, xy_coords);
+	      markRoadMap(road);
       }
    });
 
-   $(".marked.way").live("click", function(){
+   //$(".marked.way").live("click", function(){
+   $(".wayend").live("click", function(){
       //alert(printRoad(road));
       var steps = formatWay(road);
       setWalk(steps);
-      //clear way tiles
+      //clear way and wayend tiles
       $(".way").removeClass("way").addClass("front");
+      $(".wayend").removeClass("wayend").addClass("front");
    });
 
    $(".marked").live("click", function(){

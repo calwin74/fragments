@@ -44,6 +44,14 @@ float:left;
 width:70px;
 height:49px;
 margin:0 20px 0 0;
+background: url(../img/marked_green.png) no-repeat;
+}
+
+.wayend {
+float:left;
+width:70px;
+height:49px;
+margin:0 20px 0 0;
 background: url(../img/marked_black.png) no-repeat;
 }
 
