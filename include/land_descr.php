@@ -231,13 +231,18 @@ class Land
          $class .= $this->getTerrainClass();   
       }
 
+      if ($this->getOwner() == I_OWN){
+         $class .= " friend";
+      }
+      else if ($this->getOwner() == YOU_OWN){
+         $class .= " enemy";
+      }
+
       return $class;
    }
 
    private function getClassesFront($isAction){
       $class = "front";
-
-      //$class .= $this->getActionClass($isAction);
 
       return $class;
    }

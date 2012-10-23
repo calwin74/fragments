@@ -75,28 +75,32 @@ class Map {
                if ($level == 1) {
                   $s .= "class=\"$position hex\" ";
                }
-               else {
-                  $s .= "class=\"$position front\" ";            
+               else if ( ($level == 2) || ($level == 3) || ($level == 4) ) {
+                  $s .= "class=\"$position front\" ";
                }
             }
             else {
                if ($level == 1) {
                   $s .= "class=\"hex\" ";
                }
-               else {
+               else if ( ($level == 2) || ($level == 3) || ($level == 4) ) {
                   $s .= "class=\"front\" ";
                }
             }
 
             // id
             if ($level == 1) {
-               /* id for back end tile is b%key% */
-               $s .= "id=b$key> ";
+               $s .= "id=a$key> ";
             }
             else if ($level == 2) {
-               $s .= "id=$key> ";
-            }  
-
+               $s .= "id=b$key> ";               
+            }
+            else if ($level == 3) {
+               $s .= "id=c$key> ";
+            }
+            else if ($level == 4) {
+               $s .= "id=d$key> ";
+            }
 /*
             if ($level == 1 && 
                (($x_pos == 0 && $y_pos == 0) ||
@@ -116,12 +120,14 @@ class Map {
 	         //Doesn't work with empty src values except for FireFox.
             //$s .= "<img src=\"\"></img> ";
 
-	         //Add this to allow for coordinates
+	         //Add this to allow for coordinates or information
+            /*
 	         if ($level == 2) {
 	            $s .= "<p>";
 	            //$s .= $key;
 	            $s .= "</p>";
             }
+            */
             // close tile
             $s .= "</span>";
             

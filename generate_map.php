@@ -30,24 +30,8 @@ for ($y=Y_GLOBAL_MAP_SIZE; $y>=-Y_GLOBAL_MAP_SIZE; $y--)
 
    for ($x=-X_GLOBAL_MAP_SIZE; $x<=X_GLOBAL_MAP_SIZE; $x++)
    {
-      $type = rand(1,20);
+      $type = rand(1,10);
       $toxic = DEFAULT_TOXIC;
-
-      if ($type == 11) {
-      	 $type = 1;
-      }
-      else if ($type == 12) {
-      	 $type = 2;
-      }
-      else if ($type == 13) {
-      	 $type = 3;
-      }
-      else if ($type == 14) {
-      	 $type = 4;
-      }
-      else if ($type == 15) {
-      	 $type = 5;
-      }
 
       $database->addLand($x, $y, $x_hex, $y_hex, $type, $toxic);
 

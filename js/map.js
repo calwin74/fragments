@@ -115,7 +115,7 @@ initialize();
 //Read board
 loadMapBatch();
 //Start delta updates
-timer = setInterval(function(){deltaMapFunction()}, interval);
+//timer = setInterval(function(){deltaMapFunction()}, interval);
 
 // ---------------------------------------------------------------------------
 // async functions
@@ -157,48 +157,48 @@ function setWalk(steps) {
 
 function handleDeltaMapUpdate() {
    if (request_delta.readyState == 4) {
-       if (request_delta.status == 200) {
-	  var response = request_delta.responseText;
-	  //alert(response);
+      if (request_delta.status == 200) {
+	      var response = request_delta.responseText;
+	      //alert(response);
 
-	  //This might not be secure. Use a JSON parser instead?
-	  //For instance use $.parseJSON(response);
-	  var units = eval('(' + response + ')');
+	      //This might not be secure. Use a JSON parser instead?
+	      //For instance use $.parseJSON(response);
+	      var units = eval('(' + response + ')');
 
-	  //Reset armies from mapDB and DOM
-	  mapDB({army:{is:"army"}}).update({army:null});
-	  mapDB({army:{is:"army-enemy"}}).update({army:null});	  
-	  $(".army").removeClass("army");
-	  $(".army-enemy").removeClass("army-enemy");
+	      //Reset armies from mapDB and DOM
+	      mapDB({army:{is:"army"}}).update({army:null});
+	      mapDB({army:{is:"army-enemy"}}).update({army:null});	  
+	      $(".army").removeClass("army");
+	      $(".army-enemy").removeClass("army-enemy");
 
-	  //Set army in mapDB and DOM using delta updates
-	  for (var i = 0; i < units.length; i++) {
-	      var unit = units[i];
-	      mapDB( {x:{is:unit.x}}, {y:{is:unit.y}} ).update( {army: unit.army} );
-	      updateTile(unit);
-	  }
-       }
-       else if (request_delta.status == 404) {
-          alert("handleDeltaMapUpdate: Request URL does not exist");
-       }
-       else {
-	  alert("handleDeltaMapUpdate: Error - status code is " + request_delta.status);
-       }
+	      //Set army in mapDB and DOM using delta updates
+	      for (var i = 0; i < units.length; i++) {
+	         var unit = units[i];
+	         mapDB( {x:{is:unit.x}}, {y:{is:unit.y}} ).update( {army: unit.army} );
+	         updateTile(unit);
+	      }
+     }
+     else if (request_delta.status == 404) {
+        alert("handleDeltaMapUpdate: Request URL does not exist");
+     }
+     else {
+        alert("handleDeltaMapUpdate: Error - status code is " + request_delta.status);
+     }
    }
 }
 
 function handleDefaultUpdate() {
    if (request.readyState == 4) {
-       if (request.status == 200) {
-	  //var response = request.responseText;
-	  //alert (response);
-       }
-       else if (request.status == 404) {
-          alert("handleDefaultUpdate: Request URL does not exist");
-       }
-       else {
-	  alert("handleDefaultUpdate: Error - status code is " + request.status);
-       }
+      if (request.status == 200) {
+	      //var response = request.responseText;
+	      //alert (response);
+      }
+      else if (request.status == 404) {
+         alert("handleDefaultUpdate: Request URL does not exist");
+      }
+      else {
+	      alert("handleDefaultUpdate: Error - status code is " + request.status);
+      }
    }
 }
 
@@ -207,19 +207,19 @@ function handleInitialize() {
       if (request.status == 200) {
          var response = request.responseText;
 
-	 // This might not be secure. Use a JSON parser instead?
-	 var initObj = eval('(' + response + ')');
+	      // This might not be secure. Use a JSON parser instead?
+	      var initObj = eval('(' + response + ')');
 
-	 x_board_max = initObj.x_local_map_size;
-	 x_board_min = -initObj.x_local_map_size;
-	 y_board_max = initObj.y_local_map_size;
-	 y_board_min = -initObj.y_local_map_size;
+	      x_board_max = initObj.x_local_map_size;
+	      x_board_min = -initObj.x_local_map_size;
+	      y_board_max = initObj.y_local_map_size;
+	      y_board_min = -initObj.y_local_map_size;
 	 
-	 x_global = initObj.x_global_map_size;
-	 y_global = initObj.y_global_map_size;
+	      x_global = initObj.x_global_map_size;
+	      y_global = initObj.y_global_map_size;
 
-	 x_batch_size = initObj.x_batch_map_size;
-	 y_batch_size = initObj.y_batch_map_size;
+	      x_batch_size = initObj.x_batch_map_size;
+	      y_batch_size = initObj.y_batch_map_size;
       }
       else if (request.status == 404) {
          alert("Request URL does not exist");
@@ -235,8 +235,8 @@ function handleMapUpdate() {
       if (request.status == 200) {
          var response = request.responseText;
 
-	 // remove all rows from database
-	 mapDB().remove();
+	      // remove all rows from database
+	      mapDB().remove();
          // insert json response into database
          mapDB.insert(response);
 
@@ -272,15 +272,18 @@ function updateBoard(records) {
    records.each(function (r){
       // ids
       var id = x + "_" + y;
+      var a_id = "a" + id;
       var b_id = "b" + id;
+      var c_id = "c" + id;
+      var d_id = "d" + id;
+
       //current objects
-      var old_b = $("#"+b_id);              
-      var old_f = $("#"+id);
+      var old_a = $("#"+a_id);              
       //check classes
-      var br = old_b.hasClass("br");
-      var firstodd = old_b.hasClass("firstodd");
-      var odd = old_b.hasClass("odd");
-      var even = old_b.hasClass("even");
+      var br = old_a.hasClass("br");
+      var firstodd = old_a.hasClass("firstodd");
+      var odd = old_a.hasClass("odd");
+      var even = old_a.hasClass("even");
 
       var c = "";
 
@@ -298,35 +301,35 @@ function updateBoard(records) {
          c = c + " even";
       }
 
-      var class_b = c + " " + r.bclasses;
+      var a_class = c + " " + r.bclasses;
+      //var class_b = c + " " + r.bclasses;
+
+      var b_class = c +  " " + r.classes;
+
+      var army_class = "";
+      if (r.army) {
+         army_class = " " + r.army
+      } 
+      var c_class = c + " " + r.classes + army_class;
 
       // The xy coordinate and toxic classes must always be first in the class attribute list.
       var class_coord = "xy_" + r.x + "_" + r.y;
       var toxic_class = "toxic_" + r.toxic;
-      var army_class = "";
-      if (r.army) {
-	      army_class = " " + r.army;
-      }
-
-      var class_f = class_coord + " " + toxic_class + " "  + c + " " + r.classes + army_class; 
+      var d_class = class_coord + " " + toxic_class + " " + c + " " + r.classes;
 
       // class attribute
-      $("#"+b_id).attr("class", class_b);
-      $("#"+id).attr("class", class_f);
+      $("#"+a_id).attr("class", a_class);
+      $("#"+b_id).attr("class", b_class);
+      $("#"+c_id).attr("class", c_class);
+      $("#"+d_id).attr("class", d_class);
 
       // src attribute for background tile
+      /*
       var animation = r.bimage;
       if (animation) {
          $("#"+b_id).children("img").attr("src", animation);
       }
-
-      //add coordinates to front tile
-      //$("#"+id).children("p").attr("src", animation);
-      
-      //var coord = x + "|" + y;
-      var coord_hex = r.x_hex + "|" + r.y_hex
-      //var coord_hex = r.x + "|" + r.y;
-      $("#"+id).children("p").html(coord_hex);
+      */
 
       //edit x and y ...
       if (x >= x_board_max) {
@@ -345,15 +348,14 @@ function getBoard() {
    var y_top = y_position + y_board_max;
    var y_bottom = y_position - y_board_max;
 
-
    var y_diff = y_global - y_top;
    if (y_diff % 2) {
-       /* 
+  /* 
 	* First line should be even, need to modify the y coordinates.
 	* Increase by one.
-        */
-       y_top++;
-       y_bottom++;
+   */
+      y_top++;
+      y_bottom++;
    }
 
    var records = mapDB( {y:{lte:y_top}}, {y:{gte:y_bottom}}, {x:{gte:x_left}}, {x:{lte:x_right}} );
@@ -392,20 +394,20 @@ function checkBoarder(x,y) {
  * Check if a move is valid
  */
 function checkMoveMap(x,y) {
-    var status = checkBoarder(x, y);
+   var status = checkBoarder(x, y);
     
-    if (status == 1) {
-	// load more map data from database
-	loadMapBatch();
-    }
-    else if (status == 2) {
-	// totally out of map
-	alert("Out of map");
-    }
-    else {
-	// get map from cache
-	var records = getBoard();
-	updateBoard(records);
+   if (status == 1) {
+	   // load more map data from database
+	   loadMapBatch();
+   }
+   else if (status == 2) {
+	   // totally out of map
+	   alert("Out of map");
+   }
+   else {
+	   // get map from cache
+	   var records = getBoard();
+	   updateBoard(records);
    }
 }
 
@@ -415,7 +417,7 @@ function checkMoveMap(x,y) {
 function atDestination(current_hex, stop_hex) {
    var done = 0;
    if ((current_hex[0] == stop_hex[0]) && (current_hex[1] == stop_hex[1])) {
-       done = 1;
+      done = 1;
    }
 
    return done;
@@ -437,12 +439,12 @@ function markRoadMap(road) {
    while(tile = road[i++]) {
       var cartesian = hexToCartesian(tile);
       var coord = ".xy_" + cartesian[0] + "_" + cartesian[1];
-      if (i < len) {
-         $(coord).removeClass("front").addClass("way");
-      }
-      else {
-         $(coord).removeClass("front").addClass("wayend");
-      }
+      var id = $(coord).attr("id");
+
+      setMark(getCoreId(id));
+      if (i == len) {
+         setWayPoint(getCoreId(id));         
+      }   
    }
 }
 
@@ -464,7 +466,8 @@ function printRoad(road) {
  * x|y,x|y, ...
  */
 function formatWay(road) {
-   var i = 0;
+   //Skip start position
+   var i = 1;
    var tile = null;
    var desc = "";
 
@@ -670,6 +673,9 @@ function getRoadMap(current, destination) {
     //Transform to hex coordinates
     current_hex = cartesianToHex(current);
     destination_hex = cartesianToHex(destination);
+
+    //include starting point for marks
+    road.push(current_hex);
     
     while(!atDestination(current_hex, destination_hex)) {
 	    var next_step;
@@ -691,132 +697,163 @@ function getRoadMap(current, destination) {
     return road;
 }
 
+function getCoreId(id) {
+    var core_id = id.substring(1);
+    return core_id;
+}
+
+function getCoordsFromClass(id) {
+    var classes = $("#d"+id).attr("class");
+    var parts = classes.split(" ");
+    xy_coords = getXY(parts[0]);
+    return xy_coords;
+}
+
+function clearMarks() {
+   $(".marked_enemy").removeClass("marked_enemy").addClass("front");
+   $(".marked_friend").removeClass("marked_friend").addClass("front");
+   $(".marked_neutral").removeClass("marked_neutral").addClass("front");
+}
+
+function showDevView(id_x, id_y, core_id) {
+   var str = "(".concat(id_x).concat("|").concat(id_y).concat(")");
+   document.getElementById('board_id').innerHTML = str;
+
+   var classes = $("#d"+core_id).attr("class");
+   document.getElementById('dclasses').innerHTML = classes;
+
+   classes = $("#c"+core_id).attr("class");
+   document.getElementById('cclasses').innerHTML = classes;
+
+   classes = $("#b"+core_id).attr("class");
+   document.getElementById('bclasses').innerHTML = classes;
+
+   classes = $("#a"+core_id).attr("class");
+   document.getElementById('aclasses').innerHTML = classes;   
+}
+
+function moveMap(steps, y_axis) {
+   if (y_axis) {
+      y_position = y_position + steps;
+   }
+   else {
+      x_position = x_position + steps;
+   }
+   checkMoveMap(x_position, y_position);
+}
+
+function getMark(core_id) {
+   var army_id = "#c" + core_id;
+   var building_id = "#a" + core_id;
+   var mark = "marked_neutral";
+
+   if ($(army_id).hasClass('army-enemy')) {
+      mark = "marked_enemy";
+   }
+   else if ($(army_id).hasClass('army')) {
+      mark = "marked_friend";
+   }
+   else if ($(building_id).hasClass('enemy')) {
+      mark =  "marked_enemy";
+   }
+   else if ($(building_id).hasClass('friend')) {
+      mark = "marked_friend";
+   }
+  
+   return mark;
+}
+
+function setMark(core_id) {
+   var mark = getMark(core_id);
+   var mark_id = "#b" + core_id;
+
+   $(mark_id).removeClass("front").addClass(mark);
+}
+
+function setWayPoint(core_id) {
+   var mark_id = "#b" + core_id;
+   $(mark_id).addClass("waypoint");
+}
+
+function handleArmyMovement(core_id) {
+   var army_id = "#c" + core_id;
+   
+   if ($(army_id).hasClass('army')) {
+	   if (army_selected) {
+         //reset globals
+	      army_selected = null;
+	      road = null;
+	   }
+	   else {
+	      army_selected = getCoordsFromClass(core_id);
+	   }
+   }
+   else if (army_selected) {
+	   //get road map
+	   xy_coords = getCoordsFromClass(core_id);
+	   road = getRoadMap(army_selected, xy_coords);
+	   markRoadMap(road);
+   }   
+}
+
+function handleRoad(core_id) {
+   var mark_id = "#b" + core_id;
+   var result = false;
+
+   var waypoint = $(mark_id).hasClass('waypoint')
+
+   if (waypoint) {
+      var steps = formatWay(road);
+
+      //setWalk(steps);
+
+      //clear way and wayend tiles
+      $(".wayend").removeClass("wayend").addClass("front");
+      result = true;
+   }
+   
+   return result;
+}
+
 // ---------------------------------------------------------------------------
 // JQuery functions
 
 $(function() {
    $(".front").mouseover(function() {
-      var id = this.id;
-      var id_coords = id.split("_");
-      var id_x = id_coords[0];
-      var id_y = id_coords[1];
-
-      //id
-      var str = "(".concat(id_x).concat("|").concat(id_y).concat(")");
-      document.getElementById('board_id').innerHTML = str;
-      //background class
-      var bclasses = $("#b"+id).attr("class");
-      document.getElementById('bclasses').innerHTML = bclasses;
-      //foreground class
-      var fclasses = $("#"+id).attr("class");
-      document.getElementById('fclasses').innerHTML = fclasses;
-
-      var parts = fclasses.split(" ");
-
-      //(x|y)
-      xy_coords = getXY(parts[0]);
-      str = "(" + xy_coords[0] + "|" + xy_coords[1] + ")";
-      document.getElementById('coord').innerHTML = str;
-
-      //toxic
-      var toxic_part = parts[1].split(" ");
-      var toxic = toxic_part[0].split("_");
-      var str = toxic[1];
-      document.getElementById('toxic').innerHTML = str;
+      var core_id = getCoreId(this.id);
+      var id_xy = core_id.split("_");
+      var id_x = id_xy[0];
+      var id_y = id_xy[1];
+      showDevView(id_x, id_y, core_id);
    });
 
    /* click on arrows to move map */
-   $("#frametop").click(function() {
-      // move 2 steps to keep board in line.
-      y_position++;
-      y_position++;
-      checkMoveMap(x_position, y_position);
+   $("#toparrow").click(function() {
+      moveMap(2, 1);
    });
-   $("#framebottom").click(function() {
-      // move 2 steps to keep board in line.
-      y_position--;
-      y_position--;
-      checkMoveMap(x_position, y_position);
+   $("#bottomarrow").click(function() {
+      moveMap(-2, 1);
    });
-   $("#frameleft").click(function() {
-      x_position--;
-      checkMoveMap(x_position, y_position);
+   $("#leftarrow").click(function() {
+      moveMap(-1, 0);      
    });
-   $("#frameright").click(function() {
-      x_position++;
-      checkMoveMap(x_position, y_position);
+   $("#rightarrow").click(function() {
+      moveMap(1, 0);      
    });
 
    /* click on tile */
-   $(".front, .way .wayend").live("click", function() {
-      // remove marked tiles
-      $(".marked").removeClass("marked").addClass("front");
+   $(".front").live("click", function() {
+      var core_id = getCoreId(this.id);
 
-      // mark tile
-      $(this).removeClass("front").addClass("marked");
+      //clear marks
+      clearMarks();
 
-      // remove way tile
-      $(".way").removeClass("way").addClass("front");      
+      if (!handleRoad(core_id)) {
+         // mark tile
+         setMark(core_id);
 
-      // remove wayend tile
-      $(".wayend").removeClass("wayend").addClass("front");
-      
-      // find classes
-      var army = $(this).hasClass('army');
-
-      if (army == true) {
-	      if (army_selected) {
-	         army_selected = null;
-	         road = null;
-	      }
-	      else {
-	         var fclasses = $("#"+this.id).attr("class");
-	         var parts = fclasses.split(" ");
-	         xy_coords = getXY(parts[0]);
-	         army_selected = xy_coords;
-	      }
-      }
-      else if (army == false && army_selected) {
-	      //generate road map
-	      var fclasses = $("#"+this.id).attr("class");
-	      var parts = fclasses.split(" ");
-	      xy_coords = getXY(parts[0]);
-
-	      road = getRoadMap(army_selected, xy_coords);
-	      markRoadMap(road);
+         // army movement
+         handleArmyMovement(core_id);
       }
    });
-
-   //$(".marked.way").live("click", function(){
-   $(".wayend").live("click", function(){
-      //alert(printRoad(road));
-      var steps = formatWay(road);
-      setWalk(steps);
-      //clear way and wayend tiles
-      $(".way").removeClass("way").addClass("front");
-      $(".wayend").removeClass("wayend").addClass("front");
-   });
-
-   $(".marked").live("click", function(){
-      //remove marked tile if clicked
-      $(this).removeClass("marked").addClass("front");
-   });
-
-});
-
-$(document).ready(function() {
-    $('.smoke').cycle({
-/*
-      fx: 'shuffle',
-      shuffle: {
-         top: -23,
-         left: 23
-      },
-      speed: 1000,
-      timeout: 1
-*/
-		fx: 'fade',
-      timeout:375,
-      speed:33
-	});
 });

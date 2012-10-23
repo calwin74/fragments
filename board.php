@@ -4,12 +4,10 @@
  */
 
 include_once("include/session.php");
-include_once("include/map_utils.php"); //needed?
 include_once("include/html.php");
 include_once("include/land_descr.php");
 include_once("include/land_utils.php");
 include_once("include/lands.php");
-include_once("include/utils.php"); //needed?
 include_once("include/map.php");
 include_once("include/character.php");
 include_once("include/population.php");
@@ -30,107 +28,48 @@ $y = 0;
 $map = new Map();
 
 $html = new Html;
-?>
-
-<?php
 $html->header(FRAGMENTS_TITLE);
-//$html->end_header();
 ?>
 
-<link rel="stylesheet" type="text/css" href="style.css" />
-
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Fragments</title>
-
-<script src="SpryAssets/SpryMenuBar.js" type="text/javascript"></script>
-<link href="SpryAssets/SpryMenuBarHorizontal.css" rel="stylesheet" type="text/css" />
-
-<style type="text/css">
-#apDiv1 {
-	position:absolute;
-	left:339px;
-	top:497px;
-	width:322px;
-	height:114px;
-	z-index:1;
-}
-body {
-	background-color: #000;
-	background-image: url(img/interfacebg.jpg);
-	text-align: left;
-}
-</style>
 <script type="text/javascript">
 function MM_swapImgRestore() { //v3.0
-  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+  var i,x,a=document.MM_sr;
+for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
 }
 function MM_preloadImages() { //v3.0
   var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
-    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0;
+i<a.length; i++)
     if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
 }
 
 function MM_findObj(n, d) { //v4.01
-  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+  var p,i,x;  if(!d) d=document;
+if((p=n.indexOf("?"))>0&&parent.frames.length) {
     d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
-  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
-  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++)
+x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++)
+x=MM_findObj(n,d.layers[i].document);
   if(!x && d.getElementById) x=d.getElementById(n); return x;
 }
 
 function MM_swapImage() { //v3.0
-  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
-   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array;
+for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc)
+x.oSrc=x.src; x.src=a[i+2];}
 }
 </script>
-</head>
 
-<body onload="MM_preloadImages('img/arrowupon.png','img/arrowdownon.png','img/arrowlefton.png','img/arrowrighton.png')">
+<?php
 
-<div id="wrapper">
+$html->end_header();
+?>
 
-<div id="head">
-  <ul id="MenuBar1" class="MenuBarHorizontal">
-    <li><a class="MenuBarItemSubmenu" href="#">Menu</a>
-      <ul>
-        <li><a href="userinfo.php?user=<?php echo $session->username ?>">My account</a></li>
-        <li><a href="process.php">Logout</a></li>
-        <li><a href="hex_editor.php">Map editor</a></li>
-      </ul>
-    </li>
-  </ul>
+<body onload="MM_preloadImages('attackh.png','soldierh.png','defend2.png','stoph.png','img/attackh.png','img/soldierh.png','img/defend2.png','img/stoph.png','img/leftarrowh.png','img/uparrowh.png','img/downarrowh.png','img/rightarrowh.png')">
 
-
-  <div id="overview">
-       Gold: <?php echo $treasury->getGold(); ?>
-       | Total Civilians: <?php echo $population->getCivilians();?> 
-       | Tax: <?php echo $treasury->getTax(); ?>%
-       | Total Income: <?php echo $treasury->getIncome(); ?>
-       | Total Cost: Not done
-  </div>
-</div>
-
-<div id="right">
-</div>
-
-<div id="headc">
-</div>
-
-<div id="speaker">
-</div>
-<div id="comcentral">
-  <table width="115" height="373" border="0" align="left" cellpadding="0" cellspacing="9">
-    <tr>
-      <td height="30">&nbsp;</td>
-    </tr>
-    <tr>
-      <td height="310" align="left" valign="top"><img src="img/mark.png" width="35" height="15" /><br>INFO:<br>Id: <div id="board_id"></div>BClasses: <div id="bclasses"></div>FClasses: <div id="fclasses"></div> <br>Coord: <div id="coord"></div>  <br>Toxic: <div id="toxic"></div> </td>
-    </tr>
-  </table>
-</div>
-
-<div id="loudspeaker">
-</div>
+<div id="container">
 
 <div id="map1">
 <?php
@@ -144,45 +83,117 @@ $map->printMap($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE, 2);
 ?>
 </div>
 
-<?php
-/* arrows used to move local map view */
+<div id="map3">
+<?php 
+$map->printMap($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE, 3);
 ?>
-<div id="frametop"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Scroll-up','','img/arrowupon.png',1)"><img src="img/arrowupoff.png" alt="Scroll Up" name="Scroll-up" width="819" height="30" border="0" id="Scroll-up" /></a>
 </div>
-<div id="frameleft"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Scroll-Left','','img/arrowlefton.png',1)"><img src="img/arrowleftoff.png" alt="Scroll Left" name="Scroll-Left" width="30" height="292" border="0" id="Scroll-Left" /></a>
+
+<div id="map4">
+<?php 
+$map->printMap($x, $y, X_LOCAL_MAP_SIZE, Y_LOCAL_MAP_SIZE, 4);
+?>
 </div>
-<div id="frameradar">
+
+<div id="topframe">
+  <table width="100%" border="0" cellspacing="3" cellpadding="3">
+    <tr>
+       <td>MENU  | Gold: <?php echo $treasury->getGold();?> 
+                 | Total Civilians: <?php echo $population->getCivilians();?>
+                 | Tax: <?php echo $treasury->getTax(); ?>%
+                 | Total Income: <?php echo $treasury->getIncome(); ?>
+                 | Total Cost: Not done 
+       </td>
+    </tr>
+  </table>
+</div>
+
+<div id="leftframe">
+</div>
+<div id="rightframe">
+</div>
+<div id="bottomframe">
+</div>
+<div id="topleftcorner">
+</div>
+<div id="toprightcorner">
+</div>
+<div id="bottomleftcorner">
+<?php
+if (DEV_VIEW) {
+echo 'Dev view<br><div id="board_id"></div><div id="dclasses"></div><div id="cclasses"></div><div id="bclasses"></div><div id="aclasses"></div>';
+}
+?>
+</div>
+<div id="bottomrightcorner">
+</div>
+
+<div id="leftarrow"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image27','','img/leftarrowh.png',1)"><img src="img/leftarrow.png" alt="Left" name="Image27" width="24" height="134" border="0" id="Image27" /></a>
+</div>
+
+<div id="rightarrow"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('rightarrow','','img/rightarrowh.png',1)"><img src="img/rightarrow.png" alt="Right" name="rightarrow" width="24" height="134" border="0" id="rightarrow2" /></a>
+</div> 
+<a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('rightarrow','','img/rightarrowh.png',1)"></a>
+
+<div id="toparrow"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('toparrow','','img/uparrowh.png',1)"><img src="img/uparrow.png" alt="Up" name="toparrow" width="134" height="24" border="0" id="toparrow2" /></a>
+</div>
+
+<div id="bottomarrow"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('downarrow','','img/downarrowh.png',1)"><img src="img/downarrow.png" alt="down" name="downarrow" width="134" height="24" border="0" id="downarrow" /></a>
+</div>
+
+<div id="actions">
+
+<div id="bottomleft"><img src="img/wmarkarmy2.png" width="255" height="7" alt="ARMY" />
+</div>
+
+<div id="bottomcenter">
+  <img src="img/wmarkselected2.png" alt="SELECTED" width="296" height="7" align="top" />
+    <table width="100%" border="0" cellspacing="5" cellpadding="5">
+      <tr>
+        <td> Selected data goes here ... </td>
+      </tr>
+    </table>
   <p>&nbsp;</p>
-  <p><img src="img/light-on.png" width="32" height="32" alt="There Will be light!" /></p>
-</div>
-<div id="framebottom"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Scroll-Down','','img/arrowdownon.png',1)"><img src="img/arrowdownoff.png" alt="Scroll Down" name="Scroll-Down" width="756" height="30" border="0" id="Scroll-Down" /></a>
-</div>
-<div id="framecornerur">
-</div>
-<div id="framecornerbr">
-</div>
-<div id="frameright"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Scroll-Right','','img/arrowrighton.png',1)"><img src="img/arrowrightoff.png" alt="Scroll-Right" name="Scroll-Right" width="30" height="523" border="0" id="Scroll-Right" /></a>
 </div>
 
-<div id="minimap"><img src="img/Radar-frame.png" alt="MINIMAP" width="192" height="194" hspace="0" vspace="0" align="top" /></div>
+<div id="bottomright"><img src="img/wmarkcommand2.png" width="296" height="7" alt="COMMAND" />
 
-<div id="army">
-</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td><table width="100" border="0" align="left" cellpadding="0" cellspacing="4" bordercolor="#000000" id="ACTIONS">
+          <tr>
+            <td><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('attack','','img/attackh.png',1)"><img src="img/attack.png" alt="Attack" name="attack" width="44" height="44" border="0" id="attack" /></a></td>
+            <td><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Soldier','','img/soldierh.png',1)"><img src="img/soldier.png" alt="Soldier" name="Soldier" width="44" height="44" border="0" id="Soldier" /></a></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="ing/empty.png" alt="...X..." width="44" height="44" /></td>
+            </tr>
+          <tr>
+            <td><img src="img/empty.png" width="44" height="44" alt="...X..." /></td>
+            <td><img src="img/empty.png" width="44" height="44" alt="...X..." /></td>
+            <td><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Defend','','img/defendh.png',1)"><img src="img/defend.png" alt="Defend" name="Defend" width="44" height="44" border="0" id="Defend" /></a></td>
+            <td><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Stop','','img/stoph.png',1)"><img src="img/stop.png" alt="cancel" name="Stop" width="44" height="44" border="0" id="Stop" /></a></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            <td><img src="img/empty.png" alt="...X..." width="44" height="44" /></td>
+            </tr>
+        </table></td>
+      </tr>
+    </table>
+   </div
+</div>  	
 
-<div id="selected">
-</div>
-
-<div id="action">
-</div>
-
-<div id="footer">
-</div>
-
-</div>
-
-<script type="text/javascript">
-var MenuBar1 = new Spry.Widget.MenuBar("MenuBar1", {imgDown:"SpryAssets/SpryMenuBarDownHover.gif", imgRight:"SpryAssets/SpryMenuBarRightHover.gif"});
-</script>
+</div>        
 
 <?php
 $html->footer();

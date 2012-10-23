@@ -1,0 +1,3 @@
+2012-10-19 13:55:49 - ERROR --> getCharacterByUser - Error or didn´t return unique row 
+2012-10-19 13:57:33 - ERROR --> getCharacterByUser - Error or didn´t return unique row 
+2012-10-19 13:57:34 - ERROR --> getCharacterByUser - Error or didn´t return unique row 

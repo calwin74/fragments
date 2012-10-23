@@ -1,3 +1,5 @@
+@charset "utf-8";
+
 #wrapper {width:1100px;margin:0 auto; border:1px solid #000;}
 
 #header {height:40px; border:1px solid #000;}
@@ -31,7 +33,7 @@ margin:0 20px 0 0;
 background: url(../img/transparent.png) no-repeat;
 }
 
-.marked {
+.marked_neutral {
 float:left;
 width:70px;
 height:49px;
@@ -39,7 +41,7 @@ margin:0 20px 0 0;
 background: url(../img/marked_black.png) no-repeat;
 }
 
-.way {
+.marked_friend {
 float:left;
 width:70px;
 height:49px;
@@ -47,12 +49,12 @@ margin:0 20px 0 0;
 background: url(../img/marked_green.png) no-repeat;
 }
 
-.wayend {
+.marked_enemy {
 float:left;
 width:70px;
 height:49px;
 margin:0 20px 0 0;
-background: url(../img/marked_black.png) no-repeat;
+background: url(../img/marked_red.png) no-repeat;
 }
 
 p {
@@ -239,3 +241,156 @@ background: url(../img/factory.png) no-repeat;
 .factory-bunker {
 background: url(../img/factory-bunker.png) no-repeat;
 }
+
+/* new stuff here */
+
+html {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+div#container {
+	position:relative;
+	height: 100%;
+   width: 100%;
+	max-width: 1600px;
+	min-width: 780px;
+	max-height: 1200px;
+	min-height: 480px;      
+   overflow:hidden;
+}
+
+div#topframe {
+	position:absolute;
+	top:0px;
+	width: 100%;
+	height: 62px;	background-image:url(../img/topframe.png);
+	font-family: "Courier New", Courier, monospace;
+	text-align: right;
+   z-index:11;
+}
+
+div#leftframe {
+	position:absolute;
+	top:0px;
+	left: 0px;
+	width: 35px;
+	height: 100%;
+	background-image:url(../img/leftframe.png);
+   z-index:11;
+}
+
+div#rightframe {
+	position: absolute; 
+	top:0px;
+	right: 0px;
+	width: 35px;
+	height: 100%;
+	background-image:url(../img/rightframe.png);
+	z-index:11;
+}
+
+div#bottomframe {
+	position: absolute;
+	bottom: 2px;
+	width: 100%;
+	height: 91px;
+	background-image:url(../img/bottomframe.png);
+	z-index:11;
+}
+
+div#actions {
+	position: absolute;
+	bottom: 4px;
+	width: 100%;
+	height: 190px;
+	z-index:10;	
+}
+
+div#bottomleft {
+	float: left;
+	margin: 1px;
+	width: 34%;
+	height: 98%;
+	border:1px solid #000;
+	padding-left:1px;
+	padding-top:1px;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	background-image:url(../img/actionbg.png);
+	z-index:10;
+}
+
+div#bottomcenter {
+	float: left;
+	margin: 1px;
+	width: 32%;
+	height: 98%;
+	border:1px solid #000;
+	padding-left:1px;
+	padding-top:1px;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	background-image:url(../img/actionbg.png);
+	z-index:10;
+}
+
+div#bottomright {
+	float: left;
+	margin: 1px;
+	width: 32%;
+	height: 98%;
+	border:1px solid #000;
+	padding-left:1px;
+	padding-top:1px;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	background-image:url(../img/actionbg.png);
+   overflow:hidden;
+	z-index:10;
+}
+
+div#topleftcorner {
+	position: absolute;
+	top: 0px;
+	width: 35px;
+	height: 62px;
+	background-image:url(../img/topleftcorner.png);
+	left: 500;	
+	z-index:12;
+}
+
+div#toprightcorner {
+	position: absolute; 
+	top: 0px;
+	right: 0px;
+	width: 35px;
+	height: 62px;
+	background-image:url(../img/toprightcorner.png);
+	z-index:12;	
+}
+
+div#bottomleftcorner {
+	position: absolute;
+	bottom: 1px;
+	width: 233px;
+	height: 227px;
+	background-image:url(../img/bottomleftcorner.png);
+	z-index:12;
+}
+
+div#bottomrightcorner {
+	position: absolute;
+	bottom: 48px;
+	right: 0px;
+	width: 35px;
+	height: 62px;
+	background-image:url(../img/bottomrightcorner.png);
+	z-index:12;
+}
+

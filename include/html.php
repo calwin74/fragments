@@ -8,7 +8,7 @@
 			echo '<html>';
 			echo '<head>';
 			echo "<title>".$title."</title>";
-
+         echo '<link rel="shortcut icon" href="../img/icon.png">'; 
          /*
           * jquery-1.3.2.min.js
           * jquery library

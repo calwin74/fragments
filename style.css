@@ -2,11 +2,7 @@
 /* CSS Document */
 
 body {
-	background-color: #CCC;
-	background-image: url(img/interface.png);
-background-repeat:no-repeat;
-background-attachment:fixed;
-background-position:center top; 
+	background-color: #666;
 }
 
 body,td,th {
@@ -143,24 +139,47 @@ z-index:3;
 }
 #map1 {
 	position:absolute;
-	top:17px;
+   top:17px;
 	left:0px;
-	width:1431px;
-	height:580px;
-	margin:0 auto;
-	z-index:1;
-	border:0px solid #000;
+	height: 1600px;
+	width: 1600px;
+   margin:0 auto;
+	z-index:0;
+   border:0px solid #000;
+   overflow:hidden;
 }
-
 #map2 {
 	position:absolute;
-	top:17px;
+   top:17px;
 	left:0px;
-	width:1431px;
-	height:580px;
-	margin:0 auto;
+	height: 1600px;
+	width: 1600px;
+   margin:0 auto;
 	z-index:1;
-	border:0px solid #000;
+   border:0px solid #000;
+   overflow:hidden;
+}
+#map3 {
+	position:absolute;
+   top:17px;
+	left:0px;
+	height: 1600px;
+	width: 1600px;
+   margin:0 auto;
+	z-index:2;
+   border:0px solid #000;
+   overflow:hidden;
+}
+#map4 {
+	position:absolute;
+   top:17px;
+	left:0px;
+	height: 1600px;
+	width: 1600px;
+   margin:0 auto;
+	z-index:3;
+   border:0px solid #000;
+   overflow:hidden;
 }
 
 #frametop {
@@ -323,4 +342,48 @@ z-index:3;
 }
 #wrapper #army table {
 	text-align: right;
+}
+div#leftarrow {
+        position:absolute;
+        top:35%;
+        left: 17px;
+        width: 24px;
+        height: 134px;
+        background-image:url(img/actionbg.png);
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+        z-index:15;
+}
+div#rightarrow {
+        position:absolute;
+        top:35%;
+        right: 17px;
+        width: 24px;
+        height: 134px;
+        background-image:url(img/actionbg.png);
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+        z-index:15;
+}
+div#toparrow {
+        position:absolute;
+        top: 32px;
+        left: 45% ;
+        width: 134px;
+        height: 24px;
+        background-image:url(img/blacktransparent.png);
+        border-bottom-right-radius: 12px;
+        border-bottom-left-radius: 12px;
+        z-index:15;
+}
+div#bottomarrow {
+        position:absolute;
+        bottom: 192px;
+        left: 45% ;
+        width: 134px;
+        height: 24px;
+        background-image:url(img/actionbg.png);
+        border-top-right-radius: 12px;
+        border-top-left-radius: 12px;
+        z-index:15;
 }

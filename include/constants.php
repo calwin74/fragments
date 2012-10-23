@@ -20,6 +20,12 @@ include_once("site.php");
  */
 
 /*
+ * Developer view of map.
+ * Enable by setting to 1.
+ */
+define("DEV_VIEW", 1);
+
+/*
  * Database Table Constants - these constants
  * hold the names of all the database tables used
  * in the script.
@@ -105,7 +111,7 @@ define("ALL_LOWERCASE", false);
 /**
  * title prefix constant
  */
-define("FRAGMENTS_TITLE", "FR4GMENTS 2.0 - made in STHLM");
+define("FRAGMENTS_TITLE", "F R 4 G M E N T S");
 
 /**
  * terrain types
@@ -122,29 +128,14 @@ define("DIRTVEG3", 8);
 define("DIRTVEG4", 9);
 define("DIRTVEG5", 10);
 
-define("URBAN1", 11);
-define("URBAN2", 12);
-define("URBAN3", 13);
-define("URBAN4", 14);
-define("URBAN5", 15);
-
-define("VEG1", 16);
-define("VEG2", 17);
-define("VEG3", 18);
-define("VEG4", 19);
-define("VEG5", 20);
-
-define("SEA", 21);
-
-
 /**
  *  Map constants
  */
 
 /* base is x = 5 and y = 13 */
 
-define("X_LOCAL_MAP_SIZE", 5);
-define("Y_LOCAL_MAP_SIZE", 13);
+define("X_LOCAL_MAP_SIZE", 7);
+define("Y_LOCAL_MAP_SIZE", 18);
 
 define("X_GLOBAL_MAP_SIZE", 20);
 define("Y_GLOBAL_MAP_SIZE", 40);
